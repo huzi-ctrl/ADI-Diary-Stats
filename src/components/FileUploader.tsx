@@ -104,7 +104,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--border-light)', background: 'var(--bg-card)', color: 'var(--text-main)', transition: 'all 0.2s', borderRadius: '12px' }}
                 onClick={handleConnectGoogle}
               >
-                <img src="https://www.svgrepo.com/show/475656/google-color.svg" width={32} height={32} alt="Google" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width={32} height={32} alt="Google" />
                 <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Google Calendar</span>
               </button>
 
@@ -115,7 +115,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--border-light)', background: 'var(--bg-card)', color: 'var(--text-main)', transition: 'all 0.2s', borderRadius: '12px' }}
                 onClick={handleConnectOutlook}
               >
-                <img src="https://www.svgrepo.com/show/475668/microsoft-color.svg" width={32} height={32} alt="Microsoft" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" width={32} height={32} alt="Microsoft" />
                 <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Outlook Calendar</span>
               </button>
 
