@@ -1,0 +1,18 @@
+{
+  "short_name": "DriveStats",
+  "name": "DriveStats ADI Dashboard",
+  "description": "Premium Local-First iCalendar Statistics & Analysis Dashboard for Driving Instructors.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#07090e",
+  "theme_color": "#818cf8",
+  "display": "standalone",
+  "orientation": "portrait-primary"
+}
