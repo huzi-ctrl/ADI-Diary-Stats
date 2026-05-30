@@ -598,7 +598,10 @@ function App() {
 
   // Split events globally
   const { instructorEvents, filteredOutEvents } = useMemo(() => {
-    return splitInstructorEvents(allEvents);
+    const cutoffDate = new Date();
+    cutoffDate.setMonth(cutoffDate.getMonth() + 6);
+    const validEvents = allEvents.filter(e => e.start <= cutoffDate);
+    return splitInstructorEvents(validEvents);
   }, [allEvents]);
 
   // Get available years from events
@@ -856,11 +859,11 @@ function App() {
                     <button 
                       type="button" 
                       className="btn btn-secondary" 
-                      style={{ padding: '0.4rem 0.8rem', borderRadius: '8px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }} 
+                      style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
                       onClick={handleCurrentWeek}
+                      title="Current Week"
                     >
-                      <RefreshCw size={12} />
-                      Current
+                      <RefreshCw size={16} />
                     </button>
                   </div>
                 ) : (
