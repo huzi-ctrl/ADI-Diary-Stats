@@ -136,7 +136,7 @@ export const EventList: React.FC<EventListProps> = ({
     <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       
       {/* Tab Switcher */}
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border-light)', gap: '1.5rem', paddingBottom: '0.25rem' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', borderBottom: '1px solid var(--border-light)', gap: '1.5rem', paddingBottom: '0.25rem' }}>
         <button
           type="button"
           onClick={() => handleTabChange('lessons')}
@@ -416,7 +416,7 @@ export const EventList: React.FC<EventListProps> = ({
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-light)', paddingTop: '1rem', marginTop: '0.5rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-light)', paddingTop: '1rem', marginTop: '0.5rem', gap: '0.75rem' }}>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Page <strong>{currentPage}</strong> of {totalPages} (Total in view: {totalItems})
           </span>

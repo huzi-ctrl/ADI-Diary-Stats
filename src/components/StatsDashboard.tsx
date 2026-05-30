@@ -695,7 +695,7 @@ Analyze and return the JSON object.`;
             </div>
 
             {/* All-Time Future Schedule stats */}
-            <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'space-around' }}>
+            <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'space-around', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <div style={{ background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', padding: '0.5rem 0.75rem', borderRadius: '10px', textAlign: 'center' }}>
                   <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-indigo)', display: 'block' }}>
@@ -784,7 +784,8 @@ Analyze and return the JSON object.`;
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Active Driving Lesson Hours</span>
           </div>
 
-          <div style={{ height: '260px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '1.5rem 1rem 0.5rem 1rem', position: 'relative' }}>
+          <div className="chart-scroll-container">
+          <div style={{ height: '260px', minWidth: '500px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '1.5rem 1rem 0.5rem 1rem', position: 'relative' }}>
             {dayIndices.map((dayIdx, i) => {
               const hours = dayOfWeekHours[dayIdx];
               const heightPct = (hours / maxDayHours) * 100;
@@ -819,6 +820,7 @@ Analyze and return the JSON object.`;
                 </div>
               );
             })}
+          </div>
           </div>
         </div>
 
