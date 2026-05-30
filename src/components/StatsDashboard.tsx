@@ -561,6 +561,11 @@ Analyze and return the JSON object.`;
         }
       }
 
+      if (finalFinishReason && finalFinishReason !== 'STOP' && finalFinishReason !== 'stop' && finalFinishReason !== 'MAX_TOKENS' && finalFinishReason !== 'length') {
+        console.warn(`[StatsDashboard] AI generation finished with reason: ${finalFinishReason}`);
+        debugTrace += `\n[Final] Interrupted by reason: ${finalFinishReason}`;
+      }
+
       const parsed = JSON.parse(accumulatedAnswer);
       if (debugTrace) {
         parsed.debugTrace = debugTrace;
