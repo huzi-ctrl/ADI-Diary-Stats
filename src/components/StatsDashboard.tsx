@@ -530,8 +530,13 @@ Analyze and return the JSON object.`;
           finalFinishReason = res?.choices?.[0]?.finish_reason;
         }
 
-        const isReportComplete = accumulatedAnswer.trim().endsWith('}');
-        const lastChar = accumulatedAnswer.trim().slice(-1);
+        let cleanAnswer = accumulatedAnswer.trim();
+        if (cleanAnswer.startsWith('```')) {
+          cleanAnswer = cleanAnswer.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '');
+        }
+
+        const isReportComplete = cleanAnswer.trim().endsWith('}');
+        const lastChar = cleanAnswer.trim().slice(-1);
         const isEndingValid = lastChar === '}';
 
         if (isEndingValid && isReportComplete) {
@@ -566,7 +571,11 @@ Analyze and return the JSON object.`;
         debugTrace += `\n[Final] Interrupted by reason: ${finalFinishReason}`;
       }
 
-      const parsed = JSON.parse(accumulatedAnswer);
+      let finalClean = accumulatedAnswer.trim();
+      if (finalClean.startsWith('```')) {
+        finalClean = finalClean.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '');
+      }
+      const parsed = JSON.parse(finalClean);
       if (debugTrace) {
         parsed.debugTrace = debugTrace;
       }
