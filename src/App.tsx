@@ -828,7 +828,7 @@ function App() {
               ) : (
                 /* Week Navigator or Spacer */
                 viewMode !== 'settings' ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                     <button 
                       type="button" 
                       className="btn btn-secondary" 
@@ -839,7 +839,7 @@ function App() {
                       <ChevronLeft size={16} />
                     </button>
                     
-                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)', minWidth: '220px', textAlign: 'center' }}>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)', flex: '1 1 auto', minWidth: '150px', textAlign: 'center' }}>
                       {weekRangeLabel}
                     </span>
 

@@ -875,7 +875,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         earnings: data.earnings,
         projectedEarnings
       };
-    }).filter(m => m.totalLessons >= 10).sort((a, b) => a.year - b.year);
+    }).filter(m => m.totalLessons >= 10 && m.year <= new Date().getFullYear()).sort((a, b) => a.year - b.year);
   }, [lessonsOnly, hourlyRate, isYtdComparison]);
 
   // 4.3. Smart Scheduling Advisor Diagnostics
