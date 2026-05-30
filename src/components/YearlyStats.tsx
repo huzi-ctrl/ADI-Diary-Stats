@@ -858,15 +858,24 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       const efficiencyRatio = data.capacityUsedMins > 0 ? (data.paidMins / data.capacityUsedMins) * 100 : 0;
       const earningsPerActiveDay = data.activeDays.size > 0 ? data.earnings / data.activeDays.size : 0;
       
+      let projectedEarnings: number | null = null;
+      if (year === new Date().getFullYear()) {
+        const today = new Date();
+        const startOfYear = new Date(year, 0, 1);
+        const daysElapsed = Math.max(1, Math.floor((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)));
+        projectedEarnings = Math.round((data.earnings / daysElapsed) * 365);
+      }
+      
       return {
         year,
         efficiencyRatio,
         earningsPerActiveDay,
         activeDaysCount: data.activeDays.size,
         totalLessons: data.lessonsCount,
-        earnings: data.earnings
+        earnings: data.earnings,
+        projectedEarnings
       };
-    }).sort((a, b) => a.year - b.year);
+    }).filter(m => m.totalLessons >= 10).sort((a, b) => a.year - b.year);
   }, [lessonsOnly, hourlyRate, isYtdComparison]);
 
   // 4.3. Smart Scheduling Advisor Diagnostics
@@ -1170,7 +1179,8 @@ The JSON must follow this exact structure:
 }`;
 
       const metricsContext = yearlyMetrics.map(m => {
-        return `Year ${m.year}: ${m.totalLessons} lessons, ${m.activeDaysCount} active days, Scheduling Efficiency: ${m.efficiencyRatio.toFixed(1)}%, Est. Earnings: £${m.earnings.toLocaleString()} (Avg: £${m.earningsPerActiveDay.toFixed(0)}/day)`;
+        const projStr = m.projectedEarnings ? `, Projected EoY: £${m.projectedEarnings.toLocaleString()}` : '';
+        return `Year ${m.year}: ${m.totalLessons} lessons, ${m.activeDaysCount} active days, Scheduling Efficiency: ${m.efficiencyRatio.toFixed(1)}%, Est. Earnings: £${m.earnings.toLocaleString()}${projStr} (Avg: £${m.earningsPerActiveDay.toFixed(0)}/day)`;
       }).join('\n');
 
       const userPrompt = `YoY Calendar Business Performance Metrics (Comparison Type: ${isYtdComparison ? 'Year-to-Date aligned' : 'Full Year'}):
@@ -1232,7 +1242,11 @@ Please analyze this data and return the JSON object.`;
         text = res?.choices?.[0]?.message?.content || '';
       }
 
-      const parsed = JSON.parse(text);
+      let cleanText = text.trim();
+      if (cleanText.startsWith('```')) {
+        cleanText = cleanText.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '');
+      }
+      const parsed = JSON.parse(cleanText);
       setYoyAiReport(parsed);
       setCachedAiItem(cacheKey, parsed);
     } catch (err) {
@@ -1753,7 +1767,8 @@ Please analyze this data and return the JSON object.`;
         </div>
 
         <div className="responsive-split-grid" style={{ marginTop: '1rem' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+          <div className="table-wrapper">
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-light)', textAlign: 'left' }}>
                 <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600 }}>Year</th>
@@ -1796,6 +1811,11 @@ Please analyze this data and return the JSON object.`;
                     <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-cyan)' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <span>£{m.earnings.toLocaleString()}</span>
+                        {m.projectedEarnings && (
+                          <div style={{ fontSize: '0.65rem', color: 'var(--text-dim)', marginTop: '2px' }}>
+                            Proj. EoY: £{m.projectedEarnings.toLocaleString()}
+                          </div>
+                        )}
                         {idx > 0 && (
                           <span style={{ fontSize: '0.7rem', color: revenueChange >= 0 ? 'var(--accent-emerald)' : '#ef4444' }}>
                             {revenueChange >= 0 ? `▲ +£${revenueChange.toLocaleString()}` : `▼ -£${Math.abs(revenueChange).toLocaleString()}`}
@@ -1807,7 +1827,8 @@ Please analyze this data and return the JSON object.`;
                 );
               })}
             </tbody>
-          </table>
+            </table>
+          </div>
         </div>
 
         {enableAiInsights && aiApiKey && (

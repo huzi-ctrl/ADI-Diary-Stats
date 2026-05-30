@@ -317,8 +317,8 @@ function App() {
     setIsSyncing(true);
     setSyncError(null);
     try {
-      const timeMin = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
-      const timeMax = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+      const timeMin = new Date(Date.now() - 1460 * 24 * 60 * 60 * 1000).toISOString();
+      const timeMax = new Date(Date.now() + 1460 * 24 * 60 * 60 * 1000).toISOString();
       
       const endpoint = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?maxResults=2500&timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime`;
       
@@ -366,8 +366,8 @@ function App() {
     setIsSyncing(true);
     setSyncError(null);
     try {
-      const timeMin = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
-      const timeMax = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+      const timeMin = new Date(Date.now() - 1460 * 24 * 60 * 60 * 1000).toISOString();
+      const timeMax = new Date(Date.now() + 1460 * 24 * 60 * 60 * 1000).toISOString();
       
       const endpoint = calendarId 
         ? `https://graph.microsoft.com/v1.0/me/calendars/${encodeURIComponent(calendarId)}/events?$top=1000&$filter=start/dateTime ge '${timeMin}' and start/dateTime le '${timeMax}'`
