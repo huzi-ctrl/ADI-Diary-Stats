@@ -4,6 +4,7 @@ import { StatsDashboard } from './components/StatsDashboard';
 import { EventList } from './components/EventList';
 import { YearlyStats } from './components/YearlyStats';
 import { AIInsights } from './components/AIInsights';
+import { LegalModal } from './components/LegalModal';
 import { parseICS, type CalendarEvent } from './utils/icsParser';
 import { splitInstructorEvents } from './utils/eventFilters';
 import { Calendar, LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles } from 'lucide-react';
@@ -42,6 +43,8 @@ function App() {
   const [fileName, setFileName] = useState<string | null>(() => {
     return localStorage.getItem('adi_calendar_filename');
   });
+
+  const [legalModal, setLegalModal] = useState<'privacy' | 'tos' | null>(null);
 
   const [allEvents, setAllEvents] = useState<CalendarEvent[]>(() => {
     const cachedLive = localStorage.getItem('adi_cached_calendar_events');
@@ -1316,8 +1319,12 @@ function App() {
       {/* Page Footer */}
       <footer style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: '1.5rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <span>&copy; {new Date().getFullYear()} DriveStats ADI. All driving school data stays locally in the browser.</span>
-        <span>Built with Antigravity AI</span>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button onClick={() => setLegalModal('privacy')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 'inherit' }} className="hover-glow">Privacy Policy</button>
+          <button onClick={() => setLegalModal('tos')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 'inherit' }} className="hover-glow">Terms of Service</button>
+        </div>
       </footer>
+      <LegalModal type={legalModal} onClose={() => setLegalModal(null)} />
     </div>
   );
 }
