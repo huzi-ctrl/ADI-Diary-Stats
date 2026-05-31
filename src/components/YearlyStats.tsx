@@ -1261,7 +1261,7 @@ Please analyze this data and return the JSON object.`;
       } catch (parseError) {
         console.warn("JSON.parse failed. Attempting regex extraction. Raw text:", text);
         
-        const extractField = (fieldName) => {
+        const extractField = (fieldName: string) => {
           const regex = new RegExp(`"${fieldName}"\\s*:\\s*"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"`, 'i');
           const m = text.match(regex);
           if (m) {
@@ -1274,10 +1274,10 @@ Please analyze this data and return the JSON object.`;
         const efficiencyInsight = extractField("efficiencyInsight");
         const seasonalityAdvice = extractField("seasonalityAdvice");
         
-        let coachingTips = [];
-        const tipsMatch = text.match(/"coachingTips"\s*:\s*\\[([\\s\\S]*?)\\]/i);
+        let coachingTips: string[] = [];
+        const tipsMatch = text.match(/"coachingTips"\s*:\s*\[([\s\S]*?)\]/i);
         if (tipsMatch) {
-           const matches = [...tipsMatch[1].matchAll(/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/g)];
+           const matches = [...tipsMatch[1].matchAll(/"([^"\\]*(?:\\.[^"\\]*)*)"/g)];
            coachingTips = matches.map(m => {
              try { return JSON.parse(`"${m[1]}"`); } catch (e) { return m[1]; }
            });
