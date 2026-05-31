@@ -1325,8 +1325,8 @@ function App() {
       <footer style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: '1.5rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <span>&copy; {new Date().getFullYear()} ADI stats. All driving school data stays locally in the browser.</span>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <button onClick={() => setLegalModal('privacy')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 'inherit' }} className="hover-glow">Privacy Policy</button>
-          <button onClick={() => setLegalModal('tos')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 'inherit' }} className="hover-glow">Terms of Service</button>
+          <a href="?policy=privacy" onClick={(e) => { e.preventDefault(); setLegalModal('privacy'); }} style={{ textDecoration: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 'inherit' }} className="hover-glow">Privacy Policy</a>
+          <a href="?policy=tos" onClick={(e) => { e.preventDefault(); setLegalModal('tos'); }} style={{ textDecoration: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 'inherit' }} className="hover-glow">Terms of Service</a>
         </div>
       </footer>
       <LegalModal type={legalModal} onClose={() => setLegalModal(null)} />
