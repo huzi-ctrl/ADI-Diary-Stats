@@ -134,7 +134,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
       
       {/* Onboarding Header */}
       <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <h2 className="gradient-text" style={{ fontSize: '2rem', fontWeight: 800 }}>Welcome to DriveStats ADI</h2>
+        <h2 className="gradient-text" style={{ fontSize: '2rem', fontWeight: 800 }}>Welcome to ADI stats</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
           Let's get your driving school analytics set up in a few simple steps.
         </p>

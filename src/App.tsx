@@ -653,12 +653,12 @@ function App() {
       {/* App Header */}
       <header className="app-header">
         <div className="brand-section">
-          <div className="brand-icon">
-            <Calendar size={24} color="#fff" />
+          <div className="brand-icon" style={{ background: 'transparent', padding: 0 }}>
+            <img src="/favicon.png" alt="ADI stats logo" style={{ height: '36px', width: '36px', objectFit: 'contain' }} />
           </div>
           <div>
             <h1 className="gradient-text" style={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.2 }}>
-              DriveStats ADI
+              ADI stats
             </h1>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
               Approved Driving Instructor Schedule Analytics
@@ -1323,7 +1323,7 @@ function App() {
 
       {/* Page Footer */}
       <footer style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: '1.5rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <span>&copy; {new Date().getFullYear()} DriveStats ADI. All driving school data stays locally in the browser.</span>
+        <span>&copy; {new Date().getFullYear()} ADI stats. All driving school data stays locally in the browser.</span>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <button onClick={() => setLegalModal('privacy')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 'inherit' }} className="hover-glow">Privacy Policy</button>
           <button onClick={() => setLegalModal('tos')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 'inherit' }} className="hover-glow">Terms of Service</button>

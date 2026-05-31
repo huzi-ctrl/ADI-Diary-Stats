@@ -49,7 +49,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
           {isPrivacy ? (
             <>
               <p><strong>Effective Date:</strong> {new Date().toLocaleDateString()}</p>
-              <p>Your privacy is strictly protected. <strong>DriveStats ADI</strong> is designed to operate entirely in your local web browser. We do not store, track, or share your calendar data on any centralized servers.</p>
+              <p>Your privacy is strictly protected. <strong>ADI stats</strong> is designed to operate entirely in your local web browser. We do not store, track, or share your calendar data on any centralized servers.</p>
               
               <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>1. Data Collection & Storage</h3>
               <p>When you sync a Google, Microsoft Outlook, or iCalendar feed, the events are fetched directly by your browser. The data processing happens completely client-side. The dashboard statistics, including lessons, times, and dates, are never uploaded to any database owned by us.</p>
@@ -66,10 +66,10 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
           ) : (
             <>
               <p><strong>Last Updated:</strong> {new Date().toLocaleDateString()}</p>
-              <p>Please read these Terms of Service completely before using DriveStats ADI. By using the app, you agree to be bound by these terms.</p>
+              <p>Please read these Terms of Service completely before using ADI stats. By using the app, you agree to be bound by these terms.</p>
               
               <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>1. Service Description</h3>
-              <p>DriveStats ADI provides analytical dashboard tools for Approved Driving Instructors. The service is provided "as is" and relies on the accurate integration of third-party calendar providers.</p>
+              <p>ADI stats provides analytical dashboard tools for Approved Driving Instructors. The service is provided "as is" and relies on the accurate integration of third-party calendar providers.</p>
               
               <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>2. User Responsibilities</h3>
               <p>You are solely responsible for maintaining the confidentiality of any API keys, calendar feed URLs, or OAuth tokens used within the app. Because the application runs completely locally, you are responsible for securing your own device.</p>
@@ -78,7 +78,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
               <p>The app and all its contents are provided on an "as is" basis without warranties of any kind. We do not guarantee that the service will be uninterrupted, error-free, or entirely accurate, especially considering its reliance on third-party calendar APIs.</p>
               
               <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>4. Limitation of Liability</h3>
-              <p>In no event shall the creators or maintainers of DriveStats ADI be liable for any direct, indirect, incidental, or consequential damages arising out of your use of the application, including but not limited to lost revenue, miscalculated business metrics, or third-party data breaches.</p>
+              <p>In no event shall the creators or maintainers of ADI stats be liable for any direct, indirect, incidental, or consequential damages arising out of your use of the application, including but not limited to lost revenue, miscalculated business metrics, or third-party data breaches.</p>
             </>
           )}
         </div>

@@ -433,7 +433,7 @@ Write in Markdown format with bold text, clear section headers, and blockquotes.
     setLoading(true);
     setError(null);
     try {
-      const system = `You are a senior seasonality, workload trend, and revenue optimization specialist for DriveStats ADI.
+      const system = `You are a senior seasonality, workload trend, and revenue optimization specialist for ADI stats.
 Review the statistics and write an exhaustive, highly detailed Trend Analysis report.
 Do NOT write a brief outline. Provide comprehensive, multi-paragraph breakdowns for the following areas:
 Focus strictly on business operations, scheduling efficiency, revenue, and time management. Ensure the response is fully complete and does not cut off. If you run out of space, prioritize summarizing the recommendations rather than leaving them incomplete.
