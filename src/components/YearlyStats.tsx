@@ -1243,8 +1243,15 @@ Please analyze this data and return the JSON object.`;
       }
 
       let cleanText = text.trim();
-      if (cleanText.startsWith('```')) {
-        cleanText = cleanText.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '');
+      const match = cleanText.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      if (match) {
+        cleanText = match[1].trim();
+      } else {
+        const startIdx = cleanText.indexOf('{');
+        const endIdx = cleanText.lastIndexOf('}');
+        if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
+          cleanText = cleanText.slice(startIdx, endIdx + 1);
+        }
       }
       const parsed = JSON.parse(cleanText);
       setYoyAiReport(parsed);
