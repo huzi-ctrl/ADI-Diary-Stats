@@ -44,7 +44,12 @@ function App() {
     return localStorage.getItem('adi_calendar_filename');
   });
 
-  const [legalModal, setLegalModal] = useState<'privacy' | 'tos' | null>(null);
+  const [legalModal, setLegalModal] = useState<'privacy' | 'tos' | null>(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('policy') === 'privacy') return 'privacy';
+    if (params.get('policy') === 'tos') return 'tos';
+    return null;
+  });
 
   const [allEvents, setAllEvents] = useState<CalendarEvent[]>(() => {
     const cachedLive = localStorage.getItem('adi_cached_calendar_events');

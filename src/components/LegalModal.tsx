@@ -25,7 +25,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
         className="glass-card animate-slide-up"
         style={{
           width: '100%', maxWidth: '700px', maxHeight: '90vh', overflowY: 'auto',
-          padding: '2rem', position: 'relative', background: 'var(--bg-main)'
+          padding: '2rem', position: 'relative', background: 'var(--bg-dark)'
         }}
         onClick={e => e.stopPropagation()}
       >
@@ -33,7 +33,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
           onClick={onClose}
           style={{
             position: 'absolute', top: '1.5rem', right: '1.5rem',
-            background: 'rgba(255, 255, 255, 0.1)', border: 'none', borderRadius: '50%',
+            background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '50%',
             width: '32px', height: '32px', display: 'flex', justifyContent: 'center', alignItems: 'center',
             color: 'var(--text-main)', cursor: 'pointer'
           }}
