@@ -1253,7 +1253,21 @@ Please analyze this data and return the JSON object.`;
           cleanText = cleanText.slice(startIdx, endIdx + 1);
         }
       }
-      const parsed = JSON.parse(cleanText);
+      
+      let parsed;
+      try {
+        if (!cleanText) throw new Error("Empty response");
+        parsed = JSON.parse(cleanText);
+      } catch (parseError) {
+        console.error("AI Response Parsing Failed. Raw text:", text);
+        parsed = {
+          summary: "The AI was unable to generate a structured report. This usually happens if the AI model blocked the request or timed out.",
+          efficiencyInsight: "N/A",
+          seasonalityAdvice: "Raw AI Output: " + (text ? text.substring(0, 150) + "..." : "No output received."),
+          coachingTips: []
+        };
+      }
+
       setYoyAiReport(parsed);
       setCachedAiItem(cacheKey, parsed);
     } catch (err) {
