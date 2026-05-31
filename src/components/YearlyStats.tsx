@@ -1259,13 +1259,40 @@ Please analyze this data and return the JSON object.`;
         if (!cleanText) throw new Error("Empty response");
         parsed = JSON.parse(cleanText);
       } catch (parseError) {
-        console.error("AI Response Parsing Failed. Raw text:", text);
-        parsed = {
-          summary: "The AI was unable to generate a structured report. This usually happens if the AI model blocked the request or timed out.",
-          efficiencyInsight: "N/A",
-          seasonalityAdvice: "Raw AI Output: " + (text ? text.substring(0, 150) + "..." : "No output received."),
-          coachingTips: []
+        console.warn("JSON.parse failed. Attempting regex extraction. Raw text:", text);
+        
+        const extractField = (fieldName) => {
+          const regex = new RegExp(`"${fieldName}"\\s*:\\s*"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"`, 'i');
+          const m = text.match(regex);
+          if (m) {
+            try { return JSON.parse(`"${m[1]}"`); } catch (e) { return m[1]; }
+          }
+          return "N/A";
         };
+
+        const summary = extractField("summary");
+        const efficiencyInsight = extractField("efficiencyInsight");
+        const seasonalityAdvice = extractField("seasonalityAdvice");
+        
+        let coachingTips = [];
+        const tipsMatch = text.match(/"coachingTips"\s*:\s*\\[([\\s\\S]*?)\\]/i);
+        if (tipsMatch) {
+           const matches = [...tipsMatch[1].matchAll(/"([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/g)];
+           coachingTips = matches.map(m => {
+             try { return JSON.parse(`"${m[1]}"`); } catch (e) { return m[1]; }
+           });
+        }
+
+        if (summary !== "N/A" || efficiencyInsight !== "N/A" || seasonalityAdvice !== "N/A") {
+          parsed = { summary, efficiencyInsight, seasonalityAdvice, coachingTips };
+        } else {
+          parsed = {
+             summary: "The AI was unable to generate a structured report. " + String(parseError),
+             efficiencyInsight: "N/A",
+             seasonalityAdvice: "Raw Output: " + (text ? text.substring(0, 150) + "..." : "No output"),
+             coachingTips: []
+          };
+        }
       }
 
       setYoyAiReport(parsed);
