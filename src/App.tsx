@@ -7,7 +7,7 @@ import { AIInsights } from './components/AIInsights';
 import { LegalModal } from './components/LegalModal';
 import { parseICS, type CalendarEvent } from './utils/icsParser';
 import { splitInstructorEvents } from './utils/eventFilters';
-import { Calendar, LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles } from 'lucide-react';
+import { LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles } from 'lucide-react';
 
 // Helper to get the Monday of any date
 function getMonday(d: Date) {
