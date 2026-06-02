@@ -151,6 +151,79 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
     );
   }, [allInstructorEvents, now]);
 
+  // 1. Filter out non-lesson events and non-paying events for ideal hours calculations
+  const globalLessonsOnly = React.useMemo(() => {
+    return allInstructorEvents.filter(e => 
+      !e.isAllDay &&
+      !e.categories.includes('Training') &&
+      !e.categories.includes('CPD') &&
+      !e.summary.toLowerCase().includes('test') &&
+      !e.summary.toLowerCase().includes('mock') &&
+      !e.categories.includes('Tests') &&
+      !isEventNonPaying(e.summary)
+    );
+  }, [allInstructorEvents, isEventNonPaying]);
+
+  // 2. Calculate Average Ideal Working Hours based on historical average span for each day of week
+  const globalIdealSchedules = React.useMemo(() => {
+    if (capacityMode === 'custom' && customIdealHours) {
+      const dayNames: Record<number, string> = {
+        1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday'
+      };
+      const schedules: Record<number, { dayName: string; spanHours: number }> = {};
+      for (let day = 0; day < 7; day++) {
+        schedules[day] = {
+          dayName: dayNames[day],
+          spanHours: customIdealHours[day] || 0
+        };
+      }
+      return schedules;
+    }
+
+    const schedules: Record<number, { dayName: string; spanHours: number }> = {
+      1: { dayName: 'Monday', spanHours: 0 },
+      2: { dayName: 'Tuesday', spanHours: 0 },
+      3: { dayName: 'Wednesday', spanHours: 0 },
+      4: { dayName: 'Thursday', spanHours: 0 },
+      5: { dayName: 'Friday', spanHours: 0 },
+      6: { dayName: 'Saturday', spanHours: 0 },
+      0: { dayName: 'Sunday', spanHours: 0 }
+    };
+
+    const lessonsByDayOfWeek: Record<number, Record<string, typeof globalLessonsOnly>> = {};
+    for (let i = 0; i < 7; i++) lessonsByDayOfWeek[i] = {};
+
+    globalLessonsOnly.forEach(e => {
+      const day = e.start.getDay();
+      const dateStr = e.start.toISOString().split('T')[0];
+      if (!lessonsByDayOfWeek[day][dateStr]) {
+        lessonsByDayOfWeek[day][dateStr] = [];
+      }
+      lessonsByDayOfWeek[day][dateStr].push(e);
+    });
+
+    for (let day = 0; day < 7; day++) {
+      const activeDates = Object.values(lessonsByDayOfWeek[day]);
+      if (activeDates.length > 0) {
+        const spans: number[] = [];
+        activeDates.forEach(events => {
+          const sorted = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
+          const firstStart = sorted[0].start;
+          const lastEnd = sorted[sorted.length - 1].end;
+          const spanMins = (lastEnd.getTime() - firstStart.getTime()) / 60000;
+          spans.push(spanMins + 30); // Add standard 30 min travel buffer to the span
+        });
+        
+        spans.sort((a, b) => a - b);
+        const mid = Math.floor(spans.length / 2);
+        const medianSpanMins = spans.length % 2 !== 0 ? spans[mid] : (spans[mid - 1] + spans[mid]) / 2;
+        
+        schedules[day].spanHours = medianSpanMins / 60;
+      }
+    }
+    return schedules;
+  }, [globalLessonsOnly, capacityMode, customIdealHours]);
+
   const todayMonday = React.useMemo(() => {
     const today = new Date();
     const day = today.getDay();
@@ -260,13 +333,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
       if (capacityMode === 'custom' && customIdealHours) {
         totalIdealMins += (customIdealHours[d] || 0) * 60;
       } else {
-        if (dayLessons.length > 0) {
-          const sorted = [...dayLessons].sort((a, b) => a.start.getTime() - b.start.getTime());
-          const firstStart = sorted[0].start;
-          const lastEnd = sorted[sorted.length - 1].end;
-          const spanMins = (lastEnd.getTime() - firstStart.getTime()) / 60000;
-          totalIdealMins += (spanMins + 30); // Include travel buffer for the day's span
-        }
+        totalIdealMins += (globalIdealSchedules[d]?.spanHours || 0) * 60;
       }
     });
 

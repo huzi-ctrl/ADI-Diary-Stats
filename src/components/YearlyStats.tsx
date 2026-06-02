@@ -172,13 +172,15 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
     [1, 2, 3, 4, 5, 6, 0].forEach(dayOfWeek => {
       const spans = dayOfWeekSpans[dayOfWeek];
       if (spans.length > 0) {
-        const totalSpanMins = spans.reduce((a, b) => a + b, 0);
-        const avgSpanMins = totalSpanMins / spans.length;
+        spans.sort((a, b) => a - b);
+        const mid = Math.floor(spans.length / 2);
+        const medianSpanMins = spans.length % 2 !== 0 ? spans[mid] : (spans[mid - 1] + spans[mid]) / 2;
+        
         schedules[dayOfWeek] = {
           dayName: dayNames[dayOfWeek],
           startMinutes: 0, // Unused in this context now, but required by type
           endMinutes: 0,
-          spanHours: avgSpanMins / 60
+          spanHours: medianSpanMins / 60
         };
       } else {
         schedules[dayOfWeek] = {
