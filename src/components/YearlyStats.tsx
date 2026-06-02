@@ -150,50 +150,35 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       lessonsByDate[dateStr].push(e);
     });
 
-    const dayOfWeekSpans: Record<number, { starts: number[]; ends: number[] }> = {
-      1: { starts: [], ends: [] }, // Mon
-      2: { starts: [], ends: [] }, // Tue
-      3: { starts: [], ends: [] }, // Wed
-      4: { starts: [], ends: [] }, // Thu
-      5: { starts: [], ends: [] }, // Fri
-      6: { starts: [], ends: [] }, // Sat
-      0: { starts: [], ends: [] }, // Sun
+    const dayOfWeekSpans: Record<number, number[]> = {
+      1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: []
     };
 
     Object.entries(lessonsByDate).forEach(([dateStr, events]) => {
       const date = new Date(dateStr);
       const dayOfWeek = date.getDay();
       
-      let minStart = Infinity;
-      let maxEnd = -Infinity;
+      const sorted = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
+      const firstStart = sorted[0].start;
+      const lastEnd = sorted[sorted.length - 1].end;
+      const spanMins = (lastEnd.getTime() - firstStart.getTime()) / 60000;
       
-      events.forEach(e => {
-        const startMins = e.start.getHours() * 60 + e.start.getMinutes();
-        const endMins = e.end.getHours() * 60 + e.end.getMinutes();
-        if (startMins < minStart) minStart = startMins;
-        if (endMins > maxEnd) maxEnd = endMins;
-      });
-      
-      if (minStart !== Infinity && maxEnd !== -Infinity) {
-        dayOfWeekSpans[dayOfWeek].starts.push(minStart);
-        dayOfWeekSpans[dayOfWeek].ends.push(maxEnd);
-      }
+      dayOfWeekSpans[dayOfWeek].push(spanMins + 30); // Include travel buffer
     });
 
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const schedules: Record<number, IdealDaySchedule> = {};
 
     [1, 2, 3, 4, 5, 6, 0].forEach(dayOfWeek => {
-      const data = dayOfWeekSpans[dayOfWeek];
-      if (data.starts.length > 0) {
-        const avgStart = data.starts.reduce((a, b) => a + b, 0) / data.starts.length;
-        const avgEnd = data.ends.reduce((a, b) => a + b, 0) / data.ends.length;
-        const spanHours = (avgEnd - avgStart) / 60;
+      const spans = dayOfWeekSpans[dayOfWeek];
+      if (spans.length > 0) {
+        const totalSpanMins = spans.reduce((a, b) => a + b, 0);
+        const avgSpanMins = totalSpanMins / spans.length;
         schedules[dayOfWeek] = {
           dayName: dayNames[dayOfWeek],
-          startMinutes: avgStart,
-          endMinutes: avgEnd,
-          spanHours: spanHours > 0 ? spanHours : 0
+          startMinutes: 0, // Unused in this context now, but required by type
+          endMinutes: 0,
+          spanHours: avgSpanMins / 60
         };
       } else {
         schedules[dayOfWeek] = {
@@ -829,21 +814,17 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       const year = parseInt(yearStr, 10);
       let yearCapacityMins = 0;
 
-      Object.values(daysObj).forEach((events) => {
-        const sorted = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
-        let dayMins = sorted.reduce((acc, curr) => acc + curr.durationMinutes, 0);
-        dayMins += 30; // 15 travel before first, 15 travel after last
+      Object.keys(daysObj).forEach((dateStr) => {
+        const date = new Date(dateStr);
+        const dayOfWeek = date.getDay();
         
-        for (let i = 0; i < sorted.length - 1; i++) {
-          const gap = Math.round((sorted[i+1].start.getTime() - sorted[i].end.getTime()) / 60000);
-          if (gap > 0) {
-            if (gap < 90) {
-              dayMins += gap; // Dead time gap
-            } else {
-              dayMins += 30; // Usable gap: travel buffer
-            }
-          }
+        let dayMins = 0;
+        if (capacityMode === 'custom' && customIdealHours) {
+          dayMins = (customIdealHours[dayOfWeek] || 0) * 60;
+        } else {
+          dayMins = (idealSchedules[dayOfWeek]?.spanHours || 0) * 60;
         }
+        
         yearCapacityMins += dayMins;
       });
 
