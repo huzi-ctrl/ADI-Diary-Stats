@@ -151,73 +151,6 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
     );
   }, [allInstructorEvents, now]);
 
-  // 1. Filter out non-lesson events and non-paying events for ideal hours calculations
-  const globalLessonsOnly = React.useMemo(() => {
-    return allInstructorEvents.filter(e => 
-      !e.isAllDay &&
-      !e.categories.includes('Training') &&
-      !e.categories.includes('CPD') &&
-      !e.summary.toLowerCase().includes('test') &&
-      !e.summary.toLowerCase().includes('mock') &&
-      !e.categories.includes('Tests') &&
-      !isEventNonPaying(e.summary)
-    );
-  }, [allInstructorEvents, isEventNonPaying]);
-
-  // 2. Calculate Ideal Working Hours from First & Last Lesson on each day of week (or custom target hours)
-  const globalIdealSchedules = React.useMemo(() => {
-    if (capacityMode === 'custom' && customIdealHours) {
-      const dayNames: Record<number, string> = {
-        1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday'
-      };
-      const schedules: Record<number, { dayName: string; startMinutes: number; endMinutes: number; spanHours: number }> = {};
-      for (let day = 0; day < 7; day++) {
-        schedules[day] = {
-          dayName: dayNames[day],
-          startMinutes: 0,
-          endMinutes: (customIdealHours[day] || 0) * 60,
-          spanHours: customIdealHours[day] || 0
-        };
-      }
-      return schedules;
-    }
-
-    const schedules: Record<number, { dayName: string; startMinutes: number; endMinutes: number; spanHours: number }> = {
-      1: { dayName: 'Monday', startMinutes: 0, endMinutes: 0, spanHours: 0 },
-      2: { dayName: 'Tuesday', startMinutes: 0, endMinutes: 0, spanHours: 0 },
-      3: { dayName: 'Wednesday', startMinutes: 0, endMinutes: 0, spanHours: 0 },
-      4: { dayName: 'Thursday', startMinutes: 0, endMinutes: 0, spanHours: 0 },
-      5: { dayName: 'Friday', startMinutes: 0, endMinutes: 0, spanHours: 0 },
-      6: { dayName: 'Saturday', startMinutes: 0, endMinutes: 0, spanHours: 0 },
-      0: { dayName: 'Sunday', startMinutes: 0, endMinutes: 0, spanHours: 0 }
-    };
-
-    const daysMap: Record<number, { starts: number[]; ends: number[] }> = {};
-    for (let i = 0; i < 7; i++) daysMap[i] = { starts: [], ends: [] };
-
-    globalLessonsOnly.forEach(e => {
-      const day = e.start.getDay();
-      const startMins = e.start.getHours() * 60 + e.start.getMinutes();
-      const endMins = e.end.getHours() * 60 + e.end.getMinutes();
-      daysMap[day].starts.push(startMins);
-      daysMap[day].ends.push(endMins);
-    });
-
-    for (let day = 0; day < 7; day++) {
-      const starts = daysMap[day].starts;
-      const ends = daysMap[day].ends;
-      if (starts.length > 0) {
-        const minStart = Math.min(...starts);
-        const maxEnd = Math.max(...ends);
-        const spanHours = (maxEnd - minStart) / 60;
-        schedules[day].startMinutes = minStart;
-        schedules[day].endMinutes = maxEnd;
-        schedules[day].spanHours = spanHours;
-      }
-    }
-    return schedules;
-  }, [globalLessonsOnly, capacityMode, customIdealHours]);
-
   const todayMonday = React.useMemo(() => {
     const today = new Date();
     const day = today.getDay();
@@ -323,7 +256,18 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
       );
 
       totalUsedMins += getUsedMinutesForDay(dayLessons);
-      totalIdealMins += (globalIdealSchedules[d]?.spanHours || 0) * 60;
+      
+      if (capacityMode === 'custom' && customIdealHours) {
+        totalIdealMins += (customIdealHours[d] || 0) * 60;
+      } else {
+        if (dayLessons.length > 0) {
+          const sorted = [...dayLessons].sort((a, b) => a.start.getTime() - b.start.getTime());
+          const firstStart = sorted[0].start;
+          const lastEnd = sorted[sorted.length - 1].end;
+          const spanMins = (lastEnd.getTime() - firstStart.getTime()) / 60000;
+          totalIdealMins += (spanMins + 30); // Include travel buffer for the day's span
+        }
+      }
     });
 
     const usedHours = totalUsedMins / 60;
