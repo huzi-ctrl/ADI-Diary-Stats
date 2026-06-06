@@ -51,16 +51,22 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
               <p><strong>Effective Date:</strong> {new Date().toLocaleDateString()}</p>
               <p>Your privacy is strictly protected. <strong>ADI stats</strong> is designed to operate entirely in your local web browser. We do not store, track, or share your calendar data on any centralized servers.</p>
               
-              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>1. Data Collection & Storage</h3>
-              <p>When you sync a Google, Microsoft Outlook, or iCalendar feed, the events are fetched directly by your browser. The data processing happens completely client-side. The dashboard statistics, including lessons, times, and dates, are never uploaded to any database owned by us.</p>
+              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>1. Data Accessed</h3>
+              <p>Our application requests access to your Google Calendar data. Specifically, we request read-only access to your calendar events (e.g., event titles, start times, end times, and descriptions) to analyze your scheduling statistics.</p>
               
-              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>2. Third-Party Integrations</h3>
-              <p>The app interacts with third-party APIs (such as Google Calendar API and Microsoft Graph API) directly from your device. Any OAuth access tokens generated during login are strictly stored locally in your browser's <code>localStorage</code> and are only used for the express purpose of syncing your calendar.</p>
+              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>2. Data Usage</h3>
+              <p>We use the Google user data we access strictly to generate local analytical dashboards and scheduling efficiency metrics for you. The data is processed entirely client-side within your web browser to calculate lessons taught, hours worked, and revenue generated.</p>
               
-              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>3. AI Insights (Optional)</h3>
-              <p>If you choose to enable the AI Insights functionality and provide your own API key (e.g., OpenAI or Google Gemini), anonymous summary statistics will be transmitted securely to those respective AI providers for the purpose of generating insights. We do not intermediate this process; your API key is stored only on your device, and the data is sent directly to the provider.</p>
+              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>3. Data Sharing</h3>
+              <p>We <strong>do not</strong> share, transfer, or sell your Google user data to any third parties. Your data never leaves your device unless you explicitly enable the optional "AI Insights" feature, in which case anonymized scheduling statistics (not raw calendar data) are sent securely to the AI provider (e.g., OpenAI or Google Gemini) using your own provided API key.</p>
+              
+              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>4. Data Storage & Protection</h3>
+              <p>We do not store your Google user data on any centralized servers or databases. All calendar data and OAuth access tokens are stored securely and locally in your browser's <code>localStorage</code> and are cleared when you log out or clear your browser data.</p>
+              
+              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>5. Data Retention & Deletion</h3>
+              <p>Because we do not store your data on our servers, data retention is entirely under your control. You can permanently delete all associated Google user data and access tokens at any time by clearing your browser cache, logging out of the application, or revoking the application's access directly from your Google Account settings.</p>
 
-              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>4. Changes to This Policy</h3>
+              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>6. Changes to This Policy</h3>
               <p>We may update our Privacy Policy periodically. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
             </>
           ) : (
