@@ -133,10 +133,14 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
     <div style={{ maxWidth: '640px', margin: '2rem auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* Onboarding Header */}
-      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <h2 className="gradient-text" style={{ fontSize: '2rem', fontWeight: 800 }}>Welcome to ADI stats</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-          Let's get your driving school analytics set up in a few simple steps.
+      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <h2 className="gradient-text" style={{ fontSize: '2.5rem', fontWeight: 800, margin: 0 }}>Welcome to ADI stats</h2>
+        <div style={{ color: 'var(--text-main)', fontSize: '1rem', maxWidth: '580px', margin: '0 auto', lineHeight: '1.6' }}>
+          <strong>ADI stats</strong> is an analytical dashboard built specifically for Approved Driving Instructors. 
+          By connecting your calendar, the app securely analyzes your past and upcoming driving lessons to calculate your scheduling efficiency, total teaching hours, and estimated revenue.
+        </div>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', maxWidth: '500px', margin: '0 auto', lineHeight: '1.5' }}>
+          All data processing happens entirely inside your local web browser. Your calendar data is <strong>never</strong> uploaded to any centralized server, ensuring maximum privacy for your driving school.
         </p>
       </div>
 
