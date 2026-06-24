@@ -66,7 +66,10 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
               <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>5. Data Retention & Deletion</h3>
               <p>Because we do not store your data on our servers, data retention is entirely under your control. You can permanently delete all associated Google user data and access tokens at any time by clearing your browser cache, logging out of the application, or revoking the application's access directly from your Google Account settings.</p>
 
-              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>6. Changes to This Policy</h3>
+              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>6. Limited Use Compliance</h3>
+              <p>The use and transfer of raw or derived user data received from Google Workspace APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noreferrer" style={{ color: 'var(--accent-indigo)' }}>Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+              <h3 style={{ color: 'var(--text-main)', marginTop: '0.5rem' }}>7. Changes to This Policy</h3>
               <p>We may update our Privacy Policy periodically. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
             </>
           ) : (
