@@ -964,34 +964,34 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
             </tbody>
             </table>
           </div>
-        </div>
 
-        {enableAiInsights && aiApiKey && (
-          <div className="glass-card animate-slide-up" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '0.75rem', borderRadius: '12px', height: 'fit-content' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.5rem' }}>
-              <Sparkles size={15} style={{ color: 'var(--accent-purple)' }} />
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>AI YoY Growth Analyst</span>
-            </div>
-            {yoyAiLoading ? (
-              <div style={{ padding: '2rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-muted)' }}>
-                <RefreshCw size={18} className="spin-animation" style={{ margin: '0 auto' }} />
-                <span style={{ fontSize: '0.75rem' }}>Analyzing financial trajectory...</span>
+          {enableAiInsights && aiApiKey && (
+            <div className="glass-card animate-slide-up" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '0.75rem', borderRadius: '14px', height: 'fit-content' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.5rem' }}>
+                <Sparkles size={15} style={{ color: 'var(--accent-purple)' }} />
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>AI YoY Growth Analyst</span>
               </div>
-            ) : yoyAiError ? (
-              <span style={{ fontSize: '0.75rem', color: '#f87171' }}>Failed to load AI Insights: {yoyAiError}</span>
-            ) : yoyAiReport ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.8rem' }}>
-                <p style={{ color: 'var(--text-main)', lineHeight: 1.4, margin: 0 }}>{yoyAiReport.summary}</p>
-                <div style={{ background: 'rgba(129, 140, 248, 0.05)', padding: '0.6rem 0.8rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-indigo)' }}>
-                  <span style={{ fontWeight: 700, display: 'block', marginBottom: '0.1rem', color: 'var(--text-main)', fontSize: '0.75rem' }}>Efficiency Analysis</span>
-                  <span style={{ color: 'var(--text-muted)' }}>{yoyAiReport.efficiencyInsight}</span>
+              {yoyAiLoading ? (
+                <div style={{ padding: '2rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-muted)' }}>
+                  <RefreshCw size={18} className="spin-animation" style={{ margin: '0 auto' }} />
+                  <span style={{ fontSize: '0.75rem' }}>Analyzing financial trajectory...</span>
                 </div>
-              </div>
-            ) : (
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>No report data.</span>
-            )}
-          </div>
-        )}
+              ) : yoyAiError ? (
+                <span style={{ fontSize: '0.75rem', color: '#f87171' }}>Failed to load AI Insights: {yoyAiError}</span>
+              ) : yoyAiReport ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.8rem' }}>
+                  <p style={{ color: 'var(--text-main)', lineHeight: 1.45, margin: 0 }}>{yoyAiReport.summary}</p>
+                  <div style={{ background: 'rgba(129, 140, 248, 0.05)', padding: '0.65rem 0.85rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-indigo)' }}>
+                    <span style={{ fontWeight: 700, display: 'block', marginBottom: '0.15rem', color: 'var(--text-main)', fontSize: '0.75rem' }}>Efficiency Analysis</span>
+                    <span style={{ color: 'var(--text-muted)', lineHeight: 1.4 }}>{yoyAiReport.efficiencyInsight}</span>
+                  </div>
+                </div>
+              ) : (
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>No report data.</span>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     );
   };

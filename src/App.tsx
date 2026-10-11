@@ -5,7 +5,7 @@ import { EventList } from './components/EventList';
 import { YearlyStats } from './components/YearlyStats';
 import { AIInsights } from './components/AIInsights';
 import { LegalModal } from './components/LegalModal';
-import { LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles, CheckCircle2 } from 'lucide-react';
+import { LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, ChevronDown, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useUserSettings } from './hooks/useUserSettings';
 import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
@@ -25,6 +25,20 @@ function App() {
     return null;
   });
   const [showCustomApiKey, setShowCustomApiKey] = useState(false);
+  const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
+  const yearDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (yearDropdownRef.current && !yearDropdownRef.current.contains(e.target as Node)) {
+        setYearDropdownOpen(false);
+      }
+    };
+    if (yearDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [yearDropdownOpen]);
 
   // Decoupled user settings and theme management
   const {
@@ -128,9 +142,13 @@ function App() {
     const currentBtn = tabRefs.current[viewMode];
     const container = navStripRef.current;
     if (currentBtn && container) {
+      const btnRect = currentBtn.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      const relativeLeft = btnRect.left - containerRect.left;
+      
       setIndicatorPos({
-        left: currentBtn.offsetLeft,
-        width: currentBtn.offsetWidth,
+        left: relativeLeft,
+        width: btnRect.width,
         ready: true,
       });
     }
@@ -140,9 +158,11 @@ function App() {
     updateIndicator();
     const rafId = requestAnimationFrame(updateIndicator);
     const timer = setTimeout(updateIndicator, 60);
+    const timer2 = setTimeout(updateIndicator, 250);
     return () => {
       cancelAnimationFrame(rafId);
       clearTimeout(timer);
+      clearTimeout(timer2);
     };
   }, [updateIndicator, onboardingComplete]);
 
@@ -307,25 +327,102 @@ function App() {
               >
                 <ChevronLeft size={16} />
               </MagneticPill>
-              <select
-                value={selectedYear || 'all'}
-                onChange={(e) => setSelectedYear(e.target.value === 'all' ? null : parseInt(e.target.value, 10))}
-                style={{
-                  border: 'none',
-                  background: 'transparent',
-                  fontWeight: 600,
-                  fontSize: '13px',
-                  color: 'var(--text-main)',
-                  cursor: 'pointer',
-                  outline: 'none',
-                  padding: '0 4px'
-                }}
-              >
-                <option value="all">All Time</option>
-                {availableYears.map(year => (
-                  <option key={year} value={year}>{year} Stats</option>
-                ))}
-              </select>
+              {/* Custom Liquid Glass Year Dropdown */}
+              <div ref={yearDropdownRef} style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
+                  style={{
+                    border: 'none',
+                    background: 'transparent',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    color: 'var(--text-main)',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    padding: '4px 8px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    borderRadius: '9999px',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <span>{selectedYear ? `${selectedYear} Stats` : 'All Time'}</span>
+                  <ChevronDown size={13} style={{ opacity: 0.7, transform: yearDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                </button>
+
+                {yearDropdownOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      minWidth: '130px',
+                      background: 'var(--bg-card)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                      border: '1px solid var(--border-light)',
+                      borderRadius: '14px',
+                      padding: '5px',
+                      boxShadow: '0 12px 30px -4px rgba(15, 23, 42, 0.15), 0 4px 12px -2px rgba(15, 23, 42, 0.08)',
+                      zIndex: 100,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '2px'
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedYear(null);
+                        setYearDropdownOpen(false);
+                      }}
+                      style={{
+                        padding: '6px 12px',
+                        fontSize: '12.5px',
+                        fontWeight: selectedYear === null ? 700 : 500,
+                        color: selectedYear === null ? 'var(--accent-blue)' : 'var(--text-main)',
+                        background: selectedYear === null ? 'var(--accent-blue-soft)' : 'transparent',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'background 0.15s ease'
+                      }}
+                      className="dropdown-item-hover"
+                    >
+                      All Time
+                    </button>
+                    {availableYears.map(year => (
+                      <button
+                        key={year}
+                        type="button"
+                        onClick={() => {
+                          setSelectedYear(year);
+                          setYearDropdownOpen(false);
+                        }}
+                        style={{
+                          padding: '6px 12px',
+                          fontSize: '12.5px',
+                          fontWeight: selectedYear === year ? 700 : 500,
+                          color: selectedYear === year ? 'var(--accent-blue)' : 'var(--text-main)',
+                          background: selectedYear === year ? 'var(--accent-blue-soft)' : 'transparent',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          transition: 'background 0.15s ease'
+                        }}
+                        className="dropdown-item-hover"
+                      >
+                        {year} Stats
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <MagneticPill 
                 type="button" 
                 className="sfd-chip-btn" 

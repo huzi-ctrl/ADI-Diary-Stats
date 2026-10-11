@@ -589,53 +589,32 @@ User Question: ${userMsg}
         </div>
 
         {/* Sub-Tabs Selector */}
-        <div style={{ display: 'flex', gap: '0.25rem', background: 'rgba(255,255,255,0.02)', padding: '0.25rem', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+        <div className="sfd-liquid-glass-strip" style={{ padding: '3px 4px' }}>
           <button
+            type="button"
             onClick={() => setActiveTab('summary')}
-            style={{
-              padding: '0.35rem 0.75rem',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              borderRadius: '6px',
-              border: 'none',
-              cursor: 'pointer',
-              background: activeTab === 'summary' ? 'var(--accent-cyan)' : 'transparent',
-              color: activeTab === 'summary' ? 'var(--bg-main)' : 'var(--text-muted)'
-            }}
+            className={`sfd-strip-btn ${activeTab === 'summary' ? 'active' : ''}`}
+            style={{ fontSize: '12.5px', padding: '5px 12px' }}
           >
-            <Calendar size={12} style={{ marginRight: '0.25rem', display: 'inline' }} />
+            <Calendar size={13} />
             Quick Summary
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('trends')}
-            style={{
-              padding: '0.35rem 0.75rem',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              borderRadius: '6px',
-              border: 'none',
-              cursor: 'pointer',
-              background: activeTab === 'trends' ? 'var(--accent-cyan)' : 'transparent',
-              color: activeTab === 'trends' ? 'var(--bg-main)' : 'var(--text-muted)'
-            }}
+            className={`sfd-strip-btn ${activeTab === 'trends' ? 'active' : ''}`}
+            style={{ fontSize: '12.5px', padding: '5px 12px' }}
           >
-            <TrendingUp size={12} style={{ marginRight: '0.25rem', display: 'inline' }} />
+            <TrendingUp size={13} />
             Trend Analysis
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('chat')}
-            style={{
-              padding: '0.35rem 0.75rem',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              borderRadius: '6px',
-              border: 'none',
-              cursor: 'pointer',
-              background: activeTab === 'chat' ? 'var(--accent-cyan)' : 'transparent',
-              color: activeTab === 'chat' ? 'var(--bg-main)' : 'var(--text-muted)'
-            }}
+            className={`sfd-strip-btn ${activeTab === 'chat' ? 'active' : ''}`}
+            style={{ fontSize: '12.5px', padding: '5px 12px' }}
           >
-            <MessageSquare size={12} style={{ marginRight: '0.25rem', display: 'inline' }} />
+            <MessageSquare size={13} />
             AI Advisor Chat
           </button>
         </div>

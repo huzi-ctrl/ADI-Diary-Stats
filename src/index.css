@@ -531,6 +531,10 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--bg-nested);
 }
 
+.dropdown-item-hover:hover {
+  background: var(--bg-nested) !important;
+}
+
 .hover-glow:hover {
   transform: translateY(-1px);
   border-color: var(--border-medium);
