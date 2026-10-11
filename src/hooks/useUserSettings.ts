@@ -1,5 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import { DEFAULT_MASTER_GEMINI_KEY } from '../utils/aiHelper';
+import { 
+  type VehicleCostSettings, 
+  type VehicleFuelType, 
+  DEFAULT_VEHICLE_SETTINGS, 
+  DEFAULT_UK_BENCHMARKS 
+} from '../utils/costEstimator';
 
 export interface UserSettings {
   hourlyRate: number;
@@ -30,6 +36,20 @@ export interface UserSettings {
   setOutlookClientId: React.Dispatch<React.SetStateAction<string>>;
   excludedYears: number[];
   setExcludedYears: React.Dispatch<React.SetStateAction<number[]>>;
+  vehicleFuelType: VehicleFuelType;
+  setVehicleFuelType: React.Dispatch<React.SetStateAction<VehicleFuelType>>;
+  fuelCostPerUnit: number;
+  setFuelCostPerUnit: React.Dispatch<React.SetStateAction<number>>;
+  fuelEfficiency: number;
+  setFuelEfficiency: React.Dispatch<React.SetStateAction<number>>;
+  milesPerHour: number;
+  setMilesPerHour: React.Dispatch<React.SetStateAction<number>>;
+  enableDepreciation: boolean;
+  setEnableDepreciation: React.Dispatch<React.SetStateAction<boolean>>;
+  depreciationPerMile: number;
+  setDepreciationPerMile: React.Dispatch<React.SetStateAction<number>>;
+  vehicleCostSettings: VehicleCostSettings;
+  setVehicleCostSettings: (settings: Partial<VehicleCostSettings>) => void;
   exportSettings: () => string;
   importSettings: (jsonStr: string) => boolean;
 }
@@ -185,10 +205,86 @@ export function useUserSettings(): UserSettings {
     localStorage.setItem('adi_excluded_years', JSON.stringify(excludedYears));
   }, [excludedYears]);
 
+  // Vehicle Running Cost & Net Revenue Settings
+  const [vehicleFuelType, setVehicleFuelType] = useState<VehicleFuelType>(() => {
+    const saved = localStorage.getItem('adi_vehicle_fuel_type');
+    if (saved === 'petrol' || saved === 'diesel' || saved === 'electric') {
+      return saved;
+    }
+    return DEFAULT_VEHICLE_SETTINGS.fuelType;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('adi_vehicle_fuel_type', vehicleFuelType);
+  }, [vehicleFuelType]);
+
+  const [fuelCostPerUnit, setFuelCostPerUnit] = useState<number>(() => {
+    const saved = localStorage.getItem('adi_fuel_cost_per_unit');
+    return saved !== null ? parseFloat(saved) : DEFAULT_UK_BENCHMARKS.petrol.costPerUnit;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('adi_fuel_cost_per_unit', fuelCostPerUnit.toString());
+  }, [fuelCostPerUnit]);
+
+  const [fuelEfficiency, setFuelEfficiency] = useState<number>(() => {
+    const saved = localStorage.getItem('adi_fuel_efficiency');
+    return saved !== null ? parseFloat(saved) : DEFAULT_UK_BENCHMARKS.petrol.defaultMpg;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('adi_fuel_efficiency', fuelEfficiency.toString());
+  }, [fuelEfficiency]);
+
+  const [milesPerHour, setMilesPerHour] = useState<number>(() => {
+    const saved = localStorage.getItem('adi_miles_per_hour');
+    return saved !== null ? parseFloat(saved) : DEFAULT_VEHICLE_SETTINGS.milesPerHour;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('adi_miles_per_hour', milesPerHour.toString());
+  }, [milesPerHour]);
+
+  const [enableDepreciation, setEnableDepreciation] = useState<boolean>(() => {
+    const saved = localStorage.getItem('adi_enable_depreciation');
+    return saved !== null ? saved === 'true' : DEFAULT_VEHICLE_SETTINGS.enableDepreciation;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('adi_enable_depreciation', enableDepreciation ? 'true' : 'false');
+  }, [enableDepreciation]);
+
+  const [depreciationPerMile, setDepreciationPerMile] = useState<number>(() => {
+    const saved = localStorage.getItem('adi_depreciation_per_mile');
+    return saved !== null ? parseFloat(saved) : DEFAULT_VEHICLE_SETTINGS.depreciationPerMile;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('adi_depreciation_per_mile', depreciationPerMile.toString());
+  }, [depreciationPerMile]);
+
+  const vehicleCostSettings: VehicleCostSettings = useMemo(() => ({
+    fuelType: vehicleFuelType,
+    fuelCostPerUnit,
+    efficiency: fuelEfficiency,
+    milesPerHour,
+    enableDepreciation,
+    depreciationPerMile,
+  }), [vehicleFuelType, fuelCostPerUnit, fuelEfficiency, milesPerHour, enableDepreciation, depreciationPerMile]);
+
+  const setVehicleCostSettings = (settings: Partial<VehicleCostSettings>) => {
+    if (settings.fuelType !== undefined) setVehicleFuelType(settings.fuelType);
+    if (settings.fuelCostPerUnit !== undefined) setFuelCostPerUnit(settings.fuelCostPerUnit);
+    if (settings.efficiency !== undefined) setFuelEfficiency(settings.efficiency);
+    if (settings.milesPerHour !== undefined) setMilesPerHour(settings.milesPerHour);
+    if (settings.enableDepreciation !== undefined) setEnableDepreciation(settings.enableDepreciation);
+    if (settings.depreciationPerMile !== undefined) setDepreciationPerMile(settings.depreciationPerMile);
+  };
+
   // Zero-scope cross-device sync: Export & Import settings
   const exportSettings = () => {
     const payload = {
-      version: 1,
+      version: 2,
       exportedAt: new Date().toISOString(),
       hourlyRate,
       testRate,
@@ -199,7 +295,8 @@ export function useUserSettings(): UserSettings {
       enableAiInsights,
       aiProvider,
       aiModel,
-      excludedYears
+      excludedYears,
+      vehicleCostSettings,
     };
     return JSON.stringify(payload, null, 2);
   };
@@ -217,6 +314,9 @@ export function useUserSettings(): UserSettings {
       if (data.aiProvider === 'gemini' || data.aiProvider === 'openai') setAiProvider(data.aiProvider);
       if (typeof data.aiModel === 'string') setAiModel(data.aiModel);
       if (Array.isArray(data.excludedYears)) setExcludedYears(data.excludedYears);
+      if (data.vehicleCostSettings && typeof data.vehicleCostSettings === 'object') {
+        setVehicleCostSettings(data.vehicleCostSettings);
+      }
       return true;
     } catch {
       return false;
@@ -241,8 +341,8 @@ export function useUserSettings(): UserSettings {
     enableAiInsights,
     setEnableAiInsights,
     aiProvider,
-    setAiProvider,
     aiModel,
+    setAiProvider,
     setAiModel,
     aiApiKey,
     setAiApiKey,
@@ -252,7 +352,21 @@ export function useUserSettings(): UserSettings {
     setOutlookClientId,
     excludedYears,
     setExcludedYears,
+    vehicleFuelType,
+    setVehicleFuelType,
+    fuelCostPerUnit,
+    setFuelCostPerUnit,
+    fuelEfficiency,
+    setFuelEfficiency,
+    milesPerHour,
+    setMilesPerHour,
+    enableDepreciation,
+    setEnableDepreciation,
+    depreciationPerMile,
+    setDepreciationPerMile,
+    vehicleCostSettings,
+    setVehicleCostSettings,
     exportSettings,
-    importSettings
+    importSettings,
   };
 }

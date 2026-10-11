@@ -6,12 +6,18 @@ import { YearlyStats } from './components/YearlyStats';
 import { AIInsights } from './components/AIInsights';
 import { LegalModal } from './components/LegalModal';
 import { DayStats } from './components/DayStats';
-import { LayoutDashboard, Calendar, List, LogOut, ChevronLeft, ChevronRight, ChevronDown, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles, CheckCircle2, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Calendar, List, LogOut, ChevronLeft, ChevronRight, ChevronDown, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles, CheckCircle2, Menu, X, Car, Fuel, Gauge } from 'lucide-react';
 import { useUserSettings } from './hooks/useUserSettings';
 import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
 import { MagneticPill } from './components/ui/MagneticPill';
 import { DEFAULT_MASTER_GEMINI_KEY } from './utils/aiHelper';
+import { 
+  type VehicleFuelType, 
+  DEFAULT_UK_BENCHMARKS, 
+  fetchLiveUKFuelPrices, 
+  calculateVehicleCosts 
+} from './utils/costEstimator';
 
 import './components/mockup/design-system-mockup.css';
 
@@ -79,9 +85,55 @@ function App() {
     outlookClientId,
     excludedYears,
     setExcludedYears,
+    vehicleFuelType,
+    setVehicleFuelType,
+    fuelCostPerUnit,
+    setFuelCostPerUnit,
+    fuelEfficiency,
+    setFuelEfficiency,
+    milesPerHour,
+    setMilesPerHour,
+    enableDepreciation,
+    setEnableDepreciation,
+    depreciationPerMile,
+    setDepreciationPerMile,
+    vehicleCostSettings,
     exportSettings,
     importSettings,
   } = useUserSettings();
+
+  const [isFetchingFuel, setIsFetchingFuel] = useState(false);
+  const [fuelFetchMessage, setFuelFetchMessage] = useState<string | null>(null);
+
+  const handleFetchLiveFuelPrices = async () => {
+    setIsFetchingFuel(true);
+    setFuelFetchMessage(null);
+    try {
+      const data = await fetchLiveUKFuelPrices();
+      if (vehicleFuelType === 'diesel') {
+        setFuelCostPerUnit(data.diesel);
+        setFuelFetchMessage(`Updated: ${(data.diesel * 100).toFixed(1)}p/L (${data.source})`);
+      } else if (vehicleFuelType === 'electric') {
+        setFuelCostPerUnit(data.electric);
+        setFuelFetchMessage(`Updated: ${(data.electric * 100).toFixed(1)}p/kWh (${data.source})`);
+      } else {
+        setFuelCostPerUnit(data.petrol);
+        setFuelFetchMessage(`Updated: ${(data.petrol * 100).toFixed(1)}p/L (${data.source})`);
+      }
+    } catch {
+      setFuelFetchMessage('Using UK forecourt benchmarks.');
+    } finally {
+      setIsFetchingFuel(false);
+    }
+  };
+
+  const handleSelectFuelType = (type: VehicleFuelType) => {
+    setVehicleFuelType(type);
+    const benchmark = DEFAULT_UK_BENCHMARKS[type];
+    setFuelCostPerUnit(benchmark.costPerUnit);
+    setFuelEfficiency(benchmark.defaultMpg);
+    setFuelFetchMessage(null);
+  };
 
   // Navigation action bridge for safe callback execution
   const weekNavActionsRef = useRef<{
@@ -184,6 +236,9 @@ function App() {
     window.addEventListener('resize', updateIndicator);
     return () => window.removeEventListener('resize', updateIndicator);
   }, [updateIndicator]);
+
+  const sampleLessonHours = 2;
+  const sampleCosts = calculateVehicleCosts(sampleLessonHours, (hourlyRate || 40) * sampleLessonHours, vehicleCostSettings);
 
   return (
     <div className="sfd-mockup-root">
@@ -967,6 +1022,7 @@ function App() {
                 aiProvider={aiProvider}
                 aiModel={aiModel}
                 aiApiKey={aiApiKey}
+                vehicleCostSettings={vehicleCostSettings}
                 onSelectDay={(dayDate) => {
                   setSelectedDay(dayDate);
                   setViewMode('day');
@@ -982,6 +1038,7 @@ function App() {
                 hourlyRate={hourlyRate}
                 testRate={testRate}
                 nonPayingList={nonPayingList}
+                vehicleCostSettings={vehicleCostSettings}
                 enableAiInsights={enableAiInsights}
               />
             ) : viewMode === 'yearly' ? (
@@ -1207,6 +1264,207 @@ function App() {
                         </button>
                       </div>
 
+                    </div>
+                  </div>
+
+                  {/* Vehicle Operating Costs & Net Take-Home Calculator */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', gridColumn: '1 / -1', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem', marginTop: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Car size={18} className="gradient-text" style={{ color: 'var(--sfd-emerald)' }} />
+                        <label style={{ fontSize: '1rem', color: 'var(--text-main)', fontWeight: 700 }}>
+                          Vehicle Running Costs &amp; Net Take-Home Calculator
+                        </label>
+                      </div>
+
+                      {/* Fuel Type Pills */}
+                      <div style={{ display: 'flex', gap: '6px', background: 'var(--sfd-surface-nested)', padding: '3px', borderRadius: '9999px', border: '1px solid var(--sfd-border-hairline)' }}>
+                        {[
+                          { id: 'petrol' as VehicleFuelType, label: '⛽ Petrol', mpg: '40 MPG' },
+                          { id: 'diesel' as VehicleFuelType, label: '🛢️ Diesel', mpg: '45 MPG' },
+                          { id: 'electric' as VehicleFuelType, label: '⚡ Electric', mpg: '3.8 mi/kWh' },
+                        ].map(f => (
+                          <button
+                            key={f.id}
+                            type="button"
+                            onClick={() => handleSelectFuelType(f.id)}
+                            style={{
+                              padding: '4px 12px',
+                              borderRadius: '9999px',
+                              fontSize: '12px',
+                              fontWeight: 600,
+                              border: 'none',
+                              cursor: 'pointer',
+                              background: vehicleFuelType === f.id ? 'var(--sfd-primary)' : 'transparent',
+                              color: vehicleFuelType === f.id ? '#ffffff' : 'var(--text-muted)',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {f.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>
+                      Model real-world driving school expenses including stop-and-go learner fuel consumption, live forecourt prices, and car wear to determine your true take-home pay.
+                    </p>
+
+                    {/* Live Fuel Price Fetch Bar */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', background: 'var(--sfd-surface-nested)', padding: '10px 14px', borderRadius: '14px', border: '1px solid var(--sfd-border-hairline)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Fuel size={16} style={{ color: 'var(--sfd-primary)' }} />
+                        <span style={{ fontSize: '0.825rem', color: 'var(--text-main)', fontWeight: 600 }}>
+                          UK Forecourt Fuel Benchmark:
+                        </span>
+                        <span style={{ fontSize: '0.825rem', color: 'var(--sfd-emerald)', fontWeight: 700 }}>
+                          {vehicleFuelType === 'electric' 
+                            ? `${(fuelCostPerUnit * 100).toFixed(1)}p / kWh`
+                            : `${(fuelCostPerUnit * 100).toFixed(1)}p / Litre`}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {fuelFetchMessage && (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>
+                            {fuelFetchMessage}
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          style={{ padding: '4px 10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                          onClick={handleFetchLiveFuelPrices}
+                          disabled={isFetchingFuel}
+                        >
+                          <RefreshCw size={12} className={isFetchingFuel ? 'spin-animation' : ''} />
+                          {isFetchingFuel ? 'Checking prices...' : 'Fetch Live UK Fuel Prices'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Inputs Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginTop: '0.25rem' }}>
+                      {/* Fuel / Energy Price */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '14px', border: '1px solid var(--sfd-border-hairline)' }}>
+                        <label style={{ fontSize: '0.825rem', color: 'var(--text-main)', fontWeight: 700 }}>
+                          {vehicleFuelType === 'electric' ? 'Energy Price (£ / kWh)' : 'Fuel Price (£ / Litre)'}
+                        </label>
+                        <input
+                          type="number"
+                          step="0.001"
+                          min="0"
+                          className="select-input"
+                          style={{ padding: '0.5rem 0.75rem', width: '100%', fontSize: '0.9rem', fontWeight: 600 }}
+                          value={fuelCostPerUnit}
+                          onChange={(e) => setFuelCostPerUnit(parseFloat(e.target.value) || 0)}
+                        />
+                        <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
+                          {vehicleFuelType === 'electric' 
+                            ? `e.g. £0.275/kWh home standard tariff` 
+                            : `e.g. £1.425/L (142.5p per litre)`}
+                        </span>
+                      </div>
+
+                      {/* Fuel Efficiency */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '14px', border: '1px solid var(--sfd-border-hairline)' }}>
+                        <label style={{ fontSize: '0.825rem', color: 'var(--text-main)', fontWeight: 700 }}>
+                          Tuition Efficiency ({vehicleFuelType === 'electric' ? 'mi / kWh' : 'MPG'})
+                        </label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="1"
+                          className="select-input"
+                          style={{ padding: '0.5rem 0.75rem', width: '100%', fontSize: '0.9rem', fontWeight: 600 }}
+                          value={fuelEfficiency}
+                          onChange={(e) => setFuelEfficiency(parseFloat(e.target.value) || 0)}
+                        />
+                        <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
+                          {vehicleFuelType === 'electric'
+                            ? 'EV city consumption (avg 3.5–4.2 mi/kWh)'
+                            : 'Learner stop-start town driving (avg 38–45 MPG)'}
+                        </span>
+                      </div>
+
+                      {/* Tuition Speed */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '14px', border: '1px solid var(--sfd-border-hairline)' }}>
+                        <label style={{ fontSize: '0.825rem', color: 'var(--text-main)', fontWeight: 700 }}>
+                          Average Speed (Miles / Hour)
+                        </label>
+                        <input
+                          type="number"
+                          step="1"
+                          min="1"
+                          className="select-input"
+                          style={{ padding: '0.5rem 0.75rem', width: '100%', fontSize: '0.9rem', fontWeight: 600 }}
+                          value={milesPerHour}
+                          onChange={(e) => setMilesPerHour(parseFloat(e.target.value) || 0)}
+                        />
+                        <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
+                          Distance driven per teaching hour (UK avg: 15 mph)
+                        </span>
+                      </div>
+
+                      {/* Wear & Depreciation */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '14px', border: '1px solid var(--sfd-border-hairline)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <label style={{ fontSize: '0.825rem', color: 'var(--text-main)', fontWeight: 700 }}>
+                            Wear &amp; Depreciation (£/mile)
+                          </label>
+                          <input
+                            type="checkbox"
+                            checked={enableDepreciation}
+                            onChange={(e) => setEnableDepreciation(e.target.checked)}
+                            style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                            title="Toggle vehicle wear and depreciation"
+                          />
+                        </div>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          disabled={!enableDepreciation}
+                          className="select-input"
+                          style={{ padding: '0.5rem 0.75rem', width: '100%', fontSize: '0.9rem', fontWeight: 600, opacity: enableDepreciation ? 1 : 0.5 }}
+                          value={depreciationPerMile}
+                          onChange={(e) => setDepreciationPerMile(parseFloat(e.target.value) || 0)}
+                        />
+                        <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
+                          Tyres, clutch, brakes, dual controls &amp; depreciation (~£0.12/mi)
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Live Net Profit Simulator Widget */}
+                    <div style={{ marginTop: '0.5rem', background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: '16px', padding: '14px 18px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--sfd-emerald)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Gauge size={15} /> Real-Time Cost Simulator Preview (Typical 2-Hour Lesson)
+                        </span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, background: 'rgba(16, 185, 129, 0.15)', color: 'var(--sfd-emerald)', padding: '2px 8px', borderRadius: '9999px' }}>
+                          {sampleCosts.profitMargin.toFixed(0)}% Net Margin
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Running Cost / Mile</span>
+                          <strong style={{ fontSize: '1rem', color: 'var(--text-main)' }}>{(sampleCosts.totalCostPerMile * 100).toFixed(1)}p</strong>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Hourly Running Cost</span>
+                          <strong style={{ fontSize: '1rem', color: '#ef4444' }}>£{sampleCosts.costPerHour.toFixed(2)}/hr</strong>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>2h Gross Revenue</span>
+                          <strong style={{ fontSize: '1rem', color: 'var(--text-main)' }}>£{(sampleCosts.grossRevenue).toFixed(2)}</strong>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>2h Net Take-Home</span>
+                          <strong style={{ fontSize: '1.1rem', color: 'var(--sfd-emerald)', fontWeight: 800 }}>£{sampleCosts.netRevenue.toFixed(2)}</strong>
+                        </div>
+                      </div>
                     </div>
                   </div>
 

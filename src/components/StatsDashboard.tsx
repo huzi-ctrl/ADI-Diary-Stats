@@ -11,10 +11,16 @@ import {
   TrendingUp,
   Clock,
   CheckCircle2,
-  ShieldCheck
+  ShieldCheck,
+  Car
 } from 'lucide-react';
 import { getCachedAiItem, setCachedAiItem, formatAiError, getEffectiveApiKey } from '../utils/aiHelper';
 import { useWeeklyCapacity } from '../hooks/useWeeklyCapacity';
+import { 
+  type VehicleCostSettings, 
+  calculateVehicleCosts, 
+  DEFAULT_VEHICLE_SETTINGS 
+} from '../utils/costEstimator';
 
 const dayIndices = [1, 2, 3, 4, 5, 6, 0];
 const dayOfWeekNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -30,6 +36,7 @@ interface StatsDashboardProps {
   nonPayingList: string[];
   capacityMode?: 'historical' | 'custom';
   customIdealHours?: Record<number, number>;
+  vehicleCostSettings?: VehicleCostSettings;
   enableAiInsights?: boolean;
   aiProvider?: 'gemini' | 'openai';
   aiModel?: string;
@@ -48,6 +55,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
   nonPayingList,
   capacityMode = 'historical',
   customIdealHours = { 1: 7, 2: 7, 3: 7, 4: 7, 5: 7, 6: 0, 0: 0 },
+  vehicleCostSettings = DEFAULT_VEHICLE_SETTINGS,
   enableAiInsights = false,
   aiProvider = 'gemini',
   aiModel = 'gemini-2.5-flash',
@@ -113,6 +121,12 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
     capacityMode,
     customIdealHours,
   });
+
+  const hoursNumber = useMemo(() => parseFloat(totalTeachHours) || 0, [totalTeachHours]);
+
+  const vehicleCosts = useMemo(() => {
+    return calculateVehicleCosts(hoursNumber, weeklyEarnings, vehicleCostSettings);
+  }, [hoursNumber, weeklyEarnings, vehicleCostSettings]);
 
   const lessonsSig = useMemo(() => {
     return lessonsOnly.map(e => `${e.id}-${e.start.getTime()}-${e.end.getTime()}`).join('|');
@@ -359,14 +373,21 @@ Analyze and return the JSON object.`;
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Weekly Revenue</span>
-            <span className="sfd-kpi-badge emerald">£{hourlyRate}/hr</span>
+            <span 
+              className="sfd-kpi-badge emerald" 
+              title={`Net take-home profit: £${vehicleCosts.netRevenue.toFixed(0)} (${vehicleCosts.profitMargin.toFixed(0)}% margin after £${vehicleCosts.totalCost.toFixed(0)} vehicle expenses)`}
+            >
+              Net £{Math.round(vehicleCosts.netRevenue).toLocaleString()}
+            </span>
           </div>
           <div className="sfd-kpi-value">£{weeklyEarnings.toLocaleString()}</div>
           <div className="sfd-kpi-meta">
             <ArrowUpRight size={13} style={{ color: 'var(--sfd-emerald)', flexShrink: 0 }} />
             <span className="sfd-kpi-sub">
-              {testRate > 0 && testBookings.length > 0 
-                ? `£${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} tests (${testBookings.length})`
+              {hoursNumber > 0 
+                ? (testRate > 0 && testBookings.length > 0 
+                    ? `Net: £${vehicleCosts.netRevenue.toFixed(0)} (${vehicleCosts.profitMargin.toFixed(0)}% margin) • £${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} tests`
+                    : `Net: £${vehicleCosts.netRevenue.toFixed(0)} (${vehicleCosts.profitMargin.toFixed(0)}% margin) • £${vehicleCosts.totalCost.toFixed(0)} vehicle expenses`)
                 : `${totalTeachHours}h @ £${hourlyRate}/hr base rate`}
             </span>
           </div>
@@ -631,6 +652,77 @@ Analyze and return the JSON object.`;
               <CheckCircle2 size={16} style={{ color: 'var(--sfd-emerald)' }} />
               <div style={{ fontSize: '13px', color: 'var(--sfd-ink-secondary)', lineHeight: 1.4 }}>
                 <strong>Pacing Status:</strong> {thisWeekStats.fillPct >= 80 ? 'High booking capacity week.' : thisWeekStats.fillPct >= 50 ? 'Well-balanced teaching schedule.' : 'Open lesson slots available for new students.'}
+              </div>
+            </div>
+          </div>
+
+          {/* Card: Vehicle Running Costs & Net Take-Home */}
+          <div className="sfd-card-container">
+            <div className="sfd-card-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-emerald-soft, rgba(16, 185, 129, 0.12))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-emerald)' }}>
+                  <Car size={18} />
+                </div>
+                <h3 className="sfd-card-heading">Vehicle Running Costs &amp; Net Take-Home</h3>
+              </div>
+              <span className="sfd-card-tag" style={{ textTransform: 'capitalize' }}>
+                {vehicleCostSettings.fuelType === 'electric' ? '⚡ EV' : vehicleCostSettings.fuelType === 'diesel' ? '🛢️ Diesel' : '⛽ Petrol'} ({vehicleCostSettings.efficiency} {vehicleCostSettings.fuelType === 'electric' ? 'mi/kWh' : 'MPG'})
+              </span>
+            </div>
+
+            <p className="sfd-card-description" style={{ marginBottom: '12px' }}>
+              Estimated operating expenditure based on active teaching hours, learner city driving, and wear.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Estimated Mileage</span>
+                <strong style={{ color: 'var(--sfd-ink-primary)' }}>~{Math.round(vehicleCosts.estimatedMiles)} miles <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({vehicleCostSettings.milesPerHour} mph avg)</span></strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Fuel / Energy Cost</span>
+                <strong style={{ color: 'var(--sfd-ink-primary)' }}>£{vehicleCosts.fuelCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({vehicleCostSettings.fuelType === 'electric' ? `£${vehicleCostSettings.fuelCostPerUnit}/kWh` : `${(vehicleCostSettings.fuelCostPerUnit * 100).toFixed(1)}p/L`})</span></strong>
+              </div>
+              {vehicleCostSettings.enableDepreciation && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                  <span style={{ color: 'var(--sfd-ink-muted)' }}>Wear &amp; Depreciation</span>
+                  <strong style={{ color: 'var(--sfd-ink-primary)' }}>£{vehicleCosts.depreciationCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({(vehicleCostSettings.depreciationPerMile * 100).toFixed(0)}p/mi)</span></strong>
+                </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Total Running Expenses</span>
+                <strong style={{ color: '#ef4444' }}>-£{vehicleCosts.totalCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}> (£{vehicleCosts.costPerHour.toFixed(2)}/hr)</span></strong>
+              </div>
+
+              {/* Net Take-Home Highlight Box */}
+              <div style={{ background: 'var(--sfd-surface-nested)', padding: '12px 14px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px', border: '1px solid var(--sfd-border-hairline)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--sfd-ink-muted)' }}>Net Take-Home Profit</span>
+                  <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '9999px', background: 'rgba(16, 185, 129, 0.12)', color: 'var(--sfd-emerald)' }}>
+                    {vehicleCosts.profitMargin.toFixed(0)}% Margin
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--sfd-emerald)' }}>
+                    £{vehicleCosts.netRevenue.toFixed(2)}
+                  </span>
+                  <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>
+                    from £{weeklyEarnings.toLocaleString()} gross
+                  </span>
+                </div>
+
+                {/* Profit Margin bar */}
+                <div style={{ width: '100%', height: '6px', background: 'rgba(239, 68, 68, 0.25)', borderRadius: '9999px', overflow: 'hidden' }}>
+                  <div 
+                    style={{ 
+                      width: `${vehicleCosts.profitMargin}%`, 
+                      height: '100%', 
+                      background: 'var(--sfd-emerald)',
+                      borderRadius: '9999px',
+                      transition: 'width 0.4s ease-out'
+                    }} 
+                  />
+                </div>
               </div>
             </div>
           </div>

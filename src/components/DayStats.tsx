@@ -16,6 +16,11 @@ import {
 } from 'lucide-react';
 import { MagneticPill } from './ui/MagneticPill';
 import { isEventNonPaying } from '../utils/capacityCalculations';
+import { 
+  type VehicleCostSettings, 
+  calculateVehicleCosts, 
+  DEFAULT_VEHICLE_SETTINGS 
+} from '../utils/costEstimator';
 
 interface DayStatsProps {
   allInstructorEvents?: CalendarEvent[];
@@ -26,6 +31,7 @@ interface DayStatsProps {
   hourlyRate: number;
   testRate?: number;
   nonPayingList: string[];
+  vehicleCostSettings?: VehicleCostSettings;
   enableAiInsights?: boolean;
 }
 
@@ -48,6 +54,7 @@ export const DayStats: React.FC<DayStatsProps> = ({
   hourlyRate,
   testRate = 0,
   nonPayingList,
+  vehicleCostSettings = DEFAULT_VEHICLE_SETTINGS,
   enableAiInsights = true,
 }) => {
   const [dayDropdownOpen, setDayDropdownOpen] = useState(false);
@@ -303,6 +310,10 @@ export const DayStats: React.FC<DayStatsProps> = ({
   const simulatedTeachingHours = isShiftSimulated ? teachingHours + 1.5 : teachingHours;
   const simulatedDeadGaps = isShiftSimulated ? 0 : totalDeadGapMins;
 
+  const dayVehicleCosts = useMemo(() => {
+    return calculateVehicleCosts(simulatedTeachingHours, simulatedEarnings, vehicleCostSettings);
+  }, [simulatedTeachingHours, simulatedEarnings, vehicleCostSettings]);
+
   // Scheduling efficiency ratio: billable minutes / (billable minutes + dead gap minutes + travel buffers)
   const scheduledMinutes = (teachingHours * 60) + (dayTests.length * 90);
   const totalOccupiedMinutes = scheduledMinutes + (isShiftSimulated ? 0 : totalDeadGapMins) + totalBufferMins;
@@ -467,8 +478,11 @@ export const DayStats: React.FC<DayStatsProps> = ({
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Day Revenue</span>
-            <span className="sfd-kpi-badge emerald">
-              {dayEvents.length} {dayEvents.length === 1 ? 'Slot' : 'Slots'}
+            <span 
+              className="sfd-kpi-badge emerald"
+              title={`Net take-home profit: £${dayVehicleCosts.netRevenue.toFixed(2)} (${dayVehicleCosts.profitMargin.toFixed(0)}% margin after £${dayVehicleCosts.totalCost.toFixed(2)} running expenses)`}
+            >
+              Net £{Math.round(dayVehicleCosts.netRevenue)}
             </span>
           </div>
           <div className="sfd-kpi-value">
@@ -476,7 +490,9 @@ export const DayStats: React.FC<DayStatsProps> = ({
           </div>
           <div className="sfd-kpi-meta">
             <span className="sfd-kpi-sub">
-              £{hourlyRate}/hr rate {testRate > 0 ? `• £${testRate}/test` : ''}
+              {simulatedTeachingHours > 0
+                ? `Net: £${dayVehicleCosts.netRevenue.toFixed(2)} • -£${dayVehicleCosts.totalCost.toFixed(2)} vehicle costs (~${Math.round(dayVehicleCosts.estimatedMiles)} mi)`
+                : `£${hourlyRate}/hr rate ${testRate > 0 ? `• £${testRate}/test` : ''}`}
             </span>
           </div>
         </div>
