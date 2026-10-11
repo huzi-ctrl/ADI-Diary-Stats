@@ -4,6 +4,8 @@ import { DEFAULT_MASTER_GEMINI_KEY } from '../utils/aiHelper';
 export interface UserSettings {
   hourlyRate: number;
   setHourlyRate: React.Dispatch<React.SetStateAction<number>>;
+  testRate: number;
+  setTestRate: React.Dispatch<React.SetStateAction<number>>;
   nonPayingStudents: string;
   setNonPayingStudents: React.Dispatch<React.SetStateAction<string>>;
   nonPayingList: string[];
@@ -57,6 +59,17 @@ export function useUserSettings(): UserSettings {
   useEffect(() => {
     localStorage.setItem('adi_hourly_rate', hourlyRate.toString());
   }, [hourlyRate]);
+
+  // Exclusive Test Rate (£ per test booking, e.g. £80-£120 for car hire + test)
+  const [testRate, setTestRate] = useState<number>(() => {
+    const saved = localStorage.getItem('adi_test_rate');
+    // If not set, defaults to 0 (meaning tests use standard hourly rate by default, or 0 if disabled)
+    return saved !== null ? parseFloat(saved) : 0;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('adi_test_rate', testRate.toString());
+  }, [testRate]);
 
   // Non-paying students keyword list
   const [nonPayingStudents, setNonPayingStudents] = useState<string>(() => {
@@ -178,6 +191,7 @@ export function useUserSettings(): UserSettings {
       version: 1,
       exportedAt: new Date().toISOString(),
       hourlyRate,
+      testRate,
       nonPayingStudents,
       theme,
       capacityMode,
@@ -194,6 +208,7 @@ export function useUserSettings(): UserSettings {
     try {
       const data = JSON.parse(jsonStr);
       if (typeof data.hourlyRate === 'number') setHourlyRate(data.hourlyRate);
+      if (typeof data.testRate === 'number') setTestRate(data.testRate);
       if (typeof data.nonPayingStudents === 'string') setNonPayingStudents(data.nonPayingStudents);
       if (data.theme === 'light' || data.theme === 'dark') setTheme(data.theme);
       if (data.capacityMode === 'historical' || data.capacityMode === 'custom') setCapacityMode(data.capacityMode);
@@ -211,6 +226,8 @@ export function useUserSettings(): UserSettings {
   return {
     hourlyRate,
     setHourlyRate,
+    testRate,
+    setTestRate,
     nonPayingStudents,
     setNonPayingStudents,
     nonPayingList,

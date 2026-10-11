@@ -319,7 +319,8 @@ export function calculateMonthDataList(
   lessonsOnly: CalendarEvent[],
   testsOnly: CalendarEvent[],
   idealSchedules: Record<number, IdealDaySchedule>,
-  hourlyRate: number
+  hourlyRate: number,
+  testRate: number = 0
 ): MonthData[] {
   const months: Record<string, { lessons: CalendarEvent[]; tests: CalendarEvent[]; dates: Set<string> }> = {};
   
@@ -370,7 +371,9 @@ export function calculateMonthDataList(
     }
 
     const fillPct = idealHoursInMonth > 0 ? (actualHours / idealHoursInMonth) * 100 : 0;
-    const earnings = Math.round(actualHours * hourlyRate);
+    const lessonEarnings = Math.round(actualHours * hourlyRate);
+    const testEarnings = testRate > 0 ? data.tests.length * testRate : 0;
+    const earnings = lessonEarnings + testEarnings;
 
     list.push({
       monthKey: key,
@@ -413,7 +416,9 @@ export function calculateYearlyMetrics(
   isYtdComparison: boolean,
   idealSchedules: Record<number, IdealDaySchedule>,
   capacityMode: 'historical' | 'custom' = 'historical',
-  customIdealHours?: Record<number, number>
+  customIdealHours?: Record<number, number>,
+  testsOnly: CalendarEvent[] = [],
+  testRate: number = 0
 ): YearlyMetric[] {
   const targetLessons = isYtdComparison
     ? lessonsOnly.filter(e => {
@@ -425,6 +430,17 @@ export function calculateYearlyMetrics(
         return m < todayMonth || (m === todayMonth && d <= todayDate);
       })
     : lessonsOnly;
+
+  const targetTests = isYtdComparison
+    ? testsOnly.filter(e => {
+        const m = e.start.getMonth();
+        const d = e.start.getDate();
+        const today = new Date();
+        const todayMonth = today.getMonth();
+        const todayDate = today.getDate();
+        return m < todayMonth || (m === todayMonth && d <= todayDate);
+      })
+    : testsOnly;
 
   const metrics: Record<number, { paidMins: number; capacityUsedMins: number; activeDays: Set<string>; earnings: number; lessonsCount: number }> = {};
   
@@ -468,7 +484,10 @@ export function calculateYearlyMetrics(
 
     if (metrics[year]) {
       metrics[year].capacityUsedMins = yearCapacityMins;
-      metrics[year].earnings = Math.round((metrics[year].paidMins / 60) * hourlyRate);
+      const lessonEarnings = Math.round((metrics[year].paidMins / 60) * hourlyRate);
+      const testCountInYear = targetTests.filter(t => t.start.getFullYear() === year).length;
+      const testEarnings = testRate > 0 ? testCountInYear * testRate : 0;
+      metrics[year].earnings = lessonEarnings + testEarnings;
     }
   });
 
@@ -582,7 +601,8 @@ export function calculateGlobalSummary(
   weekDataList: WeekData[],
   lessonsOnly: CalendarEvent[],
   testsOnly: CalendarEvent[],
-  hourlyRate: number
+  hourlyRate: number,
+  testRate: number = 0
 ): GlobalSummary {
   const activeWeeks = weekDataList.filter(w => w.lessonCount > 0 || w.testCount > 0);
   const totalHours = lessonsOnly.reduce((acc, curr) => acc + curr.durationMinutes, 0) / 60;
@@ -600,7 +620,9 @@ export function calculateGlobalSummary(
     }
   }
 
-  const totalEarnings = Math.round(totalHours * hourlyRate);
+  const lessonEarnings = Math.round(totalHours * hourlyRate);
+  const testEarnings = testRate > 0 ? testsOnly.length * testRate : 0;
+  const totalEarnings = lessonEarnings + testEarnings;
 
   return {
     totalHours,

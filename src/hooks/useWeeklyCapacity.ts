@@ -16,6 +16,7 @@ export interface UseWeeklyCapacityProps {
   weekStart: Date;
   weekEnd: Date;
   hourlyRate: number;
+  testRate?: number;
   nonPayingList: string[];
   capacityMode?: 'historical' | 'custom';
   customIdealHours?: Record<number, number>;
@@ -32,6 +33,8 @@ export interface WeeklyCapacityResult {
   nonPayingTeachMinutes: number;
   nonPayingTeachHours: string;
   weeklyEarnings: number;
+  weeklyTestEarnings: number;
+  weeklyLessonEarnings: number;
   testBookings: CalendarEvent[];
   completedWeeklyLessons: number;
   upcomingWeeklyLessons: number;
@@ -60,6 +63,7 @@ export function useWeeklyCapacity({
   instructorEvents,
   allInstructorEvents,
   hourlyRate,
+  testRate = 0,
   nonPayingList,
   capacityMode = 'historical',
   customIdealHours = { 1: 7, 2: 7, 3: 7, 4: 7, 5: 7, 6: 0, 0: 0 }
@@ -107,20 +111,29 @@ export function useWeeklyCapacity({
     return (nonPayingTeachMinutes / 60).toFixed(1);
   }, [nonPayingTeachMinutes]);
 
-  const weeklyEarnings = useMemo(() => {
-    return Math.round(parseFloat(totalTeachHours) * hourlyRate);
-  }, [totalTeachHours, hourlyRate]);
-  
   // Test bookings count (mock and official) for this week
   const testBookings = useMemo(() => {
     return instructorEvents.filter(e => 
       !e.categories.includes('Training') && 
       !e.categories.includes('CPD') && 
+      !isEventNonPaying(e.summary, nonPayingList) &&
       (e.summary.toLowerCase().includes('test') || 
        e.summary.toLowerCase().includes('mock') || 
        e.categories.includes('Tests'))
     );
-  }, [instructorEvents]);
+  }, [instructorEvents, nonPayingList]);
+
+  const weeklyLessonEarnings = useMemo(() => {
+    return Math.round(parseFloat(totalTeachHours) * hourlyRate);
+  }, [totalTeachHours, hourlyRate]);
+
+  const weeklyTestEarnings = useMemo(() => {
+    return testRate > 0 ? testBookings.length * testRate : 0;
+  }, [testBookings.length, testRate]);
+
+  const weeklyEarnings = useMemo(() => {
+    return weeklyLessonEarnings + weeklyTestEarnings;
+  }, [weeklyLessonEarnings, weeklyTestEarnings]);
 
   // Weekly upcoming/completed calculation
   const completedWeeklyLessons = useMemo(() => {
@@ -265,6 +278,8 @@ export function useWeeklyCapacity({
     nonPayingTeachMinutes,
     nonPayingTeachHours,
     weeklyEarnings,
+    weeklyTestEarnings,
+    weeklyLessonEarnings,
     testBookings,
     completedWeeklyLessons,
     upcomingWeeklyLessons,

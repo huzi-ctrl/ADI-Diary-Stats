@@ -44,6 +44,8 @@ function App() {
   const {
     hourlyRate,
     setHourlyRate,
+    testRate,
+    setTestRate,
     nonPayingStudents,
     setNonPayingStudents,
     nonPayingList,
@@ -545,6 +547,7 @@ function App() {
                 weekStart={currentWeekStart}
                 weekEnd={weekEnd}
                 hourlyRate={hourlyRate}
+                testRate={testRate}
                 nonPayingList={nonPayingList}
                 capacityMode={capacityMode}
                 customIdealHours={customIdealHours}
@@ -557,6 +560,7 @@ function App() {
               <YearlyStats 
                 instructorEvents={filteredYearlyEvents} 
                 hourlyRate={hourlyRate}
+                testRate={testRate}
                 nonPayingList={nonPayingList}
                 capacityMode={capacityMode}
                 customIdealHours={customIdealHours}
@@ -613,6 +617,26 @@ function App() {
                     />
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
                       Standard rate charged for lessons. Used to estimate weekly and annual earnings.
+                    </span>
+                  </div>
+
+                  {/* Exclusive Practical Test Rate */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontSize: '0.9rem', color: 'var(--text-main)', fontWeight: 600 }}>Exclusive Practical Test Rate (£/test)</label>
+                    <input 
+                      type="number" 
+                      className="select-input" 
+                      style={{ padding: '0.6rem 0.8rem', width: '100%', fontSize: '0.9rem' }}
+                      min="0"
+                      value={testRate === 0 ? '' : testRate}
+                      placeholder="0 (e.g. £80-£120)"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setTestRate(val === '' ? 0 : parseFloat(val) || 0);
+                      }}
+                    />
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                      Flat fee charged for practical driving test bookings (e.g. car hire + 2h slot). Factored directly into weekly &amp; yearly earnings.
                     </span>
                   </div>
 

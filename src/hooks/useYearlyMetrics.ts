@@ -26,6 +26,7 @@ import type { IdealDaySchedule } from '../utils/capacityCalculations';
 export interface UseYearlyMetricsProps {
   instructorEvents: CalendarEvent[];
   hourlyRate: number;
+  testRate?: number;
   nonPayingList: string[];
   capacityMode?: 'historical' | 'custom';
   customIdealHours?: Record<number, number>;
@@ -75,6 +76,7 @@ export interface YearlyMetricsResult {
 export function useYearlyMetrics({
   instructorEvents,
   hourlyRate,
+  testRate = 0,
   nonPayingList,
   capacityMode = 'historical',
   customIdealHours = { 1: 7, 2: 7, 3: 7, 4: 7, 5: 7, 6: 0, 0: 0 },
@@ -149,8 +151,8 @@ export function useYearlyMetrics({
 
   // 4. Monthly aggregates
   const monthDataList = useMemo<MonthData[]>(() => {
-    return calculateMonthDataList(lessonsOnly, testsOnly, idealSchedules, hourlyRate);
-  }, [lessonsOnly, testsOnly, idealSchedules, hourlyRate]);
+    return calculateMonthDataList(lessonsOnly, testsOnly, idealSchedules, hourlyRate, testRate);
+  }, [lessonsOnly, testsOnly, idealSchedules, hourlyRate, testRate]);
 
   // Specific Month YoY Trend data filter
   const specificMonthTrendData = useMemo(() => {
@@ -165,8 +167,8 @@ export function useYearlyMetrics({
 
   // 4.2. YoY Business & Scheduling Efficiency Metrics
   const yearlyMetrics = useMemo(() => {
-    return calculateYearlyMetrics(lessonsOnly, hourlyRate, isYtdComparison, idealSchedules, capacityMode, customIdealHours);
-  }, [lessonsOnly, hourlyRate, isYtdComparison, idealSchedules, capacityMode, customIdealHours]);
+    return calculateYearlyMetrics(lessonsOnly, hourlyRate, isYtdComparison, idealSchedules, capacityMode, customIdealHours, testsOnly, testRate);
+  }, [lessonsOnly, hourlyRate, isYtdComparison, idealSchedules, capacityMode, customIdealHours, testsOnly, testRate]);
 
   // 4.3. Smart Scheduling Advisor Diagnostics
   const advisorInsights = useMemo(() => {
@@ -175,8 +177,8 @@ export function useYearlyMetrics({
 
   // Global Statistics Summary
   const globalSummary = useMemo(() => {
-    return calculateGlobalSummary(weekDataList, lessonsOnly, testsOnly, hourlyRate);
-  }, [weekDataList, lessonsOnly, testsOnly, hourlyRate]);
+    return calculateGlobalSummary(weekDataList, lessonsOnly, testsOnly, hourlyRate, testRate);
+  }, [weekDataList, lessonsOnly, testsOnly, hourlyRate, testRate]);
 
   // Dynamic coaching recommendation cache key
   const cacheKeyRec = useMemo(() => {

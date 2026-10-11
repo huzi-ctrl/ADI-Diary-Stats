@@ -26,6 +26,7 @@ interface StatsDashboardProps {
   weekStart: Date;
   weekEnd: Date;
   hourlyRate: number;
+  testRate?: number;
   nonPayingList: string[];
   capacityMode?: 'historical' | 'custom';
   customIdealHours?: Record<number, number>;
@@ -42,6 +43,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
   weekStart,
   weekEnd,
   hourlyRate,
+  testRate = 0,
   nonPayingList,
   capacityMode = 'historical',
   customIdealHours = { 1: 7, 2: 7, 3: 7, 4: 7, 5: 7, 6: 0, 0: 0 },
@@ -94,6 +96,8 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
       eveningPct,
       nightPct,
     },
+    weeklyLessonEarnings,
+    weeklyTestEarnings,
     formatRemainingThisWeek,
     formatDateShort,
   } = useWeeklyCapacity({
@@ -102,6 +106,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
     weekStart,
     weekEnd,
     hourlyRate,
+    testRate,
     nonPayingList,
     capacityMode,
     customIdealHours,
@@ -360,13 +365,18 @@ Analyze and return the JSON object.`;
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Weekly Revenue</span>
-            <span className="sfd-kpi-badge emerald">£{hourlyRate}/hr</span>
+            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+              <span className="sfd-kpi-badge emerald">£{hourlyRate}/hr</span>
+              {testRate > 0 && <span className="sfd-kpi-badge amber">£{testRate}/test</span>}
+            </div>
           </div>
           <div className="sfd-kpi-value">£{weeklyEarnings.toLocaleString()}</div>
           <div className="sfd-kpi-meta">
             <ArrowUpRight size={14} style={{ color: 'var(--sfd-emerald)' }} />
             <span className="sfd-kpi-sub font-editorial">
-              {totalTeachHours}h @ £{hourlyRate}/hr
+              {testRate > 0 && testBookings.length > 0 
+                ? `£${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} (${testBookings.length} test${testBookings.length > 1 ? 's' : ''})`
+                : `${totalTeachHours}h @ £${hourlyRate}/hr`}
             </span>
           </div>
         </div>

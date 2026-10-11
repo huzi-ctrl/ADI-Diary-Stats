@@ -7,6 +7,7 @@ import { formatMinsToTime, getMondayOfDate } from '../utils/yearlyCalculations';
 interface YearlyStatsProps {
   instructorEvents: CalendarEvent[];
   hourlyRate: number;
+  testRate?: number;
   nonPayingList: string[];
   capacityMode?: 'historical' | 'custom';
   customIdealHours?: Record<number, number>;
@@ -20,6 +21,7 @@ interface YearlyStatsProps {
 export const YearlyStats: React.FC<YearlyStatsProps> = ({ 
   instructorEvents, 
   hourlyRate, 
+  testRate = 0,
   nonPayingList,
   capacityMode = 'historical',
   customIdealHours = { 1: 7, 2: 7, 3: 7, 4: 7, 5: 7, 6: 0, 0: 0 },
@@ -57,6 +59,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
   } = useYearlyMetrics({
     instructorEvents,
     hourlyRate,
+    testRate,
     nonPayingList,
     capacityMode,
     customIdealHours,
