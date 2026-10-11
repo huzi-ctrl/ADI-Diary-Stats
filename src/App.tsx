@@ -890,14 +890,16 @@ function App() {
                   Configure your standard rates and globally non-paying student profiles. Changes are saved automatically and applied dynamically across all statistics.
                 </p>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.5rem', marginTop: '0.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginTop: '0.5rem' }}>
                   {/* Hourly Rate */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ fontSize: '0.9rem', color: 'var(--text-main)', fontWeight: 600 }}>Hourly Lesson Rate (£/hr)</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'var(--sfd-surface-nested)', padding: '16px', borderRadius: '18px', border: '1px solid var(--sfd-border-hairline)' }}>
+                    <label style={{ fontSize: '0.875rem', color: 'var(--text-main)', fontWeight: 700, minHeight: '38px', display: 'flex', alignItems: 'center' }}>
+                      Hourly Lesson Rate (£/hr)
+                    </label>
                     <input 
                       type="number" 
                       className="select-input" 
-                      style={{ padding: '0.6rem 0.8rem', width: '100%', fontSize: '0.9rem' }}
+                      style={{ padding: '0.65rem 0.85rem', width: '100%', fontSize: '0.95rem', fontWeight: 600 }}
                       min="0"
                       value={hourlyRate === 0 ? '' : hourlyRate}
                       placeholder="0"
@@ -906,18 +908,20 @@ function App() {
                         setHourlyRate(val === '' ? 0 : parseFloat(val) || 0);
                       }}
                     />
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', lineHeight: 1.4 }}>
                       Standard rate charged for lessons. Used to estimate weekly and annual earnings.
                     </span>
                   </div>
 
                   {/* Exclusive Practical Test Rate */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ fontSize: '0.9rem', color: 'var(--text-main)', fontWeight: 600 }}>Exclusive Practical Test Rate (£/test)</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'var(--sfd-surface-nested)', padding: '16px', borderRadius: '18px', border: '1px solid var(--sfd-border-hairline)' }}>
+                    <label style={{ fontSize: '0.875rem', color: 'var(--text-main)', fontWeight: 700, minHeight: '38px', display: 'flex', alignItems: 'center' }}>
+                      Practical Test Rate (£/test)
+                    </label>
                     <input 
                       type="number" 
                       className="select-input" 
-                      style={{ padding: '0.6rem 0.8rem', width: '100%', fontSize: '0.9rem' }}
+                      style={{ padding: '0.65rem 0.85rem', width: '100%', fontSize: '0.95rem', fontWeight: 600 }}
                       min="0"
                       value={testRate === 0 ? '' : testRate}
                       placeholder="0 (e.g. £80-£120)"
@@ -926,39 +930,43 @@ function App() {
                         setTestRate(val === '' ? 0 : parseFloat(val) || 0);
                       }}
                     />
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                      Flat fee charged for practical driving test bookings (e.g. car hire + 2h slot). Factored directly into weekly &amp; yearly earnings.
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', lineHeight: 1.4 }}>
+                      Flat fee for practical test bookings (car hire + test slot). Factored into earnings.
                     </span>
                   </div>
 
                   {/* Non-Paying Students */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ fontSize: '0.9rem', color: 'var(--text-main)', fontWeight: 600 }}>Globally Non-Paying Students (Friends & Family)</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'var(--sfd-surface-nested)', padding: '16px', borderRadius: '18px', border: '1px solid var(--sfd-border-hairline)' }}>
+                    <label style={{ fontSize: '0.875rem', color: 'var(--text-main)', fontWeight: 700, minHeight: '38px', display: 'flex', alignItems: 'center' }}>
+                      Non-Paying Students (Friends &amp; Family)
+                    </label>
                     <input 
                       type="text" 
                       className="select-input" 
-                      style={{ padding: '0.6rem 0.8rem', width: '100%', fontSize: '0.9rem' }}
+                      style={{ padding: '0.65rem 0.85rem', width: '100%', fontSize: '0.95rem', fontWeight: 600 }}
                       placeholder="e.g. Jordan, Aaisha, family"
                       value={nonPayingStudents}
                       onChange={(e) => setNonPayingStudents(e.target.value)}
                     />
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                      Comma-separated keywords. Events matching these names will be treated as free and excluded from active workload/financial stats.
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', lineHeight: 1.4 }}>
+                      Comma-separated keywords. Matches will be excluded from earnings stats.
                     </span>
                   </div>
 
                   {/* Live Calendar Feed URL */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ fontSize: '0.9rem', color: 'var(--text-main)', fontWeight: 600 }}>Live iCalendar Feed URL (.ics)</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: 'var(--sfd-surface-nested)', padding: '16px', borderRadius: '18px', border: '1px solid var(--sfd-border-hairline)' }}>
+                    <label style={{ fontSize: '0.875rem', color: 'var(--text-main)', fontWeight: 700, minHeight: '38px', display: 'flex', alignItems: 'center' }}>
+                      Live iCalendar Feed URL (.ics)
+                    </label>
                     <input 
                       type="text" 
                       className="select-input" 
-                      style={{ padding: '0.6rem 0.8rem', width: '100%', fontSize: '0.9rem' }}
+                      style={{ padding: '0.65rem 0.85rem', width: '100%', fontSize: '0.95rem', fontWeight: 600 }}
                       placeholder="e.g. webcal://calendar.google.com/..."
                       value={calendarUrl}
                       onChange={(e) => setCalendarUrl(e.target.value)}
                     />
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)', lineHeight: 1.4 }}>
                       Webcal or HTTPS link to sync lessons dynamically in real-time.
                     </span>
                   </div>

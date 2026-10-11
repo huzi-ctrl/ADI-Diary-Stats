@@ -125,49 +125,48 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
               <div 
                 key={item.year} 
                 style={{ 
-                  display: 'flex', 
+                  display: 'grid', 
+                  gridTemplateColumns: 'minmax(240px, 1.2fr) minmax(180px, 2fr) minmax(140px, auto)', 
                   alignItems: 'center', 
-                  justifyContent: 'space-between', 
-                  flexWrap: 'wrap', 
-                  gap: '0.75rem',
-                  paddingBottom: '0.75rem',
+                  gap: '1.25rem',
+                  paddingBottom: '0.85rem',
                   borderBottom: idx < yearlyAverages.length - 1 ? '1px solid var(--border-light)' : 'none'
                 }}
+                className="yearly-glance-row"
               >
+                {/* Col 1: Year & Booking Rate */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', minWidth: '45px' }}>
                     {item.year}
                   </span>
                   
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '1.2rem', fontWeight: 800, color }}>
-                        {item.averageFillPct.toFixed(1)}%
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '1.2rem', fontWeight: 800, color }}>
+                      {item.averageFillPct.toFixed(1)}%
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      booking rate
+                    </span>
+                    {item.isFutureYear && (
+                      <span style={{ fontSize: '0.68rem', background: 'rgba(56, 189, 248, 0.15)', color: 'var(--accent-cyan)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.02em' }}>
+                        Advance Bookings
                       </span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        booking rate
+                    )}
+                    {item.activeWeeks !== undefined && (
+                      <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                        ({item.activeWeeks} active wks)
                       </span>
-                      {item.isFutureYear && (
-                        <span style={{ fontSize: '0.68rem', background: 'rgba(56, 189, 248, 0.15)', color: 'var(--accent-cyan)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.02em' }}>
-                          Advance Bookings
-                        </span>
-                      )}
-                      {item.activeWeeks !== undefined && (
-                        <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                          ({item.activeWeeks} active wks)
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Horizontal Progress Bar */}
-                <div style={{ flex: '1 1 200px', maxWidth: '300px', background: 'rgba(148, 163, 184, 0.2)', height: '10px', borderRadius: '5px', overflow: 'hidden' }}>
-                  <div style={{ width: `${Math.min(item.averageFillPct, 100)}%`, height: '100%', background: color, borderRadius: '5px' }} />
+                {/* Col 2: Horizontal Progress Bar (Aligned Perfectly Across All Rows) */}
+                <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden' }}>
+                  <div style={{ width: `${Math.min(item.averageFillPct, 100)}%`, height: '100%', background: color, borderRadius: '9999px', transition: 'width 0.8s ease' }} />
                 </div>
 
-                {/* Trend Badge */}
-                <div>
+                {/* Col 3: Trend Badge */}
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   {idx === 0 ? (
                     <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', padding: '0.25rem 0.5rem', borderRadius: '6px', fontWeight: 600 }}>
                       Baseline Year
@@ -905,16 +904,16 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         </div>
 
         <div className="responsive-split-grid" style={{ marginTop: '1rem' }}>
-          <div className="table-wrapper">
+          <div className="table-wrapper" style={{ padding: '0px', overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid var(--border-light)', textAlign: 'left' }}>
-                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600 }}>Year</th>
-                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Lessons</th>
-                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Scheduling Efficiency</th>
-                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Earnings / Workday</th>
-                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Active Days</th>
-                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Annual Revenue</th>
+              <tr style={{ borderBottom: '1px solid var(--border-light)', textAlign: 'left', background: 'var(--bg-nested)' }}>
+                <th style={{ padding: '0.85rem 1rem', color: 'var(--text-muted)', fontWeight: 600 }}>Year</th>
+                <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Lessons</th>
+                <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Scheduling Efficiency</th>
+                <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Earnings / Workday</th>
+                <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Active Days</th>
+                <th style={{ padding: '0.85rem 1rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Annual Revenue</th>
               </tr>
             </thead>
             <tbody>
@@ -928,9 +927,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
 
                 return (
                   <tr key={m.year} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }} className="row-hover">
-                    <td style={{ padding: '0.75rem 0.5rem', fontWeight: 600, color: 'var(--text-main)' }}>{m.year}</td>
-                    <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>{m.totalLessons}</td>
-                    <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', fontWeight: 600 }}>
+                    <td style={{ padding: '0.85rem 1rem', fontWeight: 600, color: 'var(--text-main)' }}>{m.year}</td>
+                    <td style={{ padding: '0.85rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>{m.totalLessons}</td>
+                    <td style={{ padding: '0.85rem 0.5rem', textAlign: 'center', fontWeight: 600 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <span style={{ color: 'var(--text-main)' }}>{m.efficiencyRatio.toFixed(1)}%</span>
                         {idx > 0 && (
@@ -940,13 +939,13 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                         )}
                       </div>
                     </td>
-                    <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    <td style={{ padding: '0.85rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                       £{m.earningsPerActiveDay.toFixed(0)}/day
                     </td>
-                    <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    <td style={{ padding: '0.85rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                       {m.activeDaysCount} days
                     </td>
-                    <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-cyan)' }}>
+                    <td style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-cyan)' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         <span>£{m.earnings.toLocaleString()}</span>
                         {m.projectedEarnings && (
@@ -1045,29 +1044,31 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           </div>
         </div>
 
-        <div style={{ marginTop: '1.25rem', background: 'rgba(6,182,212,0.05)', padding: '0.85rem 1rem', borderRadius: '10px', borderLeft: '3px solid var(--accent-cyan)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <div style={{ marginTop: '1.25rem', background: 'rgba(6,182,212,0.06)', padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid var(--accent-cyan)', border: '1px solid rgba(6,182,212,0.18)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <div 
               onClick={() => setIsAiTipExpanded(!isAiTipExpanded)}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', userSelect: 'none' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', userSelect: 'none' }}
             >
-              <Sparkles size={14} style={{ color: 'var(--accent-cyan)' }} />
-              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)' }}>
+              <div style={{ width: '24px', height: '24px', borderRadius: '6px', background: 'rgba(6,182,212,0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Sparkles size={14} style={{ color: 'var(--accent-cyan)' }} />
+              </div>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>
                 {enableAiInsights && aiApiKey ? 'AI Dynamic Scheduling Strategy' : 'Actionable Recommendation'}
               </span>
               <span style={{ 
-                fontSize: '0.68rem', 
-                background: 'rgba(6,182,212,0.12)', 
+                fontSize: '0.7rem', 
+                background: 'rgba(6,182,212,0.14)', 
                 color: 'var(--accent-cyan)', 
-                padding: '0.15rem 0.5rem', 
+                padding: '0.2rem 0.55rem', 
                 borderRadius: '6px', 
                 fontWeight: 600,
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.2rem'
+                gap: '0.25rem'
               }}>
                 {isAiTipExpanded ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
-                {isAiTipExpanded ? 'Minimize' : 'Click to expand report'}
+                {isAiTipExpanded ? 'Minimize' : 'Expand full tip'}
               </span>
             </div>
 
@@ -1080,9 +1081,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                     fetchDynamicRecommendation(true);
                   }}
                   disabled={recLoading}
-                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-cyan)', fontSize: '0.68rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600 }}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-cyan)', fontSize: '0.72rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600 }}
                 >
-                  <RefreshCw size={10} className={recLoading ? 'spin-animation' : ''} />
+                  <RefreshCw size={11} className={recLoading ? 'spin-animation' : ''} />
                   Regenerate
                 </button>
               )}
