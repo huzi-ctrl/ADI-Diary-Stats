@@ -489,9 +489,14 @@ export const DayStats: React.FC<DayStatsProps> = ({
             £{simulatedEarnings.toFixed(2)}
           </div>
           <div className="sfd-kpi-meta">
-            <span className="sfd-kpi-sub">
-              {simulatedTeachingHours > 0
+            <span 
+              className="sfd-kpi-sub"
+              title={simulatedTeachingHours > 0 
                 ? `Net: £${dayVehicleCosts.netRevenue.toFixed(2)} • -£${dayVehicleCosts.totalCost.toFixed(2)} vehicle costs (~${Math.round(dayVehicleCosts.estimatedMiles)} mi)`
+                : `£${hourlyRate}/hr rate ${testRate > 0 ? `• £${testRate}/test` : ''}`}
+            >
+              {simulatedTeachingHours > 0
+                ? `${dayVehicleCosts.profitMargin.toFixed(0)}% take-home margin`
                 : `£${hourlyRate}/hr rate ${testRate > 0 ? `• £${testRate}/test` : ''}`}
             </span>
           </div>
@@ -501,7 +506,6 @@ export const DayStats: React.FC<DayStatsProps> = ({
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Teaching Hours</span>
-            <span className="sfd-kpi-badge neutral">Billable</span>
           </div>
           <div className="sfd-kpi-value">
             {simulatedTeachingHours.toFixed(1)}<span style={{ fontSize: '0.65em', fontWeight: 600, color: 'var(--sfd-ink-muted)', marginLeft: '2px' }}>h</span>

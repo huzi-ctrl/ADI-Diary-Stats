@@ -343,7 +343,6 @@ Analyze and return the JSON object.`;
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Weekly Lessons</span>
-            <span className="sfd-kpi-badge emerald">Booked</span>
           </div>
           <div className="sfd-kpi-value">{lessonsOnly.length}</div>
           <div className="sfd-kpi-meta">
@@ -357,7 +356,6 @@ Analyze and return the JSON object.`;
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Teaching Hours</span>
-            <span className="sfd-kpi-badge neutral">Billable</span>
           </div>
           <div className="sfd-kpi-value">
             {totalTeachHours}<span style={{ fontSize: '0.65em', fontWeight: 600, color: 'var(--sfd-ink-muted)', marginLeft: '2px' }}>h</span>
@@ -383,11 +381,14 @@ Analyze and return the JSON object.`;
           <div className="sfd-kpi-value">£{weeklyEarnings.toLocaleString()}</div>
           <div className="sfd-kpi-meta">
             <ArrowUpRight size={13} style={{ color: 'var(--sfd-emerald)', flexShrink: 0 }} />
-            <span className="sfd-kpi-sub">
+            <span 
+              className="sfd-kpi-sub"
+              title={testRate > 0 && testBookings.length > 0 
+                ? `£${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} tests • £${vehicleCosts.totalCost.toFixed(0)} expenses`
+                : `${totalTeachHours}h @ £${hourlyRate}/hr • £${vehicleCosts.totalCost.toFixed(0)} expenses`}
+            >
               {hoursNumber > 0 
-                ? (testRate > 0 && testBookings.length > 0 
-                    ? `Net: £${vehicleCosts.netRevenue.toFixed(0)} (${vehicleCosts.profitMargin.toFixed(0)}% margin) • £${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} tests`
-                    : `Net: £${vehicleCosts.netRevenue.toFixed(0)} (${vehicleCosts.profitMargin.toFixed(0)}% margin) • £${vehicleCosts.totalCost.toFixed(0)} vehicle expenses`)
+                ? `${vehicleCosts.profitMargin.toFixed(0)}% take-home margin`
                 : `${totalTeachHours}h @ £${hourlyRate}/hr base rate`}
             </span>
           </div>
