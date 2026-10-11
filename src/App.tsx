@@ -6,7 +6,7 @@ import { YearlyStats } from './components/YearlyStats';
 import { AIInsights } from './components/AIInsights';
 import { LegalModal } from './components/LegalModal';
 import { DayStats } from './components/DayStats';
-import { LayoutDashboard, Calendar, List, LogOut, ChevronLeft, ChevronRight, ChevronDown, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles, CheckCircle2 } from 'lucide-react';
+import { LayoutDashboard, Calendar, List, LogOut, ChevronLeft, ChevronRight, ChevronDown, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles, CheckCircle2, Menu, X } from 'lucide-react';
 import { useUserSettings } from './hooks/useUserSettings';
 import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
@@ -31,6 +31,8 @@ function App() {
   const [showCustomApiKey, setShowCustomApiKey] = useState(false);
   const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -40,12 +42,15 @@ function App() {
       if (dayDropdownRef.current && !dayDropdownRef.current.contains(e.target as Node)) {
         setDayDropdownOpen(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
+        setMobileMenuOpen(false);
+      }
     };
-    if (yearDropdownOpen || dayDropdownOpen) {
+    if (yearDropdownOpen || dayDropdownOpen || mobileMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [yearDropdownOpen, dayDropdownOpen]);
+  }, [yearDropdownOpen, dayDropdownOpen, mobileMenuOpen]);
 
   // Decoupled user settings and theme management
   const {
@@ -590,65 +595,191 @@ function App() {
             </div>
           )}
 
-          {/* AI Copilot Toggle Pill */}
-          <MagneticPill 
-            type="button" 
-            className={`sfd-ai-toggle ${enableAiInsights ? 'active' : ''}`}
-            onClick={() => {
-              const val = !enableAiInsights;
-              setEnableAiInsights(val);
-              if (!val && viewMode === 'ai') {
-                setViewMode('dashboard');
-              }
-            }}
-            title={enableAiInsights ? "Disable AI Features globally" : "Enable AI Features globally"}
-          >
-            <Sparkles size={14} />
-            <span>AI Copilot: {enableAiInsights ? 'On' : 'Off'}</span>
-          </MagneticPill>
+          {/* Desktop Controls (Hidden on Mobile) */}
+          <div className="sfd-desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            {/* AI Copilot Toggle Pill */}
+            <MagneticPill 
+              type="button" 
+              className={`sfd-ai-toggle ${enableAiInsights ? 'active' : ''}`}
+              onClick={() => {
+                const val = !enableAiInsights;
+                setEnableAiInsights(val);
+                if (!val && viewMode === 'ai') {
+                  setViewMode('dashboard');
+                }
+              }}
+              title={enableAiInsights ? "Disable AI Features globally" : "Enable AI Features globally"}
+            >
+              <Sparkles size={14} />
+              <span>AI Copilot: {enableAiInsights ? 'On' : 'Off'}</span>
+            </MagneticPill>
 
-          {/* Theme Switcher */}
-          <MagneticPill 
-            type="button" 
-            className="sfd-chip-btn" 
-            style={{ width: '36px', height: '36px', border: '1px solid var(--border-light)' }}
-            onClick={toggleTheme}
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            {theme === 'dark' ? <Sun size={15} style={{ color: 'var(--accent-amber)' }} /> : <Moon size={15} style={{ color: 'var(--accent-rose)' }} />}
-          </MagneticPill>
+            {/* Theme Switcher */}
+            <MagneticPill 
+              type="button" 
+              className="sfd-chip-btn" 
+              style={{ width: '36px', height: '36px', border: '1px solid var(--border-light)' }}
+              onClick={toggleTheme}
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? <Sun size={15} style={{ color: 'var(--accent-amber)' }} /> : <Moon size={15} style={{ color: 'var(--accent-rose)' }} />}
+            </MagneticPill>
 
-          {/* Connected file / sync / clear buttons when onboarding complete */}
-          {onboardingComplete && (
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--bg-nested)', border: '1px solid var(--border-light)', padding: '6px 12px', borderRadius: '9999px', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={fileName || ''}>
-                {fileName}
-              </span>
-              {calendarUrl && (
-                <MagneticPill
-                  type="button"
-                  className="sfd-btn-primary"
-                  style={{ padding: '6px 14px', fontSize: '13px' }}
-                  onClick={() => handleSyncLiveCalendar()}
-                  disabled={isSyncing}
-                  title="Sync Live Calendar Feed"
+            {/* Connected file / sync / clear buttons when onboarding complete */}
+            {onboardingComplete && (
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--bg-nested)', border: '1px solid var(--border-light)', padding: '6px 12px', borderRadius: '9999px', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={fileName || ''}>
+                  {fileName}
+                </span>
+                {calendarUrl && (
+                  <MagneticPill
+                    type="button"
+                    className="sfd-btn-primary"
+                    style={{ padding: '6px 14px', fontSize: '13px' }}
+                    onClick={() => handleSyncLiveCalendar()}
+                    disabled={isSyncing}
+                    title="Sync Live Calendar Feed"
+                  >
+                    <RefreshCw size={13} className={isSyncing ? 'spin-animation' : ''} />
+                    <span>{isSyncing ? 'Syncing...' : 'Sync Live'}</span>
+                  </MagneticPill>
+                )}
+                <MagneticPill 
+                  type="button" 
+                  className="btn btn-danger" 
+                  style={{ padding: '6px 14px', fontSize: '13px' }} 
+                  onClick={handleClear}
                 >
-                  <RefreshCw size={13} className={isSyncing ? 'spin-animation' : ''} />
-                  <span>{isSyncing ? 'Syncing...' : 'Sync Live'}</span>
+                  <LogOut size={13} />
+                  <span>Clear</span>
                 </MagneticPill>
-              )}
-              <MagneticPill 
-                type="button" 
-                className="btn btn-danger" 
-                style={{ padding: '6px 14px', fontSize: '13px' }} 
-                onClick={handleClear}
-              >
-                <LogOut size={13} />
-                <span>Clear</span>
-              </MagneticPill>
-            </div>
-          )}
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Hamburger Button (Only on Mobile) */}
+          <div className="sfd-mobile-only" style={{ display: 'none', alignItems: 'center', gap: '8px' }}>
+            <MagneticPill
+              type="button"
+              className="sfd-chip-btn"
+              style={{ width: '38px', height: '38px', border: '1px solid var(--border-light)' }}
+              onClick={() => setMobileMenuOpen(true)}
+              title="Open Navigation Menu"
+              aria-label="Open Navigation Menu"
+            >
+              <Menu size={18} />
+            </MagneticPill>
+          </div>
         </div>
+
+        {/* Mobile Slide-Over Drawer */}
+        {mobileMenuOpen && (
+          <>
+            <div 
+              className="sfd-mobile-drawer-backdrop" 
+              onClick={() => setMobileMenuOpen(false)}
+              aria-hidden="true" 
+            />
+            <div ref={mobileMenuRef} className="sfd-mobile-drawer" role="dialog" aria-modal="true">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <img src="/favicon.png" alt="ADI stats logo" style={{ height: '22px', width: '22px', objectFit: 'contain' }} />
+                  <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-main)' }}>Menu & Actions</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text-muted)' }}
+                  aria-label="Close menu"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Connected File info */}
+              {onboardingComplete && fileName && (
+                <div style={{ background: 'var(--bg-nested)', padding: '10px 14px', borderRadius: '14px', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>Active Calendar Source</span>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-main)', wordBreak: 'break-all' }}>{fileName}</span>
+                </div>
+              )}
+
+              {/* AI Copilot Switch */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>AI Insights</span>
+                <button
+                  type="button"
+                  className={`sfd-ai-toggle ${enableAiInsights ? 'active' : ''}`}
+                  style={{ width: '100%', justifyContent: 'center' }}
+                  onClick={() => {
+                    const val = !enableAiInsights;
+                    setEnableAiInsights(val);
+                    if (!val && viewMode === 'ai') {
+                      setViewMode('dashboard');
+                    }
+                  }}
+                >
+                  <Sparkles size={14} />
+                  <span>AI Copilot: {enableAiInsights ? 'Enabled' : 'Disabled'}</span>
+                </button>
+              </div>
+
+              {/* Theme Toggle Button */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Display Mode</span>
+                <button
+                  type="button"
+                  className="sfd-strip-btn"
+                  style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
+                  onClick={toggleTheme}
+                >
+                  {theme === 'dark' ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                      <Sun size={15} style={{ color: 'var(--accent-amber)' }} /> Switch to Light Mode
+                    </span>
+                  ) : (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                      <Moon size={15} style={{ color: 'var(--accent-rose)' }} /> Switch to Dark Mode
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* Calendar Actions */}
+              {onboardingComplete && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
+                  {calendarUrl && (
+                    <button
+                      type="button"
+                      className="sfd-btn-primary"
+                      style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
+                      onClick={() => {
+                        handleSyncLiveCalendar();
+                        setMobileMenuOpen(false);
+                      }}
+                      disabled={isSyncing}
+                    >
+                      <RefreshCw size={14} className={isSyncing ? 'spin-animation' : ''} />
+                      <span>{isSyncing ? 'Syncing Calendar...' : 'Sync Live Calendar'}</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="btn btn-danger"
+                    style={{ width: '100%', justifyContent: 'center', padding: '10px', borderRadius: '9999px' }}
+                    onClick={() => {
+                      handleClear();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <LogOut size={14} />
+                    <span>Disconnect Calendar</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </header>
 
       {/* Main Content Area */}
