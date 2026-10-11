@@ -328,6 +328,192 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
+/* =========================================================================
+   Unified Liquid Frosted Glass Cards & Containers
+   ========================================================================= */
+.glass-card {
+  position: relative;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-radius: 22px;
+  border: 1px solid var(--border-light);
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
+    var(--card-shadow);
+  padding: 1.5rem;
+  transition: transform 0.2s var(--transition-smooth), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+[data-theme="dark"] .glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.1) inset,
+    var(--card-shadow);
+}
+
+.glass-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  border-color: var(--border-medium);
+}
+
+/* KPI Overview Grid & Cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 880px) {
+  .kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 22px;
+}
+
+.kpi-title {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.kpi-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--text-main);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.kpi-footer {
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  margin-top: auto;
+}
+
+/* Dashboard Split Layout */
+.dashboard-layout-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 1040px) {
+  .dashboard-layout-container.with-sidebar {
+    grid-template-columns: 1fr 340px;
+  }
+}
+
+.dashboard-main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dashboard-sidebar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Table Wrapper & Event Tables */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 20px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  box-shadow: var(--card-shadow);
+}
+
+.event-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.event-table th {
+  background: var(--bg-nested);
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+}
+
+.event-table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.event-table tr:last-child td {
+  border-bottom: none;
+}
+
+.event-table tr:hover td {
+  background: var(--bg-nested);
+}
+
+.filters-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.responsive-split-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .responsive-split-grid {
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  }
+}
+
+.chart-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-main);
+}
+
+.chart-scroll-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.row-hover:hover {
+  background: var(--bg-nested);
+}
+
+.hover-glow:hover {
+  transform: translateY(-1px);
+  border-color: var(--border-medium);
+}
+
 /* Category Badges */
 .badge {
   display: inline-flex;
