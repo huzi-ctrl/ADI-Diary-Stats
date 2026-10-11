@@ -34,6 +34,7 @@ interface StatsDashboardProps {
   aiProvider?: 'gemini' | 'openai';
   aiModel?: string;
   aiApiKey?: string;
+  onSelectDay?: (dayDate: Date) => void;
 }
 
 export const StatsDashboard: React.FC<StatsDashboardProps> = ({ 
@@ -50,7 +51,8 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
   enableAiInsights = false,
   aiProvider = 'gemini',
   aiModel = 'gemini-2.5-flash',
-  aiApiKey = ''
+  aiApiKey = '',
+  onSelectDay
 }) => {
   const [weeklyAiReport, setWeeklyAiReport] = useState<{
     summary: string;
@@ -523,8 +525,19 @@ Analyze and return the JSON object.`;
               {dayIndices.map((dayIdx, i) => {
                 const hours = dayOfWeekHours[dayIdx];
                 const heightPct = maxDayHours > 0 ? (hours / maxDayHours) * 100 : 0;
+                
+                // Calculate the date corresponding to this day of the week
+                const dayDate = new Date(weekStart);
+                dayDate.setDate(weekStart.getDate() + i);
+
                 return (
-                  <div key={dayIdx} className="sfd-workload-col">
+                  <div 
+                    key={dayIdx} 
+                    className="sfd-workload-col"
+                    onClick={() => onSelectDay?.(dayDate)}
+                    style={{ cursor: onSelectDay ? 'pointer' : 'default' }}
+                    title={`${dayOfWeekNames[i]}: ${hours.toFixed(1)} lesson hours (Click to inspect day)`}
+                  >
                     <span className="sfd-workload-val">
                       {hours > 0 ? `${hours.toFixed(1)}h` : ''}
                     </span>
@@ -532,7 +545,6 @@ Analyze and return the JSON object.`;
                       <div 
                         className={`sfd-workload-bar ${hours === 0 ? 'empty' : ''}`}
                         style={{ height: hours > 0 ? `${Math.max(heightPct, 8)}%` : '6px' }}
-                        title={`${dayOfWeekNames[i]}: ${hours.toFixed(1)} lesson hours`}
                       />
                     </div>
                     <span className="sfd-workload-day">{dayOfWeekNames[i]}</span>

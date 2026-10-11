@@ -5,7 +5,8 @@ import { EventList } from './components/EventList';
 import { YearlyStats } from './components/YearlyStats';
 import { AIInsights } from './components/AIInsights';
 import { LegalModal } from './components/LegalModal';
-import { LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, ChevronDown, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles, CheckCircle2 } from 'lucide-react';
+import { DayStats } from './components/DayStats';
+import { LayoutDashboard, Calendar, List, LogOut, ChevronLeft, ChevronRight, ChevronDown, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useUserSettings } from './hooks/useUserSettings';
 import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
@@ -14,10 +15,13 @@ import { DEFAULT_MASTER_GEMINI_KEY } from './utils/aiHelper';
 
 import './components/mockup/design-system-mockup.css';
 
-type ViewMode = 'dashboard' | 'yearly' | 'events' | 'ai' | 'settings';
+type ViewMode = 'dashboard' | 'day' | 'yearly' | 'events' | 'ai' | 'settings';
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('dashboard');
+  const [selectedDay, setSelectedDay] = useState<Date>(() => new Date());
+  const [dayDropdownOpen, setDayDropdownOpen] = useState(false);
+  const dayDropdownRef = useRef<HTMLDivElement>(null);
   const [legalModal, setLegalModal] = useState<'privacy' | 'tos' | null>(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('policy') === 'privacy') return 'privacy';
@@ -33,12 +37,15 @@ function App() {
       if (yearDropdownRef.current && !yearDropdownRef.current.contains(e.target as Node)) {
         setYearDropdownOpen(false);
       }
+      if (dayDropdownRef.current && !dayDropdownRef.current.contains(e.target as Node)) {
+        setDayDropdownOpen(false);
+      }
     };
-    if (yearDropdownOpen) {
+    if (yearDropdownOpen || dayDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [yearDropdownOpen]);
+  }, [yearDropdownOpen, dayDropdownOpen]);
 
   // Decoupled user settings and theme management
   const {
@@ -218,6 +225,19 @@ function App() {
                 </span>
               </MagneticPill>
               <MagneticPill
+                ref={(el) => { tabRefs.current['day'] = el; }}
+                type="button"
+                className={`sfd-strip-btn sfd-char-hover ${viewMode === 'day' ? 'active' : ''}`}
+                onClick={() => setViewMode('day')}
+              >
+                <Calendar size={14} />
+                <span className="sfd-char-wave">
+                  {'Day'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
+              </MagneticPill>
+              <MagneticPill
                 ref={(el) => { tabRefs.current['yearly'] = el; }}
                 type="button"
                 className={`sfd-strip-btn sfd-char-hover ${viewMode === 'yearly' ? 'active' : ''}`}
@@ -304,6 +324,130 @@ function App() {
                 onClick={handleCurrentWeek}
                 title="Current Week"
                 aria-label="Current Week"
+              >
+                <RefreshCw size={13} />
+              </MagneticPill>
+            </div>
+          )}
+
+          {/* Day Selector Chip in Header (when on day view) */}
+          {onboardingComplete && viewMode === 'day' && (
+            <div className="sfd-week-chip">
+              <MagneticPill 
+                type="button" 
+                className="sfd-chip-btn" 
+                onClick={() => {
+                  const prev = new Date(selectedDay);
+                  prev.setDate(prev.getDate() - 1);
+                  setSelectedDay(prev);
+                }}
+                title="Previous Day"
+                aria-label="Previous Day"
+              >
+                <ChevronLeft size={16} />
+              </MagneticPill>
+              
+              {/* Custom Liquid Glass Day Dropdown */}
+              <div ref={dayDropdownRef} style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setDayDropdownOpen(!dayDropdownOpen)}
+                  style={{
+                    border: 'none',
+                    background: 'transparent',
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    color: 'var(--text-main)',
+                    cursor: 'pointer',
+                    outline: 'none',
+                    padding: '4px 8px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    borderRadius: '9999px',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <span>{selectedDay.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                  <ChevronDown size={13} style={{ opacity: 0.7, transform: dayDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                </button>
+
+                {dayDropdownOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 8px)',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      minWidth: '160px',
+                      background: 'var(--bg-card)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                      border: '1px solid var(--border-light)',
+                      borderRadius: '14px',
+                      padding: '5px',
+                      boxShadow: '0 12px 30px -4px rgba(15, 23, 42, 0.15), 0 4px 12px -2px rgba(15, 23, 42, 0.08)',
+                      zIndex: 100,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '2px'
+                    }}
+                  >
+                    {[0, 1, 2, 3, 4, 5, 6].map(i => {
+                      const d = new Date(currentWeekStart);
+                      d.setDate(currentWeekStart.getDate() + i);
+                      const isSelected = d.toDateString() === selectedDay.toDateString();
+                      return (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => {
+                            setSelectedDay(d);
+                            setDayDropdownOpen(false);
+                          }}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: '12.5px',
+                            fontWeight: isSelected ? 700 : 500,
+                            color: isSelected ? 'var(--accent-blue)' : 'var(--text-main)',
+                            background: isSelected ? 'var(--accent-blue-soft)' : 'transparent',
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            textAlign: 'left',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            transition: 'background 0.15s ease'
+                          }}
+                          className="dropdown-item-hover"
+                        >
+                          <span>{d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <MagneticPill 
+                type="button" 
+                className="sfd-chip-btn" 
+                onClick={() => {
+                  const next = new Date(selectedDay);
+                  next.setDate(next.getDate() + 1);
+                  setSelectedDay(next);
+                }}
+                title="Next Day"
+                aria-label="Next Day"
+              >
+                <ChevronRight size={16} />
+              </MagneticPill>
+              <MagneticPill 
+                type="button" 
+                className="sfd-chip-btn" 
+                onClick={() => setSelectedDay(new Date())}
+                title="Today"
+                aria-label="Today"
               >
                 <RefreshCw size={13} />
               </MagneticPill>
@@ -555,6 +699,22 @@ function App() {
                 aiProvider={aiProvider}
                 aiModel={aiModel}
                 aiApiKey={aiApiKey}
+                onSelectDay={(dayDate) => {
+                  setSelectedDay(dayDate);
+                  setViewMode('day');
+                }}
+              />
+            ) : viewMode === 'day' ? (
+              <DayStats
+                allInstructorEvents={instructorEvents}
+                weekInstructorEvents={weekInstructorEvents}
+                weekStart={currentWeekStart}
+                selectedDate={selectedDay}
+                onSelectDate={(newDay) => setSelectedDay(newDay)}
+                hourlyRate={hourlyRate}
+                testRate={testRate}
+                nonPayingList={nonPayingList}
+                enableAiInsights={enableAiInsights}
               />
             ) : viewMode === 'yearly' ? (
               <YearlyStats 
