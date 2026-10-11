@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-11T12:09:40.000Z",
+  "title": "Design System: DriveStats ADI",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Authoritative Royal Cobalt",
+        "canonical": "#1a56db",
+        "tonalRamp": ["#0b1a4a", "#102a71", "#173f9e", "#1a56db", "#3b82f6", "#60a5fa", "#93c5fd", "#eff6ff"]
+      },
+      "surface-ground": {
+        "role": "neutral",
+        "displayName": "Architectural Surface Ground",
+        "canonical": "#f8fafc",
+        "tonalRamp": ["#0f172a", "#1e293b", "#334155", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0", "#f8fafc"]
+      },
+      "surface-card": {
+        "role": "neutral",
+        "displayName": "Surface Card White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#1e293b", "#334155", "#475569", "#64748b", "#cbd5e1", "#e2e8f0", "#f1f5f9", "#ffffff"]
+      },
+      "ink-primary": {
+        "role": "neutral",
+        "displayName": "Deep Charcoal Ink",
+        "canonical": "#0f172a",
+        "tonalRamp": ["#020617", "#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1"]
+      },
+      "border-hairline": {
+        "role": "neutral",
+        "displayName": "Structural Hairline Border",
+        "canonical": "#e2e8f0",
+        "tonalRamp": ["#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0", "#f1f5f9", "#f8fafc"]
+      },
+      "accent-emerald": {
+        "role": "secondary",
+        "displayName": "Precision Emerald",
+        "canonical": "#059669",
+        "tonalRamp": ["#022c22", "#064e3b", "#065f46", "#059669", "#10b981", "#34d399", "#a7f3d0", "#ecfdf5"]
+      },
+      "accent-amber": {
+        "role": "tertiary",
+        "displayName": "Transit Amber",
+        "canonical": "#d97706",
+        "tonalRamp": ["#451a03", "#78350f", "#92400e", "#d97706", "#f59e0b", "#fbbf24", "#fde68a", "#fffbeb"]
+      },
+      "accent-crimson": {
+        "role": "tertiary",
+        "displayName": "Critical Crimson",
+        "canonical": "#dc2626",
+        "tonalRamp": ["#450a0a", "#7f1d1d", "#991b1b", "#dc2626", "#ef4444", "#f87171", "#fca5a5", "#fef2f2"]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display Sans",
+        "purpose": "Hero KPI metrics and master screen titles with tight negative tracking."
+      },
+      "headline": {
+        "displayName": "Headline Sans",
+        "purpose": "Major section cards, modal sheets, and data group titles."
+      },
+      "title": {
+        "displayName": "Title Sans",
+        "purpose": "Metric titles, card headers, and list primary text."
+      },
+      "body": {
+        "displayName": "Body Sans",
+        "purpose": "Descriptive text, event labels, and analytical coaching tips."
+      },
+      "label": {
+        "displayName": "Tabular Code & Numerics",
+        "purpose": "All monetary values (£), hours, ratios, percentages, and timestamps."
+      }
+    },
+    "shadows": [
+      {
+        "name": "dock-float",
+        "value": "0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04)",
+        "purpose": "Floating mobile bottom navigation dock suspended over content."
+      },
+      {
+        "name": "modal-sheet",
+        "value": "0 20px 40px -8px rgba(15, 23, 42, 0.12), 0 1px 3px 0 rgba(15, 23, 42, 0.04)",
+        "purpose": "Elevated modal dialogs, calendar sync drawers, and action sheets."
+      },
+      {
+        "name": "card-hover",
+        "value": "0 4px 12px -2px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.03)",
+        "purpose": "Subtle tactile response when hovering interactive cards."
+      }
+    ],
+    "motion": [
+      {
+        "name": "spring-snappy",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Hardware-grade spring for morphing pills, tab backdrops, and dialog transitions."
+      },
+      {
+        "name": "press-tactile",
+        "value": "transform 0.1s cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Tactile micro-depression on active button and chip presses (:active scale(0.985))."
+      }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "640px" },
+      { "name": "tablet", "value": "1024px" },
+      { "name": "desktop", "value": "1360px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "High-contrast action button for primary commands such as diary refresh, connect calendar, and apply filters.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/></svg>Sync Live Calendar</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #1a56db; color: #ffffff; border: 1px solid #1a56db; border-radius: 6px; padding: 8px 16px; font-family: 'Hanken Grotesk', -apple-system, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.1s cubic-bezier(0.16, 1, 0.3, 1); outline: none; } .ds-btn-primary:hover { background: #1e40af; border-color: #1e40af; } .ds-btn-primary:active { background: #172554; transform: scale(0.985); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Crisp hairline-bordered button for secondary actions such as CSV exports and view switching.",
+      "html": "<button class=\"ds-btn-secondary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><polyline points=\"7 10 12 15 17 10\"/><line x1=\"12\" y1=\"15\" x2=\"12\" y2=\"3\"/></svg>Export Report</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #ffffff; color: #0f172a; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 16px; font-family: 'Hanken Grotesk', -apple-system, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.1s cubic-bezier(0.16, 1, 0.3, 1); outline: none; } .ds-btn-secondary:hover { background: #f8fafc; border-color: #94a3b8; } .ds-btn-secondary:active { transform: scale(0.985); }"
+    },
+    {
+      "name": "KPI Metric Card",
+      "kind": "card",
+      "refersTo": "card-base",
+      "description": "High-density executive summary tile with monospaced tabular numerals and inline micro-trend badge.",
+      "html": "<div class=\"ds-kpi-card\"><div class=\"ds-kpi-head\"><span class=\"ds-kpi-label\">Weekly Billable Revenue</span><span class=\"ds-kpi-badge-positive\">+8.4% YoY</span></div><div class=\"ds-kpi-val\">£1,485.00</div><div class=\"ds-kpi-foot\"><span class=\"ds-kpi-meta\">33.0 hrs booked • 15 lessons</span></div></div>",
+      "css": ".ds-kpi-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; font-family: 'Hanken Grotesk', -apple-system, sans-serif; } .ds-kpi-head { display: flex; align-items: center; justify-content: space-between; } .ds-kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; } .ds-kpi-badge-positive { font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; color: #059669; background: #ecfdf5; border: 1px solid rgba(5, 150, 105, 0.2); border-radius: 4px; padding: 2px 6px; } .ds-kpi-val { font-family: 'Geist Mono', 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: #0f172a; line-height: 1.1; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; } .ds-kpi-foot { font-size: 12px; color: #64748b; margin-top: 4px; }"
+    },
+    {
+      "name": "Mobile Bottom Dock Nav",
+      "kind": "nav",
+      "refersTo": "dock-nav",
+      "description": "Ergonomic mobile floating dock featuring morphing active pills and hardware-grade spring physics.",
+      "html": "<nav class=\"ds-dock\"><button class=\"ds-dock-item ds-active\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"/><line x1=\"16\" y1=\"2\" x2=\"16\" y2=\"6\"/><line x1=\"8\" y1=\"2\" x2=\"8\" y2=\"6\"/><line x1=\"3\" y1=\"10\" x2=\"21\" y2=\"10\"/></svg><span>Weekly</span></button><button class=\"ds-dock-item\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"18\" y1=\"20\" x2=\"18\" y2=\"10\"/><line x1=\"12\" y1=\"20\" x2=\"12\" y2=\"4\"/><line x1=\"6\" y1=\"20\" x2=\"6\" y2=\"14\"/></svg><span>Yearly</span></button><button class=\"ds-dock-item\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"/></svg><span>Explorer</span></button><button class=\"ds-dock-item\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z\"/></svg><span>Settings</span></button></nav>",
+      "css": ".ds-dock { display: inline-flex; align-items: center; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 9999px; padding: 4px 6px; box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04); gap: 4px; } .ds-dock-item { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 9999px; border: none; background: transparent; color: #64748b; font-family: 'Hanken Grotesk', -apple-system, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); outline: none; } .ds-dock-item:hover { color: #0f172a; background: #f8fafc; } .ds-dock-item:active { transform: scale(0.96); } .ds-dock-item.ds-active { background: #1a56db; color: #ffffff; font-weight: 600; }"
+    },
+    {
+      "name": "In-Column Diagnostic AI Badge",
+      "kind": "custom",
+      "refersTo": "card-base",
+      "description": "Embedded contextual schedule intelligence callout placed directly inside dashboard columns.",
+      "html": "<div class=\"ds-ai-badge\"><div class=\"ds-ai-badge-header\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#1a56db\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 2v20\"/><path d=\"M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6\"/></svg><span>Capacity Diagnostic</span></div><p class=\"ds-ai-badge-body\">Friday carries 2.5 hours of fragmented dead gaps between 11:30 and 14:00. Moving pupil James B. forward by 45 minutes recovers a full 2-hour lesson slot.</p><div class=\"ds-ai-badge-action\"><span>Action: Shift Friday 12:15 slot</span></div></div>",
+      "css": ".ds-ai-badge { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 3px solid #1a56db; border-radius: 8px; padding: 12px 14px; font-family: 'Hanken Grotesk', -apple-system, sans-serif; display: flex; flex-direction: column; gap: 6px; } .ds-ai-badge-header { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #1a56db; } .ds-ai-badge-body { font-size: 13px; color: #334155; line-height: 1.45; margin: 0; } .ds-ai-badge-action { font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; color: #1a56db; display: inline-flex; align-items: center; margin-top: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Swiss Flight Deck",
+    "overview": "DriveStats is engineered for independent UK Approved Driving Instructors (ADIs) who make high-stakes operational decisions in two distinct physical environments: inside a parked training car between back-to-back student appointments under intense daylight cockpit glare, and at a home desk during late-evening weekly administrative and financial reviews. The visual system rejects the ephemeral, generic tropes of 'vibe-coded' AI software—specifically banning neon purple/cyan pastel gradients, blurry muddy glassmorphism cards, floating diffuse drop shadows, and oversized novelty border radiuses. In their place, DriveStats synthesizes the technical rigor and 1px hairline containment of Appsmith's data tooling, the architectural Swiss grotesk typography and disciplined baseline grid of Kota Studio, and the tactile hardware-grade spring physics and micro-reactivity of Unseen Studio.",
+    "keyCharacteristics": [
+      "Strict Light-First Foundation: Crisp architectural gallery white (#ffffff) atop a neutral concrete ground (#f8fafc) with deep charcoal ink (#0f172a), delivering flawless sunlight legibility.",
+      "Hairline Precision: Containers defined by crisp 1px structural borders (#e2e8f0), replacing amorphous ambient shadows with engineered architectural boundaries.",
+      "Dual Ergonomics: Floating thumb-zone bottom navigation with morphing pill indicators on mobile; high-density 12-column administrative grid on desktop.",
+      "Swiss Typographic Hierarchy: Disciplined pairing of tight-tracked grotesque sans headings (-0.025em) with monospaced tabular numerals (tabular-nums) for currency, times, and ratios.",
+      "Hardware-Grade Tactile Motion: Physics-based spring transitions (cubic-bezier(0.16, 1, 0.3, 1)) and micro-scale depression (:active scale(0.985)) on all interactive controls."
+    ],
+    "rules": [
+      {
+        "name": "The Strict Light-First Rule",
+        "body": "Surfaces are architectural light gallery neutrals by default. In-car daylight legibility is non-negotiable; dark mode is an optional secondary override for nighttime desk audits, never the default.",
+        "section": "colors"
+      },
+      {
+        "name": "The Anti-Vibe Rule",
+        "body": "Saturated purple-to-cyan gradients, floating pastel drop shadows, and multi-color background blobs are permanently banned from the design system.",
+        "section": "colors"
+      },
+      {
+        "name": "The 10% Cobalt Rule",
+        "body": "The primary Royal Cobalt accent may occupy no more than 10% of any viewport's surface area. Its rarity creates immediate, instinctive visual hierarchy.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Numerics Rule",
+        "body": "Every currency amount (£), lesson duration, percentage, and time interval must render in a monospace tabular numeral font (font-variant-numeric: tabular-nums). Fluctuating numbers must never cause horizontal layout shifts.",
+        "section": "typography"
+      },
+      {
+        "name": "The Negative Tracking Rule",
+        "body": "Headings at or above 16px must apply negative letter-spacing (-0.02em to -0.03em) to eliminate visual slack and emulate Swiss typographic precision.",
+        "section": "typography"
+      },
+      {
+        "name": "The Thumb-Zone Priority Rule",
+        "body": "On viewports under 640px, primary switching controls, date shifts, and filter toggles must reside within the lower 35% of the screen or be accessible via horizontal swipe gestures.",
+        "section": "layout"
+      },
+      {
+        "name": "The No-Horizontal-Drift Rule",
+        "body": "No container or card may trigger unintended horizontal window scrolling. Data-dense tables and 7-day timelines must provide isolated internal horizontal scroll containers with visible hairline edge fade indicators.",
+        "section": "layout"
+      },
+      {
+        "name": "The Hairline Boundary Rule",
+        "body": "Structural containers are separated by 1px solid borders, never by blurry ambient shadow drop-offs. When contrast is needed, step the surface tone (#ffffff vs #f1f5f9), do not add shadow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Hardware Elevation Rule",
+        "body": "Floating elements (the bottom mobile dock, sticky date pill, and toast notifications) receive tight, low-radius shadows that simulate hardware objects suspended 4mm above a matte table surface.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Engineered Radius Rule",
+        "body": "Cards and data containers use tight 10px corners; interactive controls use 6px. Full pill radiuses (9999px) are reserved strictly for floating navigation docks and micro status badges.",
+        "section": "shapes"
+      },
+      {
+        "name": "The No-Pill Button Rule",
+        "body": "Primary action buttons must never use full pill (border-radius: 9999px) rounding. They must use structural 6px or 8px corners to convey operational solidity rather than casual social-app aesthetics.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do format all financial amounts (£), hours, durations, and percentages in Geist Mono with font-variant-numeric: tabular-nums.",
+      "Do separate cards and containers with crisp 1px solid #e2e8f0 borders instead of diffuse box-shadows.",
+      "Do maintain a strict light-first architectural palette (#f8fafc background, #ffffff cards, #0f172a text).",
+      "Do apply negative letter-spacing (-0.025em) to all headings above 14px to maintain Swiss Grotesque tightness.",
+      "Do support smooth thumb interactions on mobile with a floating bottom control dock and 44px minimum tap targets.",
+      "Do embed AI scheduling diagnostics directly inside relevant columns (Weekly Capacity, Bottleneck Day, YoY Seasonality) with a global master toggle to completely hide them.",
+      "Do use tactile spring physics (cubic-bezier(0.16, 1, 0.3, 1)) and :active scale(0.985) press depression on all interactive controls."
+    ],
+    "donts": [
+      "Don't use pastel purple-to-cyan gradient text or gradient card fills (permanently banned anti-vibe rule).",
+      "Don't apply diffuse, muddy drop shadows or heavy backdrop-filter: blur() overlays to data cards.",
+      "Don't use full pill (border-radius: 9999px) styling on primary rectangular action buttons.",
+      "Don't isolate AI coaching in a detached, disconnected generic chat window or floating chat bubble.",
+      "Don't display Year-to-Date revenue comparisons against full 12-month prior years without pro-rata alignment.",
+      "Don't allow lesson diaries or calendar contents to be transmitted to external servers (100% client-side privacy invariant).",
+      "Don't allow numeric values to jitter or cause layout reflows when dates or weeks change."
+    ]
+  }
+}
