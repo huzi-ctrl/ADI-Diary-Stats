@@ -94,7 +94,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       }
       if (trimmed.startsWith('> ')) {
         return (
-          <div key={idx} style={{ borderLeft: '3px solid var(--accent-cyan)', paddingLeft: '0.65rem', margin: '0.4rem 0', color: 'var(--text-main)', fontStyle: 'italic', fontSize: '0.75rem', background: 'rgba(6,182,212,0.05)', padding: '0.4rem 0.65rem', borderRadius: '0 6px 6px 0' }}>
+          <div key={idx} style={{ border: '1px solid rgba(6,182,212,0.2)', margin: '0.4rem 0', color: 'var(--text-main)', fontStyle: 'italic', fontSize: '0.75rem', background: 'rgba(6,182,212,0.05)', padding: '0.5rem 0.75rem', borderRadius: '8px' }}>
             {parseBold(trimmed.slice(2))}
           </div>
         );
@@ -160,19 +160,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                   </span>
                   
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '1.2rem', fontWeight: 800, color }}>
+                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color }}>
                       {item.averageFillPct.toFixed(1)}%
                     </span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                       booking rate
                     </span>
                     {item.isFutureYear && (
-                      <span style={{ fontSize: '0.68rem', background: 'rgba(56, 189, 248, 0.15)', color: 'var(--accent-cyan)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.02em' }}>
+                      <span style={{ fontSize: '0.6875rem', background: 'rgba(6, 182, 212, 0.15)', color: 'var(--accent-cyan)', padding: '0.15rem 0.45rem', borderRadius: '6px', fontWeight: 700, letterSpacing: '0.02em' }}>
                         Advance Bookings
                       </span>
                     )}
                     {item.isCurrentYear && (
-                      <span style={{ fontSize: '0.68rem', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.02em' }}>
+                      <span style={{ fontSize: '0.6875rem', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)', padding: '0.15rem 0.45rem', borderRadius: '6px', fontWeight: 700, letterSpacing: '0.02em' }}>
                         Year-to-Date
                       </span>
                     )}
@@ -277,7 +277,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
           {sortedYears.map(yr => (
             <div key={yr} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <div style={{ width: '12px', height: '12px', background: getYearColor(yr), borderRadius: '3px' }} />
+              <div style={{ width: '10px', height: '10px', background: getYearColor(yr), borderRadius: '9999px' }} />
               <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{yr}</span>
             </div>
           ))}
@@ -474,7 +474,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
           {sortedYears.map(yr => (
             <div key={yr} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <div style={{ width: '12px', height: '12px', background: getYearColor(yr), borderRadius: '3px' }} />
+              <div style={{ width: '10px', height: '10px', background: getYearColor(yr), borderRadius: '9999px' }} />
               <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{yr}</span>
             </div>
           ))}
@@ -671,7 +671,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           {/* Legend */}
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <div style={{ width: '12px', height: '12px', background: 'linear-gradient(135deg, var(--accent-purple), var(--accent-indigo))', borderRadius: '3px' }} />
+              <div style={{ width: '10px', height: '10px', background: 'linear-gradient(135deg, var(--accent-purple), var(--accent-indigo))', borderRadius: '9999px' }} />
               <span style={{ color: 'var(--text-muted)' }}>Revenue (Gross &amp; Net)</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
@@ -1021,7 +1021,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
               ) : yoyAiReport ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.8rem' }}>
                   <p style={{ color: 'var(--text-main)', lineHeight: 1.45, margin: 0 }}>{yoyAiReport.summary}</p>
-                  <div style={{ background: 'rgba(129, 140, 248, 0.05)', padding: '0.65rem 0.85rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-indigo)' }}>
+                  <div style={{ background: 'rgba(99, 102, 241, 0.08)', padding: '0.65rem 0.85rem', borderRadius: '12px', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
                     <span style={{ fontWeight: 700, display: 'block', marginBottom: '0.15rem', color: 'var(--text-main)', fontSize: '0.75rem' }}>Efficiency Analysis</span>
                     <span style={{ color: 'var(--text-muted)', lineHeight: 1.4 }}>{yoyAiReport.efficiencyInsight}</span>
                   </div>
@@ -1082,7 +1082,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           </div>
         </div>
 
-        <div style={{ marginTop: '1.25rem', background: 'rgba(6,182,212,0.06)', padding: '1rem 1.25rem', borderRadius: '14px', borderLeft: '4px solid var(--accent-cyan)', border: '1px solid rgba(6,182,212,0.18)' }}>
+        <div style={{ marginTop: '1.25rem', background: 'rgba(6,182,212,0.06)', padding: '1rem 1.25rem', borderRadius: '16px', border: '1px solid rgba(6,182,212,0.2)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
             <div 
               onClick={() => setIsAiTipExpanded(!isAiTipExpanded)}
@@ -1183,7 +1183,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                   </div>
 
                   {/* Financial Recovery Impact */}
-                  <div style={{ background: 'rgba(6, 182, 212, 0.06)', borderLeft: '3px solid var(--accent-cyan)', padding: '0.65rem 0.85rem', borderRadius: '0 8px 8px 0' }}>
+                  <div style={{ background: 'rgba(6, 182, 212, 0.06)', border: '1px solid rgba(6, 182, 212, 0.2)', padding: '0.65rem 0.85rem', borderRadius: '12px' }}>
                     <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.8rem', marginBottom: '0.2rem' }}>
                       Financial Recovery Impact: Up to £{advisorInsights.lostEarnings.toLocaleString()} Annual Potential
                     </div>
@@ -1837,11 +1837,11 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           {/* Legend */}
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <div style={{ width: '12px', height: '12px', background: 'linear-gradient(135deg, #6366f1, #4338ca)', borderRadius: '3px' }} />
+              <div style={{ width: '10px', height: '10px', background: 'linear-gradient(135deg, var(--accent-indigo), #4f46e5)', borderRadius: '9999px' }} />
               <span style={{ color: 'var(--text-muted)' }}>Teaching Hours (Past)</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <div style={{ width: '12px', height: '12px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', borderRadius: '3px' }} />
+              <div style={{ width: '10px', height: '10px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', borderRadius: '9999px' }} />
               <span style={{ color: 'var(--text-muted)' }}>Teaching Hours (Upcoming)</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>

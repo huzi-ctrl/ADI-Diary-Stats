@@ -17,6 +17,11 @@ colors:
   border-subtle: "rgba(15, 23, 42, 0.14)"
   accent-blue: "#2563eb"
   accent-blue-soft: "#eff6ff"
+  accent-indigo: "#6366f1"
+  accent-indigo-strong: "#4f46e5"
+  accent-indigo-soft: "rgba(99, 102, 241, 0.08)"
+  accent-cyan: "#06b6d4"
+  accent-cyan-soft: "rgba(6, 182, 212, 0.08)"
   accent-emerald: "#059669"
   accent-emerald-soft: "#ecfdf5"
   accent-amber: "#d97706"
@@ -36,17 +41,41 @@ typography:
     fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "-0.02em"
+  stat:
+    fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    fontSize: "1.5rem"
+    fontWeight: 800
+    lineHeight: 1.2
+    letterSpacing: "-0.02em"
   title:
     fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 600
     lineHeight: 1.4
     letterSpacing: "-0.015em"
+  base:
+    fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 500
+    lineHeight: 1.5
+    letterSpacing: "-0.01em"
   body:
     fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
     fontSize: "0.9375rem"
     fontWeight: 400
     lineHeight: 1.6
+    letterSpacing: "-0.005em"
+  editorial:
+    fontFamily: "'Newsreader', Georgia, 'Times New Roman', serif"
+    fontStyle: "italic"
+    fontSize: "0.875rem"
+    lineHeight: 1.4
+    letterSpacing: "-0.01em"
+  compact:
+    fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+    fontSize: "0.85rem"
+    fontWeight: 500
+    lineHeight: 1.4
     letterSpacing: "-0.005em"
   label:
     fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
@@ -54,16 +83,38 @@ typography:
     fontWeight: 600
     lineHeight: 1.35
     letterSpacing: "0.01em"
-  editorial:
-    fontFamily: "'Newsreader', Georgia, 'Times New Roman', serif"
-    fontStyle: "italic"
-    fontSize: "0.875rem"
+  caption:
+    fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 500
     lineHeight: 1.4
-    letterSpacing: "-0.01em"
+    letterSpacing: "0.005em"
+  subtext:
+    fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+    fontSize: "0.72rem"
+    fontWeight: 500
+    lineHeight: 1.35
+    letterSpacing: "0.005em"
+  micro:
+    fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+    fontSize: "0.7rem"
+    fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: "0.01em"
+  nano:
+    fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+    fontSize: "0.6875rem"
+    fontWeight: 600
+    lineHeight: 1.25
+    letterSpacing: "0.015em"
 rounded:
   xs: "6px"
+  badge: "8px"
+  input: "10px"
   sm: "12px"
+  callout: "14px"
   md: "16px"
+  card-sm: "18px"
   lg: "20px"
   xl: "22px"
   2xl: "24px"

@@ -870,7 +870,7 @@ export const DayStats: React.FC<DayStatsProps> = ({
                           className="sfd-time-block"
                           style={{ 
                             width: `${widthPct}%`, 
-                            background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)', 
+                            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', 
                             color: '#ffffff',
                             boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)'
                           }}
@@ -1042,33 +1042,33 @@ export const DayStats: React.FC<DayStatsProps> = ({
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
               <div style={{ background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '16px', border: '1px solid var(--sfd-border-hairline)', textAlign: 'center' }}>
                 <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', fontWeight: 600 }}>Standard Lessons</span>
-                <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--sfd-ink-primary)', marginTop: '4px' }}>{billableLessons.length}</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--sfd-ink-primary)', marginTop: '4px' }}>{billableLessons.length}</div>
                 <span style={{ fontSize: '12px', color: 'var(--sfd-emerald)', fontWeight: 600 }}>£{lessonEarnings.toFixed(0)} est.</span>
               </div>
 
               <div style={{ background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '16px', border: '1px solid var(--sfd-border-hairline)', textAlign: 'center' }}>
                 <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', fontWeight: 600 }}>Driving Tests</span>
-                <div style={{ fontSize: '24px', fontWeight: 800, color: '#d97706', marginTop: '4px' }}>{dayTests.length}</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#d97706', marginTop: '4px' }}>{dayTests.length}</div>
                 <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>{testRate > 0 ? `£${testRate}/test` : 'Hourly rate'}</span>
               </div>
 
               <div style={{ background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '16px', border: '1px solid var(--sfd-border-hairline)', textAlign: 'center' }}>
                 <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', fontWeight: 600 }}>Transit Windows</span>
-                <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--sfd-ink-secondary)', marginTop: '4px' }}>{Math.round(totalBufferMins / 15)}</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--sfd-ink-secondary)', marginTop: '4px' }}>{Math.round(totalBufferMins / 15)}</div>
                 <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>{totalBufferMins}m buffer time</span>
               </div>
 
               {nonPayingLessons.length > 0 && (
                 <div style={{ background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '16px', border: '1px solid var(--sfd-border-hairline)', textAlign: 'center' }}>
                   <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', fontWeight: 600 }}>Non-Paying</span>
-                  <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--sfd-ink-secondary)', marginTop: '4px' }}>{nonPayingLessons.length}</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--sfd-ink-secondary)', marginTop: '4px' }}>{nonPayingLessons.length}</div>
                   <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>Excluded £0.00</span>
                 </div>
               )}
 
               <div style={{ background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '16px', border: '1px solid var(--sfd-border-hairline)', textAlign: 'center' }}>
                 <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', fontWeight: 600 }}>Efficiency Ratio</span>
-                <div style={{ fontSize: '24px', fontWeight: 800, color: efficiencyPct >= 80 ? 'var(--sfd-emerald)' : 'var(--sfd-amber)', marginTop: '4px' }}>{efficiencyPct}%</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: efficiencyPct >= 80 ? 'var(--sfd-emerald)' : 'var(--sfd-amber)', marginTop: '4px' }}>{efficiencyPct}%</div>
                 <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>Workload density</span>
               </div>
             </div>

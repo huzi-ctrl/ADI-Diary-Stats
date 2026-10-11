@@ -300,13 +300,13 @@ export const EventList: React.FC<EventListProps> = ({
                             lower.includes('personal') || lower.includes('break') || lower.includes('medical') ? 'badge-personal' :
                             'badge-default';
                           return (
-                            <span key={c} className={`badge ${badgeClass}`} style={{ fontSize: '0.65rem' }}>
+                            <span key={c} className={`badge ${badgeClass}`} style={{ fontSize: '0.6875rem' }}>
                               {c}
                             </span>
                           );
                         })
                       ) : (
-                        <span className="badge badge-default" style={{ fontSize: '0.65rem' }}>
+                        <span className="badge badge-default" style={{ fontSize: '0.6875rem' }}>
                           {activeTab === 'lessons' ? 'Instruction' : 'Personal'}
                         </span>
                       )}
@@ -330,7 +330,7 @@ export const EventList: React.FC<EventListProps> = ({
         {paginatedEvents.length > 0 ? (
           paginatedEvents.map(e => (
             <div key={`mob-${e.id}`} className="glass-card" style={{ padding: '1.1rem 1.25rem', borderRadius: '16px', border: '1px solid var(--border-medium)', background: 'var(--bg-nested)', width: '100%', boxSizing: 'border-box' }}>
-              <div style={{ fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.25rem', fontSize: '1.05rem' }}>{e.summary}</div>
+              <div style={{ fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.25rem', fontSize: '1rem' }}>{e.summary}</div>
               
               {e.description && (
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', whiteSpace: 'pre-wrap', marginBottom: '0.5rem', maxHeight: '80px', overflowY: 'auto' }}>

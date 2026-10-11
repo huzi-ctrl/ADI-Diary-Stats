@@ -1079,7 +1079,7 @@ function App() {
               <div className="sfd-card-container" style={{ animation: 'fadeIn 0.5s ease-out' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
                   <Settings size={20} className="gradient-text" style={{ filter: 'brightness(1.2)' }} />
-                  <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-main)' }}>Instructor & Rates Settings</h2>
+                  <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>Instructor & Rates Settings</h2>
                 </div>
 
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>

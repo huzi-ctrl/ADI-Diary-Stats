@@ -529,7 +529,7 @@ Analyze and return the JSON object.`;
                   </span>
                 </div>
                 <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
-                  <div style={{ width: `${Math.min(nextWeekStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
+                  <div style={{ width: `${Math.min(nextWeekStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #2563eb 0%, #3b82f6 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
                 </div>
               </div>
 
@@ -544,7 +544,7 @@ Analyze and return the JSON object.`;
                   </span>
                 </div>
                 <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
-                  <div style={{ width: `${Math.min(twoWeeksOutStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #6366f1 0%, #818cf8 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
+                  <div style={{ width: `${Math.min(twoWeeksOutStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #4f46e5 0%, #6366f1 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
                 </div>
               </div>
             </div>
@@ -842,7 +842,7 @@ Analyze and return the JSON object.`;
                   <span style={{ fontSize: '13px', fontWeight: 600 }}>Analyzing weekly pacing...</span>
                 </div>
               ) : weeklyAiError ? (
-                <div style={{ background: 'var(--sfd-coral-soft)', color: '#9f1239', border: '1px solid var(--sfd-coral-border)', padding: '12px', borderRadius: '14px', fontSize: '12px' }}>
+                <div style={{ background: 'var(--sfd-coral-soft)', color: 'var(--sfd-coral)', border: '1px solid var(--sfd-coral-border)', padding: '12px', borderRadius: '14px', fontSize: '12px' }}>
                   {weeklyAiError}
                 </div>
               ) : weeklyAiReport ? (

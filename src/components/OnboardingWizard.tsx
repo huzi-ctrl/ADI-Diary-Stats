@@ -224,7 +224,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                       />
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>{cal.name}</span>
-                        {cal.isDefault && <span style={{ fontSize: '0.65rem', color: 'var(--accent-indigo)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.02em', marginTop: '0.05rem' }}>Primary Calendar</span>}
+                        {cal.isDefault && <span style={{ fontSize: '0.6875rem', color: 'var(--accent-indigo)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.02em', marginTop: '0.05rem' }}>Primary Calendar</span>}
                       </div>
                     </label>
                   ))}

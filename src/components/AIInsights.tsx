@@ -528,7 +528,7 @@ User Question: ${userMsg}
         } else if (trimmed.startsWith('# ')) {
           elements.push(<h2 key={idx} style={{ color: 'var(--accent-purple)', marginTop: '1.5rem', marginBottom: '0.75rem' }}>{trimmed.slice(2)}</h2>);
         } else if (trimmed.startsWith('> ')) {
-          elements.push(<blockquote key={idx} style={{ borderLeft: '3px solid var(--accent-cyan)', background: 'rgba(6,182,212,0.05)', padding: '0.5rem 1rem', margin: '0.5rem 0', borderRadius: '4px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{parseBold(trimmed.slice(2))}</blockquote>);
+          elements.push(<blockquote key={idx} style={{ border: '1px solid rgba(6,182,212,0.2)', background: 'rgba(6,182,212,0.05)', padding: '0.625rem 1rem', margin: '0.5rem 0', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{parseBold(trimmed.slice(2))}</blockquote>);
         } else if (trimmed === '') {
           elements.push(<div key={idx} style={{ height: '0.5rem' }} />);
         } else {
@@ -743,7 +743,7 @@ User Question: ${userMsg}
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                 }}
               >
-                <span style={{ fontSize: '0.65rem', fontWeight: 700, color: msg.role === 'user' ? 'rgba(255,255,255,0.7)' : 'var(--accent-cyan)', display: 'block', marginBottom: '0.25rem' }}>
+                <span style={{ fontSize: '0.6875rem', fontWeight: 700, color: msg.role === 'user' ? 'rgba(255,255,255,0.7)' : 'var(--accent-cyan)', display: 'block', marginBottom: '0.25rem', letterSpacing: '0.015em' }}>
                   {msg.role === 'user' ? 'You' : `${aiProvider.toUpperCase()} Assistant`}
                 </span>
                 <div style={{ fontSize: '0.85rem', color: '#fff', lineHeight: '1.4' }}>

@@ -15,7 +15,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
     <div 
       style={{
         position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-        background: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(5px)',
+        background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(5px)',
         display: 'flex', justifyContent: 'center', alignItems: 'center',
         zIndex: 9999, padding: '1rem'
       }}
