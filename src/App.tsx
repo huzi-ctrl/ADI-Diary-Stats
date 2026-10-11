@@ -353,7 +353,7 @@ function App() {
               </MagneticPill>
               
               {/* Custom Liquid Glass Day Dropdown */}
-              <div ref={dayDropdownRef} style={{ position: 'relative' }}>
+              <div ref={dayDropdownRef} style={{ position: 'relative', zIndex: 1000 }}>
                 <button
                   type="button"
                   onClick={() => setDayDropdownOpen(!dayDropdownOpen)}
@@ -384,15 +384,15 @@ function App() {
                       top: 'calc(100% + 8px)',
                       left: '50%',
                       transform: 'translateX(-50%)',
-                      minWidth: '160px',
-                      background: 'var(--bg-card)',
-                      backdropFilter: 'blur(16px)',
-                      WebkitBackdropFilter: 'blur(16px)',
-                      border: '1px solid var(--border-light)',
-                      borderRadius: '14px',
-                      padding: '5px',
-                      boxShadow: '0 12px 30px -4px rgba(15, 23, 42, 0.15), 0 4px 12px -2px rgba(15, 23, 42, 0.08)',
-                      zIndex: 100,
+                      minWidth: '180px',
+                      backgroundColor: 'var(--sfd-surface-ground, #ffffff)',
+                      backdropFilter: 'blur(24px)',
+                      WebkitBackdropFilter: 'blur(24px)',
+                      border: '1px solid var(--sfd-border-subtle, rgba(15, 23, 42, 0.16))',
+                      borderRadius: '16px',
+                      padding: '6px',
+                      boxShadow: '0 20px 45px -4px rgba(15, 23, 42, 0.25), 0 8px 16px -2px rgba(15, 23, 42, 0.1)',
+                      zIndex: 99999,
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '2px'
@@ -402,6 +402,7 @@ function App() {
                       const d = new Date(currentWeekStart);
                       d.setDate(currentWeekStart.getDate() + i);
                       const isSelected = d.toDateString() === selectedDay.toDateString();
+                      const isToday = new Date().toDateString() === d.toDateString();
                       return (
                         <button
                           key={i}
@@ -411,22 +412,28 @@ function App() {
                             setDayDropdownOpen(false);
                           }}
                           style={{
-                            padding: '6px 12px',
+                            padding: '8px 12px',
                             fontSize: '12.5px',
                             fontWeight: isSelected ? 700 : 500,
                             color: isSelected ? 'var(--accent-blue)' : 'var(--text-main)',
                             background: isSelected ? 'var(--accent-blue-soft)' : 'transparent',
                             border: 'none',
-                            borderRadius: '8px',
+                            borderRadius: '10px',
                             cursor: 'pointer',
                             textAlign: 'left',
                             display: 'flex',
+                            alignItems: 'center',
                             justifyContent: 'space-between',
                             transition: 'background 0.15s ease'
                           }}
                           className="dropdown-item-hover"
                         >
                           <span>{d.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                          {isToday && (
+                            <span style={{ fontSize: '10.5px', background: 'var(--sfd-primary-soft)', color: 'var(--sfd-primary)', padding: '2px 6px', borderRadius: '6px', fontWeight: 700 }}>
+                              Today
+                            </span>
+                          )}
                         </button>
                       );
                     })}

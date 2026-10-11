@@ -162,7 +162,7 @@
   gap: 18px;
   flex-wrap: wrap;
   position: relative;
-  z-index: 10;
+  z-index: 1000;
 }
 
 [data-theme="dark"] .sfd-header {
@@ -598,12 +598,23 @@
   gap: 20px;
   position: relative;
   z-index: 10;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1024px) {
   .sfd-cockpit-split {
-    grid-template-columns: 7fr 3fr;
+    grid-template-columns: minmax(0, 68fr) minmax(0, 32fr);
   }
+}
+
+.sfd-cockpit-split > * {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .sfd-card-container {
@@ -963,12 +974,18 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .sfd-agenda-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
+  width: 100%;
 }
 
 .sfd-agenda-item {
@@ -980,6 +997,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  min-width: 0;
+  box-sizing: border-box;
   transition: all 0.2s var(--sfd-ease-fluid);
 }
 
@@ -1002,12 +1021,302 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--sfd-ink-primary);
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .sfd-agenda-price {
   font-size: 13.5px;
   font-weight: 700;
   color: var(--sfd-emerald);
+  flex-shrink: 0;
+}
+
+/* =========================================================================
+   Vertical Day Schedule Timeline System
+   Clean, spacious, uncompressed chronological flow
+   ========================================================================= */
+.sfd-v-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sfd-v-item {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  position: relative;
+  transition: transform 0.2s var(--sfd-ease-fluid);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sfd-v-time-col {
+  width: 110px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  padding-right: 6px;
+  box-sizing: border-box;
+}
+
+.sfd-v-time-range {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sfd-ink-primary);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.sfd-v-duration {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--sfd-ink-muted);
+}
+
+.sfd-v-card {
+  flex: 1;
+  min-width: 0;
+  background: var(--sfd-surface-nested);
+  border: 1px solid var(--sfd-border-hairline);
+  border-left: 4px solid var(--sfd-emerald);
+  border-radius: 16px;
+  padding: 13px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s var(--sfd-ease-fluid);
+}
+
+.sfd-v-card:hover {
+  background: var(--sfd-surface-card);
+  border-color: var(--sfd-border-subtle);
+  transform: translateX(2px);
+  box-shadow: var(--sfd-shadow-soft);
+}
+
+.sfd-v-item.sfd-v-test .sfd-v-card {
+  border-left-color: #d97706;
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.06) 0%, var(--sfd-surface-nested) 100%);
+}
+
+.sfd-v-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sfd-v-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+  flex: 1;
+}
+
+.sfd-v-pupil-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sfd-ink-primary);
+  letter-spacing: -0.01em;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.sfd-v-type-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.sfd-v-type-badge.emerald {
+  background: var(--sfd-emerald-soft);
+  color: #065f46;
+  border: 1px solid var(--sfd-emerald-border);
+}
+
+.sfd-v-type-badge.amber {
+  background: var(--sfd-amber-soft);
+  color: #92400e;
+  border: 1px solid var(--sfd-amber-border);
+}
+
+.sfd-v-type-badge.coral {
+  background: var(--sfd-coral-soft);
+  color: #9f1239;
+  border: 1px solid var(--sfd-coral-border);
+}
+
+.sfd-v-type-badge.neutral {
+  background: var(--sfd-surface-nested);
+  color: var(--sfd-ink-secondary);
+  border: 1px solid var(--sfd-border-hairline);
+}
+
+.sfd-v-price {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--sfd-emerald);
+  flex-shrink: 0;
+}
+
+.sfd-v-price.amber {
+  color: #d97706;
+}
+
+.sfd-v-price.muted {
+  color: var(--sfd-ink-muted);
+}
+
+/* Connectors: Transit Buffers, Dead Gaps, Open Windows */
+.sfd-v-connector {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 2px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sfd-v-connector-rail {
+  width: 110px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 14px;
+  box-sizing: border-box;
+}
+
+.sfd-v-buffer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--sfd-amber-soft);
+  color: #92400e;
+  border: 1px dashed var(--sfd-amber-border);
+  border-radius: 9999px;
+  padding: 4px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.sfd-v-gap-card {
+  flex: 1;
+  min-width: 0;
+  background: var(--sfd-coral-soft);
+  border: 1px dashed var(--sfd-coral-border);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sfd-v-gap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sfd-v-gap-time {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9f1239;
+}
+
+.sfd-v-gap-note {
+  margin: 0;
+  font-size: 12px;
+  color: #881337;
+  line-height: 1.45;
+}
+
+.sfd-v-gap-simulated {
+  margin-top: 4px;
+  background: var(--sfd-emerald-soft);
+  border: 1px solid var(--sfd-emerald-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #065f46;
+}
+
+.sfd-v-free-card {
+  flex: 1;
+  min-width: 0;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px dashed var(--sfd-border-hairline);
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sfd-v-free-time {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sfd-ink-muted);
+}
+
+.sfd-v-free-sub {
+  font-size: 12px;
+  color: var(--sfd-ink-faint);
+}
+
+/* Mini bird's-eye overview track */
+.sfd-v-mini-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: var(--sfd-surface-nested);
+  gap: 2px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.sfd-v-mini-seg {
+  height: 100%;
+  border-radius: 9999px;
+  transition: opacity 0.2s;
+}
+
+@media (max-width: 640px) {
+  .sfd-v-item {
+    flex-direction: column;
+    gap: 6px;
+  }
+  .sfd-v-time-col {
+    width: 100%;
+    align-items: flex-start;
+    padding-right: 0;
+  }
+  .sfd-v-connector-rail {
+    display: none;
+  }
 }
 
 /* Floating Bottom Navigation Dock - High-Craft Frosted Glass */

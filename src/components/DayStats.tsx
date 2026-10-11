@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { CalendarEvent } from '../utils/icsParser';
 import { 
   Calendar, 
@@ -10,7 +10,9 @@ import {
   ChevronRight,
   ShieldCheck,
   Car,
-  Coffee
+  Coffee,
+  AlignLeft,
+  BarChart2
 } from 'lucide-react';
 import { MagneticPill } from './ui/MagneticPill';
 import { isEventNonPaying } from '../utils/capacityCalculations';
@@ -49,7 +51,22 @@ export const DayStats: React.FC<DayStatsProps> = ({
   enableAiInsights = true,
 }) => {
   const [dayDropdownOpen, setDayDropdownOpen] = useState(false);
+  const dayStatsDropdownRef = useRef<HTMLDivElement>(null);
   const [isShiftSimulated, setIsShiftSimulated] = useState(false);
+  const [timelineView, setTimelineView] = useState<'vertical' | 'horizontal'>('vertical');
+
+  // Click outside to close day dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dayStatsDropdownRef.current && !dayStatsDropdownRef.current.contains(e.target as Node)) {
+        setDayDropdownOpen(false);
+      }
+    };
+    if (dayDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dayDropdownOpen]);
 
   // Generate 7 days of the active week
   const weekDays = useMemo(() => {
@@ -344,7 +361,7 @@ export const DayStats: React.FC<DayStatsProps> = ({
               <ChevronLeft size={16} />
             </MagneticPill>
 
-            <div style={{ position: 'relative' }}>
+            <div ref={dayStatsDropdownRef} style={{ position: 'relative', zIndex: 1000 }}>
               <button
                 type="button"
                 onClick={() => setDayDropdownOpen(!dayDropdownOpen)}
@@ -370,15 +387,15 @@ export const DayStats: React.FC<DayStatsProps> = ({
                     position: 'absolute',
                     top: 'calc(100% + 8px)',
                     right: 0,
-                    minWidth: '200px',
-                    background: 'var(--bg-card)',
-                    backdropFilter: 'blur(20px)',
-                    WebkitBackdropFilter: 'blur(20px)',
-                    border: '1px solid var(--border-light)',
+                    minWidth: '220px',
+                    backgroundColor: 'var(--sfd-surface-ground, #ffffff)',
+                    backdropFilter: 'blur(24px)',
+                    WebkitBackdropFilter: 'blur(24px)',
+                    border: '1px solid var(--sfd-border-subtle, rgba(15, 23, 42, 0.16))',
                     borderRadius: '16px',
                     padding: '6px',
-                    boxShadow: '0 16px 36px -4px rgba(15, 23, 42, 0.18)',
-                    zIndex: 100,
+                    boxShadow: '0 20px 45px -4px rgba(15, 23, 42, 0.25), 0 8px 16px -2px rgba(15, 23, 42, 0.1)',
+                    zIndex: 99999,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '2px'
@@ -523,133 +540,349 @@ export const DayStats: React.FC<DayStatsProps> = ({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           <div className="sfd-card-container">
-            <div className="sfd-card-header">
+            <div className="sfd-card-header" style={{ flexWrap: 'wrap', gap: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
                   <Clock size={18} />
                 </div>
                 <h2 className="sfd-card-heading">{selectedDayName} Schedule Flow</h2>
               </div>
-              <span className="sfd-card-tag">{formatMinToTime(spanStartMin)} &ndash; {formatMinToTime(spanEndMin)} Span</span>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <span className="sfd-card-tag">{formatMinToTime(spanStartMin)} &ndash; {formatMinToTime(spanEndMin)} Span</span>
+                
+                {/* View Mode Toggle: Vertical Timeline vs Horizontal Bar */}
+                <div style={{ display: 'flex', alignItems: 'center', background: 'var(--sfd-surface-nested)', padding: '2px', borderRadius: '9999px', border: '1px solid var(--sfd-border-hairline)' }}>
+                  <button
+                    type="button"
+                    onClick={() => setTimelineView('vertical')}
+                    style={{
+                      border: 'none',
+                      background: timelineView === 'vertical' ? 'var(--sfd-surface-card)' : 'transparent',
+                      color: timelineView === 'vertical' ? 'var(--sfd-ink-primary)' : 'var(--sfd-ink-muted)',
+                      padding: '4px 10px',
+                      borderRadius: '9999px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      boxShadow: timelineView === 'vertical' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <AlignLeft size={13} />
+                    <span>Vertical</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTimelineView('horizontal')}
+                    style={{
+                      border: 'none',
+                      background: timelineView === 'horizontal' ? 'var(--sfd-surface-card)' : 'transparent',
+                      color: timelineView === 'horizontal' ? 'var(--sfd-ink-primary)' : 'var(--sfd-ink-muted)',
+                      padding: '4px 10px',
+                      borderRadius: '9999px',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      boxShadow: timelineView === 'horizontal' ? '0 2px 6px rgba(15, 23, 42, 0.08)' : 'none',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <BarChart2 size={13} />
+                    <span>Strip</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             <p className="sfd-card-description">
-              Continuous timeline representation of lessons, automated 15-minute travel buffers, and fragmented unbookable dead gaps.
+              Continuous chronological representation of driving lessons, automated 15-minute inter-lesson transit allowances, and fragmented unbookable dead gaps.
             </p>
 
-            {/* Fluid Capsule Timeline Track */}
-            <div className="sfd-timeline-box" style={{ marginTop: '10px' }}>
-              <div className="sfd-timeline-scale">
-                <span>{formatMinToTime(spanStartMin)}</span>
-                <span>{formatMinToTime(Math.round(spanStartMin + totalSpanMin * 0.25))}</span>
-                <span>{formatMinToTime(Math.round(spanStartMin + totalSpanMin * 0.5))}</span>
-                <span>{formatMinToTime(Math.round(spanStartMin + totalSpanMin * 0.75))}</span>
-                <span>{formatMinToTime(spanEndMin)}</span>
+            {/* Mini Bird's-Eye Overview Bar */}
+            <div className="sfd-v-mini-bar" title="Day pacing overview at a glance">
+              {segments.map((seg, idx) => {
+                const pct = Math.max(1, (seg.durationMinutes / totalSpanMin) * 100);
+                const bg = seg.type === 'lesson' 
+                  ? 'var(--sfd-emerald)' 
+                  : seg.type === 'test' 
+                    ? '#d97706' 
+                    : seg.type === 'buffer' 
+                      ? 'var(--sfd-amber)' 
+                      : seg.type === 'gap' 
+                        ? (isShiftSimulated && recoverableGapSegment === seg ? 'var(--sfd-emerald)' : 'var(--sfd-coral)') 
+                        : 'rgba(148, 163, 184, 0.2)';
+                return (
+                  <div 
+                    key={idx} 
+                    className="sfd-v-mini-seg" 
+                    style={{ width: `${pct}%`, background: bg }}
+                    title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: ${seg.label}`}
+                  />
+                );
+              })}
+            </div>
+
+            {/* View Mode 1: Expanded Vertical Schedule (Primary) */}
+            {timelineView === 'vertical' ? (
+              <div className="sfd-v-schedule-list">
+                {dayEvents.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '36px 16px', background: 'var(--sfd-surface-nested)', borderRadius: '18px', border: '1px dashed var(--sfd-border-hairline)' }}>
+                    <Coffee size={32} style={{ margin: '0 auto 10px auto', opacity: 0.5, color: 'var(--sfd-ink-muted)' }} />
+                    <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>No Lessons Booked for {selectedDayName}</h4>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: 'var(--sfd-ink-muted)' }}>
+                      Your schedule is completely clear across the {formatMinToTime(spanStartMin)} &ndash; {formatMinToTime(spanEndMin)} span.
+                    </p>
+                  </div>
+                ) : (
+                  segments.map((seg, idx) => {
+                    if (seg.type === 'lesson') {
+                      const isNonPaying = seg.event ? isEventNonPaying(seg.event.summary, nonPayingList) : false;
+                      const lessonPrice = isNonPaying ? '£0.00' : `£${((seg.durationMinutes / 60) * hourlyRate).toFixed(2)}`;
+                      return (
+                        <div key={idx} className="sfd-v-item sfd-v-lesson">
+                          <div className="sfd-v-time-col">
+                            <span className="sfd-v-time-range">{formatMinToTime(seg.startMinutes)} &ndash; {formatMinToTime(seg.endMinutes)}</span>
+                            <span className="sfd-v-duration">{(seg.durationMinutes / 60).toFixed(1)} hrs</span>
+                          </div>
+                          <div className="sfd-v-card">
+                            <div className="sfd-v-card-header">
+                              <div className="sfd-v-title-wrap">
+                                <span className="sfd-v-type-badge emerald">Lesson</span>
+                                {isNonPaying && <span className="sfd-v-type-badge neutral">Non-Paying</span>}
+                                <h4 className="sfd-v-pupil-name">{seg.label}</h4>
+                              </div>
+                              <span className={`sfd-v-price ${isNonPaying ? 'muted' : ''}`}>{lessonPrice}</span>
+                            </div>
+                            {seg.event?.location && (
+                              <div style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <span>📍</span>
+                                <span>{seg.event.location}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    if (seg.type === 'test') {
+                      const tPrice = testRate > 0 ? `£${testRate.toFixed(2)}` : `£${((seg.durationMinutes / 60) * hourlyRate).toFixed(2)}`;
+                      return (
+                        <div key={idx} className="sfd-v-item sfd-v-test">
+                          <div className="sfd-v-time-col">
+                            <span className="sfd-v-time-range">{formatMinToTime(seg.startMinutes)} &ndash; {formatMinToTime(seg.endMinutes)}</span>
+                            <span className="sfd-v-duration">{(seg.durationMinutes / 60).toFixed(1)} hrs</span>
+                          </div>
+                          <div className="sfd-v-card">
+                            <div className="sfd-v-card-header">
+                              <div className="sfd-v-title-wrap">
+                                <span className="sfd-v-type-badge amber">
+                                  <Car size={12} />
+                                  Driving Test
+                                </span>
+                                <h4 className="sfd-v-pupil-name">{seg.label}</h4>
+                              </div>
+                              <span className="sfd-v-price amber">{tPrice}</span>
+                            </div>
+                            {seg.event?.location && (
+                              <div style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <span>📍</span>
+                                <span>{seg.event.location}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    if (seg.type === 'buffer') {
+                      return (
+                        <div key={idx} className="sfd-v-connector">
+                          <div className="sfd-v-connector-rail" />
+                          <div className="sfd-v-buffer-badge">
+                            <Car size={13} />
+                            <span>{seg.durationMinutes}m Travel Buffer &bull; {formatMinToTime(seg.startMinutes)} &ndash; {formatMinToTime(seg.endMinutes)}</span>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    if (seg.type === 'gap') {
+                      const isRecovered = isShiftSimulated && recoverableGapSegment === seg;
+                      return (
+                        <div key={idx} className="sfd-v-connector">
+                          <div className="sfd-v-connector-rail" />
+                          <div className="sfd-v-gap-card" style={isRecovered ? { background: 'var(--sfd-emerald-soft)', borderColor: 'var(--sfd-emerald-border)' } : undefined}>
+                            <div className="sfd-v-gap-header">
+                              <span className={`sfd-v-type-badge ${isRecovered ? 'emerald' : 'coral'}`}>
+                                {isRecovered ? '✨ Slot Recovered' : '⚠️ Unusable Dead Gap'}
+                              </span>
+                              <span className="sfd-v-gap-time" style={isRecovered ? { color: '#065f46' } : undefined}>
+                                {formatMinToTime(seg.startMinutes)} &ndash; {formatMinToTime(seg.endMinutes)} ({seg.durationMinutes} mins)
+                              </span>
+                            </div>
+                            <p className="sfd-v-gap-note" style={isRecovered ? { color: '#065f46' } : undefined}>
+                              {isRecovered 
+                                ? `Shift simulation active: recovered a continuous 1.5-hour lesson window (+£${(hourlyRate * 1.5).toFixed(2)}) by sliding adjacent bookings.`
+                                : `Too short for a standard 1.5h lesson + 15m transit buffer. Shifting appointments by 30–45m can convert this fragmented dead time into paid teaching.`
+                              }
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    if (seg.type === 'free') {
+                      if (seg.durationMinutes < 60) return null;
+                      const isSlotBookable = seg.durationMinutes >= 90;
+                      return (
+                        <div key={idx} className="sfd-v-connector">
+                          <div className="sfd-v-connector-rail" />
+                          <div className="sfd-v-free-card">
+                            <div className="sfd-v-gap-header">
+                              <span className="sfd-v-type-badge neutral">
+                                {isSlotBookable ? '🟢 Open Teaching Window' : 'Free Time'}
+                              </span>
+                              <span className="sfd-v-free-time">
+                                {formatMinToTime(seg.startMinutes)} &ndash; {formatMinToTime(seg.endMinutes)} ({(seg.durationMinutes / 60).toFixed(1)}h)
+                              </span>
+                            </div>
+                            <span className="sfd-v-free-sub">
+                              {isSlotBookable 
+                                ? 'Sufficient time for a full driving lesson or mock test (15m transit buffers already accommodated).'
+                                : 'Scheduled rest or downtime.'
+                              }
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    }
+
+                    return null;
+                  })
+                )}
               </div>
+            ) : (
+              /* View Mode 2: Compact Horizontal Strip */
+              <div className="sfd-timeline-box" style={{ marginTop: '10px' }}>
+                <div className="sfd-timeline-scale">
+                  <span>{formatMinToTime(spanStartMin)}</span>
+                  <span>{formatMinToTime(Math.round(spanStartMin + totalSpanMin * 0.25))}</span>
+                  <span>{formatMinToTime(Math.round(spanStartMin + totalSpanMin * 0.5))}</span>
+                  <span>{formatMinToTime(Math.round(spanStartMin + totalSpanMin * 0.75))}</span>
+                  <span>{formatMinToTime(spanEndMin)}</span>
+                </div>
 
-              <div 
-                className="sfd-timeline-track" 
-                title="Hover blocks to inspect appointment times and buffer allowances"
-                style={{ height: '56px', padding: '4px' }}
-              >
-                {segments.map((seg, idx) => {
-                  const widthPct = Math.max(3, (seg.durationMinutes / totalSpanMin) * 100);
+                <div 
+                  className="sfd-timeline-track" 
+                  title="Hover blocks to inspect appointment times and buffer allowances"
+                  style={{ height: '56px', padding: '4px' }}
+                >
+                  {segments.map((seg, idx) => {
+                    const widthPct = Math.max(3, (seg.durationMinutes / totalSpanMin) * 100);
 
-                  if (seg.type === 'lesson') {
-                    return (
-                      <div
-                        key={idx}
-                        className="sfd-time-block sfd-time-lesson"
-                        style={{ width: `${widthPct}%` }}
-                        title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: ${seg.label} (${seg.sublabel})`}
-                      >
-                        {seg.label} ({seg.sublabel})
-                      </div>
-                    );
-                  }
+                    if (seg.type === 'lesson') {
+                      return (
+                        <div
+                          key={idx}
+                          className="sfd-time-block sfd-time-lesson"
+                          style={{ width: `${widthPct}%` }}
+                          title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: ${seg.label} (${seg.sublabel})`}
+                        >
+                          {seg.label} ({seg.sublabel})
+                        </div>
+                      );
+                    }
 
-                  if (seg.type === 'test') {
+                    if (seg.type === 'test') {
+                      return (
+                        <div
+                          key={idx}
+                          className="sfd-time-block"
+                          style={{ 
+                            width: `${widthPct}%`, 
+                            background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)', 
+                            color: '#ffffff',
+                            boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)'
+                          }}
+                          title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: Practical Driving Test (${seg.label})`}
+                        >
+                          <Car size={13} style={{ marginRight: '4px', flexShrink: 0 }} />
+                          {seg.label}
+                        </div>
+                      );
+                    }
+
+                    if (seg.type === 'buffer') {
+                      return (
+                        <div
+                          key={idx}
+                          className="sfd-time-block sfd-time-buffer"
+                          style={{ width: `${widthPct}%` }}
+                          title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: ${seg.label}`}
+                        >
+                          {seg.durationMinutes}m
+                        </div>
+                      );
+                    }
+
+                    if (seg.type === 'gap') {
+                      if (isShiftSimulated && recoverableGapSegment === seg) {
+                        return (
+                          <div
+                            key={idx}
+                            className="sfd-time-block sfd-time-lesson"
+                            style={{ 
+                              width: `${widthPct}%`,
+                              background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                              boxShadow: '0 4px 12px rgba(5, 150, 105, 0.35)',
+                              animation: 'pulse 2s infinite'
+                            }}
+                            title={`Simulated Optimization: Recovered 1.5h lesson slot (+£${(hourlyRate * 1.5).toFixed(2)})`}
+                          >
+                            +Slot Filled (1.5h)
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div
+                          key={idx}
+                          className="sfd-time-block sfd-time-deadgap"
+                          style={{ width: `${widthPct}%` }}
+                          title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: ${seg.label} (Too short to book standard lesson)`}
+                        >
+                          Gap {seg.durationMinutes}m
+                        </div>
+                      );
+                    }
+
+                    // Free time
                     return (
                       <div
                         key={idx}
                         className="sfd-time-block"
                         style={{ 
                           width: `${widthPct}%`, 
-                          background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)', 
-                          color: '#ffffff',
-                          boxShadow: '0 2px 8px rgba(217, 119, 6, 0.3)'
+                          background: 'rgba(148, 163, 184, 0.1)', 
+                          color: 'var(--sfd-ink-faint)', 
+                          border: '1px dashed var(--sfd-border-hairline)' 
                         }}
-                        title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: Practical Driving Test (${seg.label})`}
+                        title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: Available Open Time`}
                       >
-                        <Car size={13} style={{ marginRight: '4px', flexShrink: 0 }} />
-                        {seg.label}
+                        {widthPct > 8 ? seg.label : ''}
                       </div>
                     );
-                  }
-
-                  if (seg.type === 'buffer') {
-                    return (
-                      <div
-                        key={idx}
-                        className="sfd-time-block sfd-time-buffer"
-                        style={{ width: `${widthPct}%` }}
-                        title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: ${seg.label}`}
-                      >
-                        {seg.durationMinutes}m
-                      </div>
-                    );
-                  }
-
-                  if (seg.type === 'gap') {
-                    if (isShiftSimulated && recoverableGapSegment === seg) {
-                      return (
-                        <div
-                          key={idx}
-                          className="sfd-time-block sfd-time-lesson"
-                          style={{ 
-                            width: `${widthPct}%`,
-                            background: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
-                            boxShadow: '0 4px 12px rgba(5, 150, 105, 0.35)',
-                            animation: 'pulse 2s infinite'
-                          }}
-                          title={`Simulated Optimization: Recovered 1.5h lesson slot (+£${(hourlyRate * 1.5).toFixed(2)})`}
-                        >
-                          +Slot Filled (1.5h)
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <div
-                        key={idx}
-                        className="sfd-time-block sfd-time-deadgap"
-                        style={{ width: `${widthPct}%` }}
-                        title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: ${seg.label} (Too short to book standard lesson)`}
-                      >
-                        Gap {seg.durationMinutes}m
-                      </div>
-                    );
-                  }
-
-                  // Free time
-                  return (
-                    <div
-                      key={idx}
-                      className="sfd-time-block"
-                      style={{ 
-                        width: `${widthPct}%`, 
-                        background: 'rgba(148, 163, 184, 0.1)', 
-                        color: 'var(--sfd-ink-faint)', 
-                        border: '1px dashed var(--sfd-border-hairline)' 
-                      }}
-                      title={`${formatMinToTime(seg.startMinutes)} – ${formatMinToTime(seg.endMinutes)}: Available Open Time`}
-                    >
-                      {widthPct > 8 ? seg.label : ''}
-                    </div>
-                  );
-                })}
+                  })}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Timeline Legend */}
             <div className="sfd-timeline-legend" style={{ marginTop: '12px' }}>
@@ -814,15 +1047,15 @@ export const DayStats: React.FC<DayStatsProps> = ({
                         borderLeft: isTest ? '3px solid #d97706' : isNonPaying ? '3px solid var(--sfd-ink-muted)' : '3px solid var(--sfd-emerald)'
                       }}
                     >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
                         <span className="sfd-agenda-time">
                           {sTime} &ndash; {eTime} ({(e.durationMinutes / 60).toFixed(1)}h)
                         </span>
-                        <span className="sfd-agenda-desc">
+                        <span className="sfd-agenda-desc" style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                           {e.summary}
                         </span>
                       </div>
-                      <span className="sfd-agenda-price" style={{ color: isNonPaying ? 'var(--sfd-ink-muted)' : isTest ? '#d97706' : 'var(--sfd-emerald)' }}>
+                      <span className="sfd-agenda-price" style={{ color: isNonPaying ? 'var(--sfd-ink-muted)' : isTest ? '#d97706' : 'var(--sfd-emerald)', flexShrink: 0 }}>
                         {price}
                       </span>
                     </div>
