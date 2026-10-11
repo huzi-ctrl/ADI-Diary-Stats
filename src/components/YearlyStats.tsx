@@ -3,6 +3,7 @@ import type { CalendarEvent } from '../utils/icsParser';
 import { Clock, Percent, Activity, CalendarDays, Award, TrendingUp, Download, Sparkles, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { useYearlyMetrics } from '../hooks/useYearlyMetrics';
 import { formatMinsToTime, getMondayOfDate } from '../utils/yearlyCalculations';
+import { InfoPlacard } from './ui/InfoPlacard';
 
 interface YearlyStatsProps {
   instructorEvents: CalendarEvent[];
@@ -1460,8 +1461,17 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       <div className="kpi-grid">
         
         <div className="glass-card kpi-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span className="kpi-title">Total Teaching Hours</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="kpi-title">Total Teaching Hours</span>
+              <InfoPlacard
+                title="Total Teaching Hours"
+                badge="Annual Volume"
+                description="Cumulative instructional time spent delivering driving lessons across the selected year."
+                calculation="Sum of all lesson durations in hours from your parsed calendar events."
+                tip="Compare this year-over-year to gauge changes in your annual instructional workload."
+              />
+            </div>
             <Clock size={16} className="gradient-text" />
           </div>
           <div className="kpi-value">{globalSummary.totalHours.toFixed(0)} <span style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--text-muted)' }}>hrs</span></div>
@@ -1469,8 +1479,17 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         </div>
 
         <div className="glass-card kpi-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span className="kpi-title">Typical Weekly Ideal Span</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="kpi-title">Typical Weekly Ideal Span</span>
+              <InfoPlacard
+                title="Typical Weekly Ideal Span"
+                badge="Target Pace"
+                description="Average weekly teaching capacity target calculated from your historical scheduling profile or custom settings."
+                calculation="Represents your benchmark target working hours per typical operational week."
+                tip="Use this target to balance student booking density across all operating weeks."
+              />
+            </div>
             <CalendarDays size={16} className="gradient-text" />
           </div>
           <div className="kpi-value" style={{ color: 'var(--accent-indigo)' }}>
@@ -1480,8 +1499,17 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         </div>
 
         <div className="glass-card kpi-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span className="kpi-title">Average Fill Percentage</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="kpi-title">Average Fill Percentage</span>
+              <InfoPlacard
+                title="Average Fill Percentage"
+                badge="Annual Utilization"
+                description="Average utilization of your teaching capacity across all operating weeks of the year."
+                calculation="(Total Teaching Hours Delivered ÷ Total Ideal Capacity Target) × 100."
+                tip="An annual average between 75% and 85% provides high earnings while protecting against seasonal student cancellations."
+              />
+            </div>
             <Percent size={16} className="gradient-text" />
           </div>
           <div className="kpi-value" style={{ color: 'var(--accent-emerald)' }}>{globalSummary.avgFillPct.toFixed(0)}%</div>
@@ -1489,8 +1517,17 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         </div>
 
         <div className="glass-card kpi-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <span className="kpi-title">Estimated Total Earnings</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="kpi-title">Estimated Total Earnings</span>
+              <InfoPlacard
+                title="Estimated Total Earnings"
+                badge="Annual Gross"
+                description="Projected gross tuition earnings from driving lessons and practical driving test bookings over the calendar year."
+                calculation={`(Total Lessons × Hourly Rate) + (Driving Tests × Test Fee). Calculated from £${hourlyRate}/hr.`}
+                tip="Tracking annual earnings helps prepare accurate tax self-assessments and fuel expense budgeting."
+              />
+            </div>
             <Award size={16} className="gradient-text" />
           </div>
           <div className="kpi-value" style={{ color: 'var(--accent-cyan)' }}>

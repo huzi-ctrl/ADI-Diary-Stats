@@ -1792,3 +1792,22 @@
     transform: translateX(0);
   }
 }
+
+@keyframes placardPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.info-placard-trigger:hover {
+  background: var(--sfd-primary-soft, rgba(37, 99, 235, 0.12)) !important;
+  color: var(--sfd-primary, #2563eb) !important;
+  border-color: rgba(37, 99, 235, 0.35) !important;
+  transform: scale(1.08);
+}
+

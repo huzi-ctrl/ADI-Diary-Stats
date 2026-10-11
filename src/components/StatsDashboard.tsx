@@ -21,6 +21,7 @@ import {
   calculateVehicleCosts, 
   DEFAULT_VEHICLE_SETTINGS 
 } from '../utils/costEstimator';
+import { InfoPlacard } from './ui/InfoPlacard';
 
 const dayIndices = [1, 2, 3, 4, 5, 6, 0];
 const dayOfWeekNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -342,7 +343,16 @@ Analyze and return the JSON object.`;
         {/* Metric 1: Weekly Lessons */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Weekly Lessons</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="sfd-kpi-label">Weekly Lessons</span>
+              <InfoPlacard
+                title="Weekly Lessons"
+                badge="Activity"
+                description="Total driving lessons scheduled in your calendar for this week (Monday through Sunday)."
+                calculation="Count of calendar events identified as student tuition, distinguishing paying lessons from complimentary sessions."
+                tip="Free or introductory lessons are tracked separately so your billable averages aren't skewed."
+              />
+            </div>
           </div>
           <div className="sfd-kpi-value">{lessonsOnly.length}</div>
           <div className="sfd-kpi-meta">
@@ -355,7 +365,16 @@ Analyze and return the JSON object.`;
         {/* Metric 2: Billable Teaching Hours */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Teaching Hours</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="sfd-kpi-label">Teaching Hours</span>
+              <InfoPlacard
+                title="Teaching Hours"
+                badge="Workload"
+                description="Total scheduled hours spent in-car instructing students during the active week."
+                calculation="Sum of individual lesson durations in hours. Introductory and non-paying drives are tracked separately."
+                tip="Monitor this against your weekly target bandwidth to avoid burnout or fatigue behind the wheel."
+              />
+            </div>
           </div>
           <div className="sfd-kpi-value">
             {totalTeachHours}<span style={{ fontSize: '0.65em', fontWeight: 600, color: 'var(--sfd-ink-muted)', marginLeft: '2px' }}>h</span>
@@ -370,7 +389,16 @@ Analyze and return the JSON object.`;
         {/* Metric 3: Estimated Revenue */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Weekly Revenue</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="sfd-kpi-label">Weekly Revenue</span>
+              <InfoPlacard
+                title="Weekly Gross & Net Revenue"
+                badge="Net Take-Home"
+                description="Projected gross lesson revenue alongside your estimated net take-home profit after deducting vehicle operating expenses."
+                calculation={`Gross = (£${hourlyRate} × ${totalTeachHours}h)${weeklyTestEarnings > 0 ? ` + £${weeklyTestEarnings} tests` : ''}. Net = Gross − Estimated Vehicle Expenses (£${vehicleCosts.totalCost.toFixed(0)} fuel & wear at ${vehicleCostSettings.milesPerHour} mph).`}
+                tip="Fine-tune fuel price, fuel economy (MPG/EV), and speed in Settings to match your vehicle's real costs."
+              />
+            </div>
             <span 
               className="sfd-kpi-badge emerald" 
               title={`Net take-home profit: £${vehicleCosts.netRevenue.toFixed(0)} (${vehicleCosts.profitMargin.toFixed(0)}% margin after £${vehicleCosts.totalCost.toFixed(0)} vehicle expenses)`}
@@ -397,7 +425,16 @@ Analyze and return the JSON object.`;
         {/* Metric 4: Capacity Fill Rate */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Capacity Fill</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="sfd-kpi-label">Capacity Fill</span>
+              <InfoPlacard
+                title="Capacity Fill Rate"
+                badge="Utilization"
+                description="Measures how full your weekly diary is relative to your configured weekly capacity target."
+                calculation={`(${totalTeachHours}h booked ÷ ${(hoursNumber + thisWeekStats.freeHours).toFixed(1)}h target capacity) × 100 = ${thisWeekStats.fillPct}%.`}
+                tip="A sustainable target is 75%–90%. Operating above 95% leaves little buffer for traffic delays, pupil pickups, or cancellations."
+              />
+            </div>
             <span className={`sfd-kpi-badge ${thisWeekStats.fillPct >= 75 ? 'emerald' : thisWeekStats.fillPct >= 50 ? 'amber' : 'coral'}`}>
               {thisWeekStats.fillPct >= 100 ? 'Full' : `${thisWeekStats.fillPct}%`}
             </span>
@@ -426,6 +463,13 @@ Analyze and return the JSON object.`;
                   <TrendingUp size={18} />
                 </div>
                 <h2 className="sfd-card-heading">Upcoming Capacity & Booking Flow</h2>
+                <InfoPlacard
+                  title="Upcoming Capacity & Booking Flow"
+                  badge="3-Week Pulse"
+                  description="Compares student booking volume and available bandwidth across the active week and the next two upcoming weeks."
+                  calculation="Analyzes total teaching hours scheduled per week against your configured capacity ceiling."
+                  tip="Look ahead 2 weeks to identify booking slumps early and offer open slots to eager pupils on your waiting list."
+                />
               </div>
               <span className="sfd-card-tag">3-Week Capacity Pulse</span>
             </div>
@@ -526,6 +570,13 @@ Analyze and return the JSON object.`;
                   <BarChart3 size={18} />
                 </div>
                 <h2 className="sfd-card-heading">Weekly Teaching Workload</h2>
+                <InfoPlacard
+                  title="Weekly Teaching Workload"
+                  badge="Mon – Sun Pacing"
+                  description="Visual daily breakdown of teaching hours booked across Monday through Sunday."
+                  calculation="Aggregates individual lesson durations for each day from your connected calendar."
+                  tip="Look for uneven workloads—clustering too many hours on back-to-back days causes instructor fatigue."
+                />
               </div>
               <span className="sfd-card-tag">Mon &ndash; Sun Pacing</span>
             </div>
@@ -575,6 +626,13 @@ Analyze and return the JSON object.`;
                   <Activity size={18} />
                 </div>
                 <h2 className="sfd-card-heading">Lesson Time-of-Day Slots</h2>
+                <InfoPlacard
+                  title="Time-of-Day Slot Distribution"
+                  badge="Timing Insights"
+                  description="Categorizes lessons by student appointment time: Morning (6am–12pm), Afternoon (12pm–6pm), Evening (6pm–12am), and Night (12am–6am)."
+                  calculation="Calculates percentage share and slot counts across each time window based on lesson start times."
+                  tip="Pupil demand is highest after 4pm and on weekends. Charging premium rates for peak evening slots can optimize income."
+                />
               </div>
               <span className="sfd-card-tag">Slot Distribution</span>
             </div>
@@ -615,9 +673,16 @@ Analyze and return the JSON object.`;
                   <Clock size={18} />
                 </div>
                 <h3 className="sfd-card-heading">Schedule Summary</h3>
+                <InfoPlacard
+                  title="Schedule Summary"
+                  badge="Active Week"
+                  description="Consolidated overview of active week billable tuition, hourly rates, available buffer time, and pacing health."
+                  tip="Consistent scheduling habits keep pupil cancellations low and maintain steady weekly income."
+                />
               </div>
               <span className="sfd-card-tag">Active Week</span>
             </div>
+
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '8px' }}>
@@ -665,11 +730,19 @@ Analyze and return the JSON object.`;
                   <Car size={18} />
                 </div>
                 <h3 className="sfd-card-heading">Vehicle Running Costs &amp; Net Take-Home</h3>
+                <InfoPlacard
+                  title="Vehicle Running Costs & Net Profit"
+                  badge="Cost Engine"
+                  description="Live calculation of fuel consumption and vehicle wear incurred while delivering this week's booked lessons."
+                  calculation={`Estimated Miles = ${totalTeachHours}h × ${vehicleCostSettings.milesPerHour} mph = ${Math.round(vehicleCosts.estimatedMiles)} mi. Fuel Spend = £${vehicleCosts.fuelCost.toFixed(0)}. Net Profit = Gross − £${vehicleCosts.totalCost.toFixed(0)} expenses.`}
+                  tip="Learner tuition involves high stop-start idling and low gears, which reduces real MPG by ~15-20% compared to highway cruising."
+                />
               </div>
               <span className="sfd-card-tag" style={{ textTransform: 'capitalize' }}>
                 {vehicleCostSettings.fuelType === 'electric' ? '⚡ EV' : vehicleCostSettings.fuelType === 'diesel' ? '🛢️ Diesel' : '⛽ Petrol'} ({vehicleCostSettings.efficiency} {vehicleCostSettings.fuelType === 'electric' ? 'mi/kWh' : 'MPG'})
               </span>
             </div>
+
 
             <p className="sfd-card-description" style={{ marginBottom: '12px' }}>
               Estimated operating expenditure based on active teaching hours, learner city driving, and wear.
@@ -737,7 +810,15 @@ Analyze and return the JSON object.`;
                     <Sparkles size={18} />
                   </div>
                   <h3 className="sfd-card-heading">AI Weekly Copilot</h3>
+                  <InfoPlacard
+                    title="AI Weekly Copilot"
+                    badge="Smart Coaching"
+                    description="Automated business coaching intelligence that reviews your diary structure, bottlenecks, and productivity pacing."
+                    calculation="Analyzes weekly distribution, gap ratios, and lesson times through secure client-side AI analysis."
+                    tip="Review the AI tips at the beginning of each week to eliminate scheduling bottlenecks and protect your rest days."
+                  />
                 </div>
+
                 {effectiveApiKey && (
                   <button
                     type="button"

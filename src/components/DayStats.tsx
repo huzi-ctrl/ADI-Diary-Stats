@@ -21,6 +21,7 @@ import {
   calculateVehicleCosts, 
   DEFAULT_VEHICLE_SETTINGS 
 } from '../utils/costEstimator';
+import { InfoPlacard } from './ui/InfoPlacard';
 
 interface DayStatsProps {
   allInstructorEvents?: CalendarEvent[];
@@ -477,7 +478,16 @@ export const DayStats: React.FC<DayStatsProps> = ({
         {/* Metric 1: Day Revenue */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Day Revenue</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="sfd-kpi-label">Day Revenue</span>
+              <InfoPlacard
+                title="Daily Revenue & Net Profit"
+                badge="Net Take-Home"
+                description="Projected tuition earnings for the selected date, highlighting net income after deducting daily fuel and vehicle costs."
+                calculation={`Gross = (£${hourlyRate} × ${simulatedTeachingHours.toFixed(1)}h)${dayTests.length > 0 ? ` + tests` : ''}. Net = Gross − Estimated Daily Running Costs (£${dayVehicleCosts.totalCost.toFixed(2)} at ${vehicleCostSettings?.milesPerHour || 25} mph).`}
+                tip="Net revenue reflects actual cash in hand after paying for pupil lesson fuel."
+              />
+            </div>
             <span 
               className="sfd-kpi-badge emerald"
               title={`Net take-home profit: £${dayVehicleCosts.netRevenue.toFixed(2)} (${dayVehicleCosts.profitMargin.toFixed(0)}% margin after £${dayVehicleCosts.totalCost.toFixed(2)} running expenses)`}
@@ -505,7 +515,16 @@ export const DayStats: React.FC<DayStatsProps> = ({
         {/* Metric 2: Billable Hours */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Teaching Hours</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="sfd-kpi-label">Teaching Hours</span>
+              <InfoPlacard
+                title="Daily Teaching Hours"
+                badge="Instruction Time"
+                description="Total billable instructional time booked for this day."
+                calculation="Sum of duration of all tuition lessons scheduled for today."
+                tip="Aim for balanced daily pacing to avoid driver fatigue."
+              />
+            </div>
           </div>
           <div className="sfd-kpi-value">
             {simulatedTeachingHours.toFixed(1)}<span style={{ fontSize: '0.65em', fontWeight: 600, color: 'var(--sfd-ink-muted)', marginLeft: '2px' }}>h</span>
@@ -520,7 +539,16 @@ export const DayStats: React.FC<DayStatsProps> = ({
         {/* Metric 3: Travel Buffers */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Transit Windows</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="sfd-kpi-label">Transit Windows</span>
+              <InfoPlacard
+                title="Transit Windows & Travel Time"
+                badge="Buffer Windows"
+                description="Total transition time available between lessons throughout today's schedule."
+                calculation="Sum of transit buffer intervals between consecutive pupil sessions."
+                tip="Maintaining 15–30 minutes between appointments allows comfortable travel between pupil pickup zones."
+              />
+            </div>
             <span className="sfd-kpi-badge amber">15m Buffer</span>
           </div>
           <div className="sfd-kpi-value">
@@ -536,7 +564,16 @@ export const DayStats: React.FC<DayStatsProps> = ({
         {/* Metric 4: Scheduling Efficiency & Dead Gaps */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Scheduling Flow</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="sfd-kpi-label">Scheduling Flow</span>
+              <InfoPlacard
+                title="Scheduling Flow Score"
+                badge="Compactness"
+                description="Pacing metric indicating how efficiently today's lessons are grouped together."
+                calculation="Higher scores indicate compact schedules with healthy travel windows and minimal wasted downtime."
+                tip="Fragmented 45–60 min gaps between lessons often cannot be filled and become unpaid waiting time."
+              />
+            </div>
             <span className={`sfd-kpi-badge ${efficiencyPct >= 80 ? 'emerald' : efficiencyPct >= 65 ? 'amber' : 'coral'}`}>
               {efficiencyPct}% Score
             </span>
@@ -564,7 +601,15 @@ export const DayStats: React.FC<DayStatsProps> = ({
                   <Clock size={18} />
                 </div>
                 <h2 className="sfd-card-heading">{selectedDayName} Schedule Flow</h2>
+                <InfoPlacard
+                  title={`${selectedDayName} Schedule Flow`}
+                  badge="Day Agenda"
+                  description="Interactive chronological timeline of your teaching sessions, buffer periods, and breaks across the selected day."
+                  calculation="Visualizes each booking's start and end times along with required transit buffer intervals."
+                  tip="Switch between the Vertical Timeline and horizontal Strip view depending on your screen size."
+                />
               </div>
+
               
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <span className="sfd-card-tag">{formatMinToTime(spanStartMin)} &ndash; {formatMinToTime(spanEndMin)} Span</span>
@@ -983,9 +1028,16 @@ export const DayStats: React.FC<DayStatsProps> = ({
                   <TrendingUp size={18} />
                 </div>
                 <h3 className="sfd-card-heading">Day Slots Distribution</h3>
+                <InfoPlacard
+                  title="Day Slots Distribution"
+                  badge="Breakdown"
+                  description="Detailed breakdown of the day's commitments separated into standard paid lessons, driving tests, travel buffers, and rest gaps."
+                  tip="Keep a balanced mix so driving test waiting periods don't erode your regular lesson income."
+                />
               </div>
               <span className="sfd-card-tag">{dayEvents.length} Slots Booked</span>
             </div>
+
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
               <div style={{ background: 'var(--sfd-surface-nested)', padding: '14px', borderRadius: '16px', border: '1px solid var(--sfd-border-hairline)', textAlign: 'center' }}>
@@ -1034,9 +1086,16 @@ export const DayStats: React.FC<DayStatsProps> = ({
                   <Calendar size={18} />
                 </div>
                 <h3 className="sfd-card-heading">{selectedDayName} Agenda</h3>
+                <InfoPlacard
+                  title={`${selectedDayName} Agenda`}
+                  badge="Appointments"
+                  description="Chronological schedule of student appointments, lesson start/finish times, and calculated fees."
+                  tip="Check student lesson pickup locations before departing to avoid delays in peak traffic."
+                />
               </div>
               <span className="sfd-card-tag">{dayEvents.length} Appointments</span>
             </div>
+
 
             {dayEvents.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '36px 16px', color: 'var(--sfd-ink-muted)' }}>
