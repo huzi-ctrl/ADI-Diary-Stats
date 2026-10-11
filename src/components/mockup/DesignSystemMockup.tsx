@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useLayoutEffect, useEffect } from 'react';
+import { useState, useRef, useCallback, useLayoutEffect, useEffect, useMemo } from 'react';
 import './design-system-mockup.css';
 import { 
   ChevronLeft, 
@@ -13,19 +13,93 @@ import {
   Settings, 
   ArrowUpRight,
   RefreshCw,
-  ShieldCheck
+  ShieldCheck,
+  Activity,
+  CheckCircle2
 } from 'lucide-react';
+import type { CalendarEvent } from '../../utils/icsParser';
+import { useWeeklyCapacity } from '../../hooks/useWeeklyCapacity';
 
 interface DesignSystemMockupProps {
   onDismissMockup?: () => void;
   isEmbeddedView?: boolean;
+  instructorEvents?: CalendarEvent[];
+  filteredOutEvents?: CalendarEvent[];
+  allInstructorEvents?: CalendarEvent[];
+  weekStart?: Date;
+  weekEnd?: Date;
+  hourlyRate?: number;
+  nonPayingList?: string[];
+  capacityMode?: 'historical' | 'custom';
+  customIdealHours?: Record<number, number>;
 }
 
-export function DesignSystemMockup({ onDismissMockup, isEmbeddedView = false }: DesignSystemMockupProps) {
+export function DesignSystemMockup({ 
+  onDismissMockup, 
+  isEmbeddedView = false,
+  instructorEvents = [],
+  filteredOutEvents = [],
+  allInstructorEvents = [],
+  weekStart,
+  weekEnd,
+  hourlyRate = 45,
+  nonPayingList = [],
+  capacityMode = 'historical',
+  customIdealHours,
+}: DesignSystemMockupProps) {
   const [activeTab, setActiveTab] = useState<'weekly' | 'yearly' | 'explorer' | 'settings'>('weekly');
   const [enableAi, setEnableAi] = useState(true);
   const [weekIndex, setWeekIndex] = useState(41);
-  const [isShiftSimulated, setIsShiftSimulated] = useState(false);
+
+  const fallbackNow = useMemo(() => new Date(), []);
+  const safeWeekStart = weekStart || fallbackNow;
+  const safeWeekEnd = weekEnd || fallbackNow;
+
+  // Real capacity and schedule calculations from user calendar
+  const {
+    now,
+    totalTeachHours,
+    lessonsOnly,
+    nonPayingLessons,
+    nonPayingTeachHours,
+    weeklyEarnings,
+    testBookings,
+    completedWeeklyLessons,
+    upcomingWeeklyLessons,
+    weeklyLessonsCompletionPct,
+    allFutureLessons,
+    allFutureTests,
+    thisWeekStats,
+    nextWeekStats,
+    twoWeeksOutStats,
+    nextWeekStart,
+    twoWeeksOutStart,
+    dayOfWeekHours,
+    maxDayHours,
+    dayIndices,
+    dayOfWeekNames,
+    timeOfDay: {
+      morningCount,
+      afternoonCount,
+      eveningCount,
+      nightCount,
+      morningPct,
+      afternoonPct,
+      eveningPct,
+      nightPct,
+    },
+    formatRemainingThisWeek,
+    formatDateShort,
+  } = useWeeklyCapacity({
+    instructorEvents,
+    allInstructorEvents,
+    weekStart: safeWeekStart,
+    weekEnd: safeWeekEnd,
+    hourlyRate,
+    nonPayingList,
+    capacityMode,
+    customIdealHours,
+  });
 
   const dockRef = useRef<HTMLElement>(null);
   const dockTabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -65,12 +139,6 @@ export function DesignSystemMockup({ onDismissMockup, isEmbeddedView = false }: 
     return () => window.removeEventListener('resize', updateSliders);
   }, [updateSliders]);
 
-  // Dynamic values that update when simulating AI recommendation
-  const billableHours = isShiftSimulated ? '35.0h' : '33.0h';
-  const billableRevenue = isShiftSimulated ? '£1,575.00' : '£1,485.00';
-  const deadGapHours = isShiftSimulated ? '0.75h' : '2.50h';
-  const fillRate = isShiftSimulated ? '92.1%' : '86.8%';
-
   return (
     <div className="sfd-mockup-root">
       {/* Prototype Pill Banner */}
@@ -81,8 +149,13 @@ export function DesignSystemMockup({ onDismissMockup, isEmbeddedView = false }: 
             COCKPIT STUDIO
           </span>
           <span className="sfd-prototype-text">
-            7:3 Split Schedule Visualizer • Live timeline caustics, smart travel buffers & shift simulation.
+            Schedule & Capacity Intelligence • Real weekly pacing, fill percentages & workload distribution.
           </span>
+          {filteredOutEvents.length > 0 && (
+            <span style={{ fontSize: '11px', color: 'var(--sfd-primary)', background: 'var(--sfd-primary-soft)', padding: '2px 8px', borderRadius: '9999px', border: '1px solid rgba(29, 78, 216, 0.15)' }}>
+              Hidden {filteredOutEvents.length} personal/rest events
+            </span>
+          )}
         </div>
         {onDismissMockup && (
           <button 
@@ -222,307 +295,321 @@ export function DesignSystemMockup({ onDismissMockup, isEmbeddedView = false }: 
       </header>
       )}
 
-      {/* Soft Sculpted KPI Cards */}
+      {/* Soft Sculpted KPI Cards - Real Weekly Metrics */}
       <section className="sfd-kpi-grid">
-        {/* Metric 1: Billable Revenue */}
+        {/* Metric 1: Weekly Lessons */}
+        <div className="sfd-kpi-card">
+          <div className="sfd-kpi-top">
+            <span className="sfd-kpi-label">Weekly Lessons</span>
+            <span className="sfd-kpi-badge emerald">
+              {lessonsOnly.length > 0 ? `${lessonsOnly.length} booked` : '0 booked'}
+            </span>
+          </div>
+          <div className="sfd-kpi-value">{lessonsOnly.length}</div>
+          <div className="sfd-kpi-meta">
+            <span className="sfd-kpi-sub font-editorial">
+              {lessonsOnly.length} paid &bull; {nonPayingLessons.length} free
+            </span>
+          </div>
+        </div>
+
+        {/* Metric 2: Billable Teaching Hours */}
+        <div className="sfd-kpi-card">
+          <div className="sfd-kpi-top">
+            <span className="sfd-kpi-label">Teaching Hours</span>
+            <span className="sfd-kpi-badge neutral">{totalTeachHours} hrs</span>
+          </div>
+          <div className="sfd-kpi-value">{totalTeachHours}<span style={{ fontSize: '20px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>h</span></div>
+          <div className="sfd-kpi-meta">
+            <span className="sfd-kpi-sub font-editorial">
+              {totalTeachHours}h paid &bull; {nonPayingTeachHours}h free
+            </span>
+          </div>
+        </div>
+
+        {/* Metric 3: Estimated Revenue */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Weekly Revenue</span>
-            <span className="sfd-kpi-badge emerald">
-              {isShiftSimulated ? '+14.8% YoY' : '+8.4% YoY'}
-            </span>
+            <span className="sfd-kpi-badge emerald">£{hourlyRate}/hr</span>
           </div>
-          <div className="sfd-kpi-value">{billableRevenue}</div>
+          <div className="sfd-kpi-value">£{weeklyEarnings.toLocaleString()}</div>
           <div className="sfd-kpi-meta">
             <ArrowUpRight size={14} style={{ color: 'var(--sfd-emerald)' }} />
-            <span>{isShiftSimulated ? '16 appointments • £45/hr' : '15 appointments • £45/hr'}</span>
-          </div>
-        </div>
-
-        {/* Metric 2: Billable Hours */}
-        <div className="sfd-kpi-card">
-          <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Billable Hours</span>
-            <span className="sfd-kpi-badge emerald">{fillRate} Capacity</span>
-          </div>
-          <div className="sfd-kpi-value">{billableHours}</div>
-          <div className="sfd-kpi-meta">
-            <span>Goal: 38.0h ideal target</span>
-          </div>
-        </div>
-
-        {/* Metric 3: Travel Buffers */}
-        <div className="sfd-kpi-card">
-          <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Transit Windows</span>
-            <span className="sfd-kpi-badge amber">15m Standard</span>
-          </div>
-          <div className="sfd-kpi-value">3.75h</div>
-          <div className="sfd-kpi-meta">
-            <span>Automated travel buffers</span>
-          </div>
-        </div>
-
-        {/* Metric 4: Dead Gaps */}
-        <div className="sfd-kpi-card">
-          <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Unusable Gaps</span>
-            <span className={`sfd-kpi-badge ${isShiftSimulated ? 'emerald' : 'coral'}`}>
-              {isShiftSimulated ? 'Optimal' : 'Recoverable'}
+            <span className="sfd-kpi-sub font-editorial">
+              {totalTeachHours}h @ £{hourlyRate}/hr
             </span>
           </div>
-          <div className="sfd-kpi-value" style={{ color: isShiftSimulated ? 'var(--sfd-emerald)' : 'var(--sfd-coral)' }}>
-            {deadGapHours}
+        </div>
+
+        {/* Metric 4: Capacity Fill Rate */}
+        <div className="sfd-kpi-card">
+          <div className="sfd-kpi-top">
+            <span className="sfd-kpi-label">Capacity Fill</span>
+            <span className={`sfd-kpi-badge ${thisWeekStats.fillPct >= 75 ? 'emerald' : thisWeekStats.fillPct >= 50 ? 'amber' : 'coral'}`}>
+              {thisWeekStats.fillPct}% Utilization
+            </span>
           </div>
+          <div className="sfd-kpi-value">{thisWeekStats.fillPct}%</div>
           <div className="sfd-kpi-meta">
-            <span>{isShiftSimulated ? 'Schedule fully smoothed' : 'Gaps under 90 minutes'}</span>
+            <span className="sfd-kpi-sub font-editorial">
+              {thisWeekStats.freeHours.toFixed(1)}h free bandwidth remaining
+            </span>
           </div>
         </div>
       </section>
 
-      {/* Main Split: Smooth Visualizer + Agenda */}
+      {/* Main Split: Real Weekly Capacity, Pacing & Pacing Analytics */}
       <main className="sfd-cockpit-split">
-        {/* Left Column: Schedule Capacity Timeline Visualizer */}
-        <div className="sfd-card-container">
-          <div className="sfd-card-header">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
-                <Calendar size={18} />
+        {/* Left Column: Real Weekly Overview Info */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* Card 1: Upcoming Capacity & Fill Rates */}
+          <div className="sfd-card-container">
+            <div className="sfd-card-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
+                  <TrendingUp size={18} />
+                </div>
+                <h2 className="sfd-card-heading">Upcoming Capacity & Booking Flow</h2>
               </div>
-              <h2 className="sfd-card-heading">Friday Schedule & Capacity Flow</h2>
-            </div>
-            <span className="sfd-card-tag">08:00 – 18:00 Span</span>
-          </div>
-
-          <p className="sfd-card-description">
-            Real-time visualization of booked appointments, injected 15-minute transit buffers, and unbookable calendar gaps.
-          </p>
-
-          {/* Fluid Capsule Timeline Track */}
-          <div className="sfd-timeline-box">
-            <div className="sfd-timeline-scale">
-              <span>08:00</span>
-              <span>10:00</span>
-              <span>12:00</span>
-              <span>14:00</span>
-              <span>16:00</span>
-              <span>18:00</span>
+              <span className="sfd-card-tag">3-Week Capacity Pulse</span>
             </div>
 
-            <div className="sfd-timeline-track" title="Hover capsules to inspect lesson details">
-              {/* 08:30 - 10:30 Lesson Sarah M. */}
-              <div 
-                className="sfd-time-block sfd-time-lesson" 
-                style={{ width: '22%' }}
-                title="08:30 - 10:30: Sarah M. (2h Lesson • £90.00)"
-              >
-                Sarah M. (2h)
-              </div>
+            <p className="sfd-card-description">
+              Real-time booking fill percentages and available bandwidth across the active and upcoming weeks.
+            </p>
 
-              {/* 10:30 - 10:45 Buffer */}
-              <div 
-                className="sfd-time-block sfd-time-buffer" 
-                style={{ width: '4%' }}
-                title="10:30 - 10:45: 15m Transit Window"
-              >
-                15m
-              </div>
-
-              {/* 10:45 - 12:45 Lesson James B. */}
-              <div 
-                className="sfd-time-block sfd-time-lesson" 
-                style={{ width: '22%' }}
-                title="10:45 - 12:45: James B. (2h Lesson • £90.00)"
-              >
-                James B. (2h)
-              </div>
-
-              {/* 12:45 - 13:00 Buffer */}
-              <div 
-                className="sfd-time-block sfd-time-buffer" 
-                style={{ width: '4%' }}
-                title="12:45 - 13:00: 15m Transit Window"
-              >
-                15m
-              </div>
-
-              {/* Fragmented Dead Gap vs Shifted Slot */}
-              {isShiftSimulated ? (
-                <>
-                  {/* Recovered lesson slot! */}
-                  <div 
-                    className="sfd-time-block sfd-time-lesson" 
-                    style={{ width: '20%' }}
-                    title="13:00 - 14:45: Recovered Lesson Slot (+£78.75)"
-                  >
-                    +Slot Booked (1.75h)
-                  </div>
-                  <div 
-                    className="sfd-time-block sfd-time-buffer" 
-                    style={{ width: '4%' }}
-                    title="14:45 - 15:00: Transit Window"
-                  >
-                    15m
-                  </div>
-                  <div 
-                    className="sfd-time-block sfd-time-lesson" 
-                    style={{ width: '24%' }}
-                    title="15:00 - 17:00: David K. (2h Mock Test • £90.00)"
-                  >
-                    David K. (2h Mock)
-                  </div>
-                </>
-              ) : (
-                <>
-                  {/* Unusable Dead Gap: 13:00 - 14:15 */}
-                  <div 
-                    className="sfd-time-block sfd-time-deadgap" 
-                    style={{ width: '15%' }}
-                    title="13:00 - 14:15: Unusable Gap (1h 15m) • Too short for standard lesson"
-                  >
-                    Unusable Gap (1h 15m)
-                  </div>
-
-                  {/* 14:15 - 16:15 Lesson David K. */}
-                  <div 
-                    className="sfd-time-block sfd-time-lesson" 
-                    style={{ width: '22%' }}
-                    title="14:15 - 16:15: David K. (2h Mock Test • £90.00)"
-                  >
-                    David K. (2h Mock)
-                  </div>
-
-                  {/* Buffer */}
-                  <div 
-                    className="sfd-time-block sfd-time-buffer" 
-                    style={{ width: '4%' }}
-                    title="16:15 - 16:30: Transit Window"
-                  >
-                    15m
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          {/* Timeline Legend */}
-          <div className="sfd-timeline-legend">
-            <div className="sfd-legend-item">
-              <span className="sfd-legend-swatch" style={{ background: 'var(--sfd-emerald)' }} />
-              <span>Billable Lessons</span>
-            </div>
-            <div className="sfd-legend-item">
-              <span className="sfd-legend-swatch" style={{ background: 'var(--sfd-amber-soft)', border: '1px dashed var(--sfd-amber)' }} />
-              <span>15m Travel Buffers</span>
-            </div>
-            <div className="sfd-legend-item">
-              <span className="sfd-legend-swatch" style={{ background: 'var(--sfd-coral-soft)', border: '1px dashed var(--sfd-coral)' }} />
-              <span>Unusable Gaps (&lt; 90m)</span>
-            </div>
-          </div>
-
-          {/* Editorial AI Insight Card */}
-          {enableAi && (
-            <div className="sfd-ai-badge">
-              <div className="sfd-ai-badge-top">
-                <span className="sfd-ai-badge-title">
-                  <Sparkles size={15} />
-                  Contextual Schedule Opportunity
-                </span>
-                <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>
-                  Executive Copilot
+            {/* Active Week Lesson Progress */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', background: 'var(--sfd-surface-nested)', padding: '14px 18px', borderRadius: '18px', border: '1px solid var(--sfd-border-hairline)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)', fontWeight: 500 }}>Active Week Lesson Completion</span>
+                <span style={{ fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>
+                  {completedWeeklyLessons} / {lessonsOnly.length} Completed ({weeklyLessonsCompletionPct}%)
                 </span>
               </div>
+              <div style={{ height: '12px', background: 'rgba(15, 23, 42, 0.06)', borderRadius: '9999px', overflow: 'hidden', padding: '2px', border: '1px solid var(--sfd-border-hairline)' }}>
+                <div style={{ 
+                  width: `${weeklyLessonsCompletionPct}%`, 
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #059669 0%, #2563eb 100%)', 
+                  borderRadius: '9999px',
+                  transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
+                }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--sfd-ink-faint)' }}>
+                <span>Completed: {completedWeeklyLessons} lessons</span>
+                <span>Remaining: {upcomingWeeklyLessons} lessons</span>
+              </div>
+            </div>
 
-              <p className="sfd-ai-badge-body">
-                {isShiftSimulated ? (
-                  <>
-                    <strong style={{ color: 'var(--sfd-emerald)' }}>Optimization Active:</strong> By shifting David K., you unlocked a continuous 1 hour 45 minute lesson opening at 13:00. Weekly billable earnings increased by £90.00.
-                  </>
-                ) : (
-                  <>
-                    You have an unbookable <strong>1h 15m gap</strong> between 13:00 and 14:15 on Friday. Moving David K. back by 45 minutes joins this fragmented time into a bookable 1h 45m lesson opening.
-                  </>
-                )}
-              </p>
-
-              <div className="sfd-ai-badge-action-bar">
-                <button
-                  type="button"
-                  className="sfd-ai-badge-action-btn sfd-char-hover"
-                  onClick={() => setIsShiftSimulated(prev => !prev)}
-                >
-                  <span className="sfd-char-wave">
-                    {(isShiftSimulated ? 'Reset to Original Schedule' : 'Simulate Schedule Shift (+£90.00)').split('').map((c, i) => (
-                      <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.02}s` }}>{c === ' ' ? '\u00A0' : c}</span>
-                    ))}
+            {/* 3-Week Fill Rate Bars */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginTop: '4px' }}>
+              {/* This Week */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--sfd-ink-primary)' }}>
+                    This Week ({formatRemainingThisWeek()})
                   </span>
-                </button>
-                <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>
-                  {isShiftSimulated ? 'Revenue recalculated dynamically' : 'Pure simulation • No calendar changes made'}
-                </span>
+                  <span style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--sfd-emerald)' }}>
+                    {thisWeekStats.fillPct}% filled &bull; {thisWeekStats.freeHours.toFixed(1)}h free
+                  </span>
+                </div>
+                <div style={{ width: '100%', background: 'var(--sfd-surface-nested)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
+                  <div style={{ width: `${Math.min(thisWeekStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #059669 0%, #10b981 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
+                </div>
+              </div>
+
+              {/* Next Week */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--sfd-ink-primary)' }}>
+                    Next Week ({nextWeekStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })})
+                  </span>
+                  <span style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--sfd-primary)' }}>
+                    {nextWeekStats.fillPct}% filled &bull; {nextWeekStats.freeHours.toFixed(1)}h free
+                  </span>
+                </div>
+                <div style={{ width: '100%', background: 'var(--sfd-surface-nested)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
+                  <div style={{ width: `${Math.min(nextWeekStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
+                </div>
+              </div>
+
+              {/* Week After Next */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--sfd-ink-primary)' }}>
+                    Week after Next ({twoWeeksOutStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })})
+                  </span>
+                  <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#6366f1' }}>
+                    {twoWeeksOutStats.fillPct}% filled &bull; {twoWeeksOutStats.freeHours.toFixed(1)}h free
+                  </span>
+                </div>
+                <div style={{ width: '100%', background: 'var(--sfd-surface-nested)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
+                  <div style={{ width: `${Math.min(twoWeeksOutStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #6366f1 0%, #818cf8 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
+                </div>
               </div>
             </div>
-          )}
+
+            {/* Future Lesson & Test Pill Counter Badges */}
+            <div style={{ display: 'flex', gap: '12px', marginTop: '4px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--sfd-surface-nested)', padding: '8px 16px', borderRadius: '9999px', border: '1px solid var(--sfd-border-subtle)' }}>
+                <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--sfd-primary)' }}>{allFutureLessons.length}</span>
+                <span style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--sfd-ink-secondary)' }}>All Future Lessons</span>
+              </div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--sfd-emerald-soft)', padding: '8px 16px', borderRadius: '9999px', border: '1px solid var(--sfd-emerald-border)' }}>
+                <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--sfd-emerald)' }}>{allFutureTests.length}</span>
+                <span style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--sfd-ink-secondary)' }}>Future Practical Tests</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Weekly Teaching Workload (Monday – Sunday) */}
+          <div className="sfd-card-container">
+            <div className="sfd-card-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
+                  <BarChart3 size={18} />
+                </div>
+                <h2 className="sfd-card-heading">Weekly Teaching Workload</h2>
+              </div>
+              <span className="sfd-card-tag">Mon &ndash; Sun Pacing</span>
+            </div>
+
+            <p className="sfd-card-description">
+              Daily distribution of booked driving lessons throughout the current week.
+            </p>
+
+            <div className="sfd-workload-chart">
+              {dayIndices.map((dayIdx, i) => {
+                const hours = dayOfWeekHours[dayIdx];
+                const heightPct = maxDayHours > 0 ? (hours / maxDayHours) * 100 : 0;
+                return (
+                  <div key={dayIdx} className="sfd-workload-col">
+                    <span className="sfd-workload-val">
+                      {hours > 0 ? `${hours.toFixed(1)}h` : ''}
+                    </span>
+                    <div className="sfd-workload-bar-track">
+                      <div 
+                        className={`sfd-workload-bar ${hours === 0 ? 'empty' : ''}`}
+                        style={{ height: hours > 0 ? `${Math.max(heightPct, 8)}%` : '6px' }}
+                        title={`${dayOfWeekNames[i]}: ${hours.toFixed(1)} lesson hours`}
+                      />
+                    </div>
+                    <span className="sfd-workload-day">{dayOfWeekNames[i]}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Card 3: Lesson Time-of-Day Slots */}
+          <div className="sfd-card-container">
+            <div className="sfd-card-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
+                  <Activity size={18} />
+                </div>
+                <h2 className="sfd-card-heading">Lesson Time-of-Day Slots</h2>
+              </div>
+              <span className="sfd-card-tag">Slot Distribution</span>
+            </div>
+
+            <div className="sfd-timeofday-grid">
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Morning (6am &ndash; 12pm)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-primary)' }}>{morningPct}%</span>
+                <span className="sfd-timeofday-sub">{morningCount} slots</span>
+              </div>
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Afternoon (12pm &ndash; 6pm)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-ink-primary)' }}>{afternoonPct}%</span>
+                <span className="sfd-timeofday-sub">{afternoonCount} slots</span>
+              </div>
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Evening (6pm &ndash; 12am)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-emerald)' }}>{eveningPct}%</span>
+                <span className="sfd-timeofday-sub">{eveningCount} slots</span>
+              </div>
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Night (12am &ndash; 6am)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-amber)' }}>{nightPct}%</span>
+                <span className="sfd-timeofday-sub">{nightCount} slots</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Right Column: Daily Agenda */}
-        <div className="sfd-sidebar-col">
+        {/* Right Column: Executive Summary & Details */}
+        <div className="sfd-sidebar-col" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* Card: Active Week Summary */}
           <div className="sfd-card-container">
             <div className="sfd-card-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-surface-nested)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-ink-primary)' }}>
                   <Clock size={18} />
                 </div>
-                <h3 className="sfd-card-heading">Friday Agenda</h3>
+                <h3 className="sfd-card-heading">Schedule Summary</h3>
               </div>
-              <span className="sfd-card-tag">{isShiftSimulated ? '4 Lessons' : '3 Lessons'}</span>
+              <span className="sfd-card-tag">Active Week</span>
             </div>
 
-            <div className="sfd-agenda-list">
-              <div className="sfd-agenda-item">
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span className="sfd-agenda-time">08:30 – 10:30</span>
-                  <span className="sfd-agenda-desc">Sarah M. (Standard 2h)</span>
-                </div>
-                <span className="sfd-agenda-price">£90</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '8px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Week Span</span>
+                <strong style={{ color: 'var(--sfd-ink-primary)' }}>{formatDateShort(safeWeekStart)} &ndash; {formatDateShort(safeWeekEnd)}</strong>
               </div>
-
-              <div className="sfd-agenda-item">
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span className="sfd-agenda-time">10:45 – 12:45</span>
-                  <span className="sfd-agenda-desc">James B. (Manoeuvres)</span>
-                </div>
-                <span className="sfd-agenda-price">£90</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '8px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Status As Of</span>
+                <span style={{ color: 'var(--sfd-ink-secondary)' }}>{now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
               </div>
-
-              {isShiftSimulated && (
-                <div className="sfd-agenda-item" style={{ background: 'var(--sfd-emerald-soft)', border: '1px solid var(--sfd-emerald-border)' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span className="sfd-agenda-time" style={{ color: 'var(--sfd-emerald)' }}>13:00 – 14:45</span>
-                    <span className="sfd-agenda-desc">New Pupil (Slot Filled)</span>
-                  </div>
-                  <span className="sfd-agenda-price" style={{ color: 'var(--sfd-emerald)' }}>+£90</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '8px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Hourly Rate</span>
+                <strong style={{ color: 'var(--sfd-ink-primary)' }}>£{hourlyRate}/hr</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '8px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Booked Lessons</span>
+                <strong style={{ color: 'var(--sfd-ink-primary)' }}>{lessonsOnly.length} lessons ({totalTeachHours}h)</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '8px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Free Bandwidth</span>
+                <strong style={{ color: 'var(--sfd-emerald)' }}>{thisWeekStats.freeHours.toFixed(1)}h available</strong>
+              </div>
+              {nonPayingLessons.length > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+                  <span style={{ color: 'var(--sfd-ink-muted)' }}>Non-Paying</span>
+                  <span style={{ color: 'var(--sfd-ink-secondary)' }}>{nonPayingLessons.length} lessons ({nonPayingTeachHours}h)</span>
                 </div>
               )}
-
-              <div className="sfd-agenda-item">
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span className="sfd-agenda-time">{isShiftSimulated ? '15:00 – 17:00' : '14:15 – 16:15'}</span>
-                  <span className="sfd-agenda-desc">David K. (DVSA Mock Test)</span>
-                </div>
-                <span className="sfd-agenda-price">£90</span>
-              </div>
             </div>
 
-            {/* Subtle Bottleneck Callout */}
-            <div style={{ background: 'var(--sfd-surface-nested)', padding: '14px 16px', borderRadius: '18px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <TrendingUp size={16} style={{ color: 'var(--sfd-primary)' }} />
+            {/* Health Badge */}
+            <div style={{ background: 'var(--sfd-surface-nested)', padding: '14px 16px', borderRadius: '18px', display: 'flex', alignItems: 'center', gap: '10px', marginTop: '4px' }}>
+              <CheckCircle2 size={16} style={{ color: 'var(--sfd-emerald)' }} />
               <div style={{ fontSize: '13px', color: 'var(--sfd-ink-secondary)', lineHeight: 1.4 }}>
-                <strong>Bottleneck Day:</strong> Friday accounts for 42% of your weekly unbookable gaps.
+                <strong>Pacing Status:</strong> {thisWeekStats.fillPct >= 80 ? 'High booking capacity week.' : thisWeekStats.fillPct >= 50 ? 'Well-balanced teaching schedule.' : 'Open lesson slots available for new students.'}
               </div>
             </div>
           </div>
+
+          {/* Card: Tests & Practical Exams */}
+          {testBookings.length > 0 && (
+            <div className="sfd-card-container">
+              <div className="sfd-card-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-amber-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#92400e' }}>
+                    <Calendar size={18} />
+                  </div>
+                  <h3 className="sfd-card-heading">Practical Driving Tests</h3>
+                </div>
+                <span className="sfd-card-tag" style={{ color: '#92400e' }}>{testBookings.length} This Week</span>
+              </div>
+              <p style={{ fontSize: '13px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.5 }}>
+                You have {testBookings.length} driving test appointments scheduled this week ({allFutureTests.length} total across calendar).
+              </p>
+            </div>
+          )}
 
           {/* Local-First Privacy Card */}
           <div className="sfd-card-container">

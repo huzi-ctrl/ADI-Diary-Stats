@@ -647,8 +647,119 @@
   color: var(--sfd-ink-secondary);
   background: var(--sfd-surface-nested);
   padding: 4px 11px;
-  border-radius: 9999px;
   border: 1px solid var(--sfd-border-subtle);
+}
+
+/* Workload Bar Chart */
+.sfd-workload-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 200px;
+  padding: 16px 8px 8px 8px;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.sfd-workload-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 44px;
+  height: 100%;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.sfd-workload-val {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sfd-ink-primary);
+  height: 16px;
+}
+
+.sfd-workload-bar-track {
+  height: 130px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.sfd-workload-bar {
+  width: 38px;
+  max-width: 100%;
+  border-radius: 9999px 9999px 10px 10px;
+  background: linear-gradient(180deg, #1d4ed8 0%, #2563eb 60%, #3b82f6 100%);
+  box-shadow: 0 4px 14px rgba(29, 78, 216, 0.25);
+  transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s ease;
+  cursor: pointer;
+}
+
+.sfd-workload-bar:hover {
+  transform: scaleY(1.03);
+  filter: brightness(1.1);
+}
+
+.sfd-workload-bar.empty {
+  background: var(--sfd-surface-nested);
+  border: 1px dashed var(--sfd-border-subtle);
+  box-shadow: none;
+}
+
+.sfd-workload-day {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sfd-ink-secondary);
+}
+
+/* Time of Day Slots */
+.sfd-timeofday-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .sfd-timeofday-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.sfd-timeofday-card {
+  background: var(--sfd-surface-nested);
+  border: 1px solid var(--sfd-border-hairline);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  transition: all 0.2s var(--sfd-ease-fluid);
+}
+
+.sfd-timeofday-card:hover {
+  border-color: var(--sfd-border-subtle);
+  transform: translateY(-2px);
+}
+
+.sfd-timeofday-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sfd-ink-muted);
+}
+
+.sfd-timeofday-pct {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sfd-timeofday-sub {
+  font-size: 12px;
+  color: var(--sfd-ink-faint);
 }
 
 /* Fluid Capsule Timeline Track */

@@ -460,6 +460,15 @@ function App() {
               <DesignSystemMockup 
                 isEmbeddedView 
                 onDismissMockup={() => setViewMode('dashboard')} 
+                instructorEvents={weekInstructorEvents} 
+                filteredOutEvents={weekFilteredOutEvents} 
+                allInstructorEvents={instructorEvents} 
+                weekStart={currentWeekStart} 
+                weekEnd={weekEnd} 
+                hourlyRate={hourlyRate} 
+                nonPayingList={nonPayingList} 
+                capacityMode={capacityMode} 
+                customIdealHours={customIdealHours} 
               />
             ) : viewMode === 'yearly' ? (
               <YearlyStats 
