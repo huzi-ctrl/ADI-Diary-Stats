@@ -127,18 +127,34 @@ export function calculateIdealSchedules(
     const activeDates = Object.values(lessonsByDayOfWeek[day]);
     if (activeDates.length > 0) {
       const spans: number[] = [];
+      const starts: number[] = [];
+      const ends: number[] = [];
+      
       activeDates.forEach(events => {
         const sorted = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
         const firstStart = sorted[0].start;
         const lastEnd = sorted[sorted.length - 1].end;
+        
+        const startMins = firstStart.getHours() * 60 + firstStart.getMinutes();
+        const endMins = lastEnd.getHours() * 60 + lastEnd.getMinutes();
         const spanMins = (lastEnd.getTime() - firstStart.getTime()) / 60000;
+        
+        starts.push(startMins);
+        ends.push(endMins);
         spans.push(spanMins + 30); // Add standard 30 min travel buffer to the span
       });
       
       spans.sort((a, b) => a - b);
+      starts.sort((a, b) => a - b);
+      ends.sort((a, b) => a - b);
+      
       const mid = Math.floor(spans.length / 2);
       const medianSpanMins = spans.length % 2 !== 0 ? spans[mid] : (spans[mid - 1] + spans[mid]) / 2;
+      const medianStartMins = Math.round(starts.length % 2 !== 0 ? starts[mid] : (starts[mid - 1] + starts[mid]) / 2);
+      const medianEndMins = Math.round(ends.length % 2 !== 0 ? ends[mid] : (ends[mid - 1] + ends[mid]) / 2);
       
+      schedules[day].startMinutes = medianStartMins;
+      schedules[day].endMinutes = medianEndMins;
       schedules[day].spanHours = medianSpanMins / 60;
     }
   }

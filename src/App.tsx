@@ -47,6 +47,10 @@ function App() {
     setAiApiKey,
     googleClientId,
     outlookClientId,
+    excludedYears,
+    setExcludedYears,
+    exportSettings,
+    importSettings,
   } = useUserSettings();
 
   // Navigation action bridge for safe callback execution
@@ -461,6 +465,7 @@ function App() {
                 aiProvider={aiProvider}
                 aiModel={aiModel}
                 aiApiKey={aiApiKey}
+                excludedYears={excludedYears}
               />
             ) : viewMode === 'events' ? (
               <EventList 
@@ -500,8 +505,12 @@ function App() {
                       className="select-input" 
                       style={{ padding: '0.6rem 0.8rem', width: '100%', fontSize: '0.9rem' }}
                       min="0"
-                      value={hourlyRate}
-                      onChange={(e) => setHourlyRate(parseFloat(e.target.value) || 0)}
+                      value={hourlyRate === 0 ? '' : hourlyRate}
+                      placeholder="0"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setHourlyRate(val === '' ? 0 : parseFloat(val) || 0);
+                      }}
                     />
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
                       Standard rate charged for lessons. Used to estimate weekly and annual earnings.
@@ -696,17 +705,115 @@ function App() {
                     )}
                   </div>
 
+                  {/* Excluded Years from Analytics */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', gridColumn: '1 / -1', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem', marginTop: '0.5rem' }}>
+                    <label style={{ fontSize: '0.95rem', color: 'var(--text-main)', fontWeight: 600 }}>
+                      Exclude Calendar Years from Statistics (Partial / Inactive Work)
+                    </label>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      Exclude years with incomplete data (e.g. only started late in the year, or future forward-bookings) so they don&apos;t skew your multi-year performance and average booking rates.
+                    </span>
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
+                      {availableYears.map(yr => {
+                        const isExcluded = excludedYears.includes(yr);
+                        return (
+                          <label key={yr} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: isExcluded ? 'rgba(239, 68, 68, 0.08)' : 'var(--sfd-surface-nested)', border: `1px solid ${isExcluded ? 'rgba(239, 68, 68, 0.3)' : 'var(--sfd-border-hairline)'}`, padding: '6px 14px', borderRadius: '9999px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, color: isExcluded ? '#ef4444' : 'var(--text-main)' }}>
+                            <input 
+                              type="checkbox"
+                              checked={isExcluded}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setExcludedYears(prev => [...prev, yr]);
+                                } else {
+                                  setExcludedYears(prev => prev.filter(y => y !== yr));
+                                }
+                              }}
+                              style={{ cursor: 'pointer' }}
+                            />
+                            <span>{yr} {isExcluded ? '(Excluded)' : ''}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Zero-Scope Cross-Device Sync */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', gridColumn: '1 / -1', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem', marginTop: '0.5rem' }}>
+                    <label style={{ fontSize: '0.95rem', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <RefreshCw size={16} className="gradient-text" style={{ color: 'var(--sfd-primary)' }} />
+                      Cross-Device Settings Backup &amp; Sync
+                    </label>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      Quickly transfer your hourly rate, non-paying student profiles, and target hours to another phone, tablet, or PC without needing an account or cloud permissions.
+                    </span>
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
+                      <button 
+                        type="button" 
+                        className="btn btn-secondary" 
+                        style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        onClick={() => {
+                          const json = exportSettings();
+                          const blob = new Blob([json], { type: 'application/json' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `drivestats-settings-${new Date().toISOString().split('T')[0]}.json`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        }}
+                      >
+                        Export Settings File (.json)
+                      </button>
+                      <button 
+                        type="button" 
+                        className="btn btn-secondary" 
+                        style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        onClick={() => {
+                          const json = exportSettings();
+                          navigator.clipboard.writeText(json).then(() => {
+                            alert('Settings copied to clipboard! You can paste this on another device.');
+                          });
+                        }}
+                      >
+                        Copy Settings to Clipboard
+                      </button>
+                      <label className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', margin: 0 }}>
+                        Import Settings File
+                        <input 
+                          type="file" 
+                          accept=".json,application/json" 
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (ev) => {
+                                const content = ev.target?.result as string;
+                                if (importSettings(content)) {
+                                  alert('Settings successfully imported!');
+                                } else {
+                                  alert('Invalid settings file format.');
+                                }
+                              };
+                              reader.readAsText(file);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  </div>
+
                   {/* AI Assistant & Copilot Insights */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', gridColumn: '1 / -1', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem', marginTop: '0.5rem' }}>
                     <label style={{ fontSize: '0.95rem', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                       <Sparkles size={16} className="gradient-text" style={{ color: 'var(--accent-cyan)' }} />
-                      AI Assistant & Dashboard Copilot
+                      AI Assistant &amp; Dashboard Copilot
                     </label>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                       Enable client-side AI analysis to generate automated business summaries, seasonality reviews, and interactive coaching.
                     </span>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.25rem 0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', margin: '0.25rem 0', flexWrap: 'wrap' }}>
                       <input 
                         type="checkbox" 
                         id="enable-ai-checkbox"
@@ -715,8 +822,11 @@ function App() {
                         style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                       />
                       <label htmlFor="enable-ai-checkbox" style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}>
-                        Enable AI Insights Tab (requires your own API Key)
+                        Enable AI Insights Tab
                       </label>
+                      <span style={{ fontSize: '0.7rem', background: 'rgba(16, 185, 129, 0.12)', color: 'var(--sfd-emerald)', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
+                        Master Key Connected
+                      </span>
                     </div>
 
                     {enableAiInsights && (

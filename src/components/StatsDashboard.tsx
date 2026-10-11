@@ -415,7 +415,7 @@ Analyze and return the JSON object.`;
                   {completedWeeklyLessons} / {lessonsOnly.length} Completed ({weeklyLessonsCompletionPct}%)
                 </span>
               </div>
-              <div style={{ height: '12px', background: 'rgba(15, 23, 42, 0.06)', borderRadius: '9999px', overflow: 'hidden', padding: '2px', border: '1px solid var(--sfd-border-hairline)' }}>
+              <div style={{ height: '12px', background: 'rgba(148, 163, 184, 0.16)', borderRadius: '9999px', overflow: 'hidden', padding: '2px', border: '1px solid var(--sfd-border-hairline)' }}>
                 <div style={{ 
                   width: `${weeklyLessonsCompletionPct}%`, 
                   height: '100%',
@@ -442,7 +442,7 @@ Analyze and return the JSON object.`;
                     {thisWeekStats.fillPct}% filled &bull; {thisWeekStats.freeHours.toFixed(1)}h free
                   </span>
                 </div>
-                <div style={{ width: '100%', background: 'var(--sfd-surface-nested)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
+                <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
                   <div style={{ width: `${Math.min(thisWeekStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #059669 0%, #10b981 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
                 </div>
               </div>
@@ -457,7 +457,7 @@ Analyze and return the JSON object.`;
                     {nextWeekStats.fillPct}% filled &bull; {nextWeekStats.freeHours.toFixed(1)}h free
                   </span>
                 </div>
-                <div style={{ width: '100%', background: 'var(--sfd-surface-nested)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
+                <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
                   <div style={{ width: `${Math.min(nextWeekStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
                 </div>
               </div>
@@ -472,7 +472,7 @@ Analyze and return the JSON object.`;
                     {twoWeeksOutStats.fillPct}% filled &bull; {twoWeeksOutStats.freeHours.toFixed(1)}h free
                   </span>
                 </div>
-                <div style={{ width: '100%', background: 'var(--sfd-surface-nested)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
+                <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
                   <div style={{ width: `${Math.min(twoWeeksOutStats.fillPct, 100)}%`, height: '100%', background: 'linear-gradient(90deg, #6366f1 0%, #818cf8 100%)', borderRadius: '9999px', transition: 'width 0.8s var(--sfd-ease-fluid)' }} />
                 </div>
               </div>

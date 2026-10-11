@@ -33,6 +33,7 @@ export interface UseYearlyMetricsProps {
   aiProvider?: 'gemini' | 'openai';
   aiModel?: string;
   aiApiKey?: string;
+  excludedYears?: number[];
 }
 
 export interface YoyAiReport {
@@ -80,7 +81,8 @@ export function useYearlyMetrics({
   enableAiInsights = false,
   aiProvider = 'gemini',
   aiModel = 'gemini-2.5-flash',
-  aiApiKey = ''
+  aiApiKey = '',
+  excludedYears = []
 }: UseYearlyMetricsProps): YearlyMetricsResult {
   const [trendMode, setTrendMode] = useState<'raw' | 'smoothed' | 'deseasonalized'>('raw');
   const [isYtdComparison, setIsYtdComparison] = useState(true);
@@ -135,13 +137,13 @@ export function useYearlyMetrics({
 
   // 3.5. YoY comparison grouping
   const yoyData = useMemo(() => {
-    return calculateYoyData(weekDataList);
-  }, [weekDataList]);
+    return calculateYoyData(weekDataList, excludedYears);
+  }, [weekDataList, excludedYears]);
 
   // 3.6. Yearly summary averages and changes
   const yearlyAverages = useMemo(() => {
-    return calculateYearlyAverages(yoyData);
-  }, [yoyData]);
+    return calculateYearlyAverages(yoyData, excludedYears);
+  }, [yoyData, excludedYears]);
 
   // 4. Monthly aggregates
   const monthDataList = useMemo<MonthData[]>(() => {

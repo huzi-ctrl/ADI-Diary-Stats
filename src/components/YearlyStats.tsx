@@ -14,6 +14,7 @@ interface YearlyStatsProps {
   aiProvider?: 'gemini' | 'openai';
   aiModel?: string;
   aiApiKey?: string;
+  excludedYears?: number[];
 }
 
 export const YearlyStats: React.FC<YearlyStatsProps> = ({ 
@@ -25,7 +26,8 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
   enableAiInsights = false,
   aiProvider = 'gemini',
   aiModel = 'gemini-2.5-flash',
-  aiApiKey = ''
+  aiApiKey = '',
+  excludedYears = []
 }) => {
   // Decoupled multi-year analytics and calculations
   const {
@@ -62,6 +64,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
     aiProvider,
     aiModel,
     aiApiKey,
+    excludedYears,
   });
 
   // Markdown parsing helpers
@@ -100,7 +103,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
             Year-over-Year Performance Summary
           </h3>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
-            Direct glance at how capacity utilization and workload has changed over the years.
+            Annual schedule booking rate (capacity utilization). Higher % means a fuller schedule and higher earnings. Incomplete or starting years can be excluded in Settings.
           </p>
         </div>
 
@@ -136,14 +139,14 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                         {item.averageFillPct.toFixed(1)}%
                       </span>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                        avg capacity
+                        booking rate
                       </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Horizontal Progress Bar */}
-                <div style={{ flex: '1 1 200px', maxWidth: '300px', background: 'rgba(255,255,255,0.05)', height: '10px', borderRadius: '5px', overflow: 'hidden' }}>
+                <div style={{ flex: '1 1 200px', maxWidth: '300px', background: 'rgba(148, 163, 184, 0.2)', height: '10px', borderRadius: '5px', overflow: 'hidden' }}>
                   <div style={{ width: `${Math.min(item.averageFillPct, 100)}%`, height: '100%', background: color, borderRadius: '5px' }} />
                 </div>
 
@@ -155,11 +158,11 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                     </span>
                   ) : item.change >= 0 ? (
                     <span style={{ fontSize: '0.75rem', background: 'rgba(16,185,129,0.1)', color: 'var(--accent-emerald)', padding: '0.25rem 0.5rem', borderRadius: '6px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                      ▲ +{item.change.toFixed(1)}% up vs {yearlyAverages[idx - 1].year}
+                      ▲ +{item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year}
                     </span>
                   ) : (
                     <span style={{ fontSize: '0.75rem', background: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.25rem 0.5rem', borderRadius: '6px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                      ▼ {item.change.toFixed(1)}% down vs {yearlyAverages[idx - 1].year}
+                      ▼ {item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year}
                     </span>
                   )}
                 </div>
@@ -1454,7 +1457,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           Calculated Ideal Schedule
         </h3>
         <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-          Typical working hours calculated globally by identifying the earliest first lesson and latest last lesson on active days in the entire diary.
+          Typical working hours calculated globally using median start and end times across active days in your diary to avoid single-day outliers.
         </p>
 
         <div style={{ overflowX: 'auto' }}>

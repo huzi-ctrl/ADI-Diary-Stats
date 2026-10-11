@@ -25,6 +25,10 @@ export interface UserSettings {
   setGoogleClientId: React.Dispatch<React.SetStateAction<string>>;
   outlookClientId: string;
   setOutlookClientId: React.Dispatch<React.SetStateAction<string>>;
+  excludedYears: number[];
+  setExcludedYears: React.Dispatch<React.SetStateAction<number[]>>;
+  exportSettings: () => string;
+  importSettings: (jsonStr: string) => boolean;
 }
 
 export function useUserSettings(): UserSettings {
@@ -152,6 +156,56 @@ export function useUserSettings(): UserSettings {
     localStorage.setItem('adi_outlook_client_id', outlookClientId);
   }, [outlookClientId]);
 
+  // Excluded years from statistics (e.g. partial year / starting out)
+  const [excludedYears, setExcludedYears] = useState<number[]>(() => {
+    try {
+      const saved = localStorage.getItem('adi_excluded_years');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('adi_excluded_years', JSON.stringify(excludedYears));
+  }, [excludedYears]);
+
+  // Zero-scope cross-device sync: Export & Import settings
+  const exportSettings = () => {
+    const payload = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      hourlyRate,
+      nonPayingStudents,
+      theme,
+      capacityMode,
+      customIdealHours,
+      enableAiInsights,
+      aiProvider,
+      aiModel,
+      excludedYears
+    };
+    return JSON.stringify(payload, null, 2);
+  };
+
+  const importSettings = (jsonStr: string): boolean => {
+    try {
+      const data = JSON.parse(jsonStr);
+      if (typeof data.hourlyRate === 'number') setHourlyRate(data.hourlyRate);
+      if (typeof data.nonPayingStudents === 'string') setNonPayingStudents(data.nonPayingStudents);
+      if (data.theme === 'light' || data.theme === 'dark') setTheme(data.theme);
+      if (data.capacityMode === 'historical' || data.capacityMode === 'custom') setCapacityMode(data.capacityMode);
+      if (data.customIdealHours && typeof data.customIdealHours === 'object') setCustomIdealHours(data.customIdealHours);
+      if (typeof data.enableAiInsights === 'boolean') setEnableAiInsights(data.enableAiInsights);
+      if (data.aiProvider === 'gemini' || data.aiProvider === 'openai') setAiProvider(data.aiProvider);
+      if (typeof data.aiModel === 'string') setAiModel(data.aiModel);
+      if (Array.isArray(data.excludedYears)) setExcludedYears(data.excludedYears);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   return {
     hourlyRate,
     setHourlyRate,
@@ -177,5 +231,9 @@ export function useUserSettings(): UserSettings {
     setGoogleClientId,
     outlookClientId,
     setOutlookClientId,
+    excludedYears,
+    setExcludedYears,
+    exportSettings,
+    importSettings
   };
 }

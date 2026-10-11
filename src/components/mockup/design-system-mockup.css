@@ -708,9 +708,14 @@
 }
 
 .sfd-workload-bar.empty {
-  background: var(--sfd-surface-nested);
-  border: 1px dashed var(--sfd-border-subtle);
+  background: rgba(148, 163, 184, 0.14);
+  border: 1px dashed rgba(148, 163, 184, 0.35);
   box-shadow: none;
+}
+
+[data-theme="dark"] .sfd-workload-bar.empty {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px dashed rgba(148, 163, 184, 0.22);
 }
 
 .sfd-workload-day {

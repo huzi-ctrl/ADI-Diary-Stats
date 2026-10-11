@@ -116,6 +116,12 @@ export function calculateYearlyIdealSchedules(
   const dayOfWeekSpans: Record<number, number[]> = {
     1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: []
   };
+  const dayOfWeekStarts: Record<number, number[]> = {
+    1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: []
+  };
+  const dayOfWeekEnds: Record<number, number[]> = {
+    1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: []
+  };
 
   Object.entries(lessonsByDate).forEach(([dateStr, events]) => {
     const date = new Date(dateStr);
@@ -124,22 +130,35 @@ export function calculateYearlyIdealSchedules(
     const sorted = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
     const firstStart = sorted[0].start;
     const lastEnd = sorted[sorted.length - 1].end;
+    
+    const startMins = firstStart.getHours() * 60 + firstStart.getMinutes();
+    const endMins = lastEnd.getHours() * 60 + lastEnd.getMinutes();
     const spanMins = (lastEnd.getTime() - firstStart.getTime()) / 60000;
     
+    dayOfWeekStarts[dayOfWeek].push(startMins);
+    dayOfWeekEnds[dayOfWeek].push(endMins);
     dayOfWeekSpans[dayOfWeek].push(spanMins + 30); // Include travel buffer
   });
 
   [1, 2, 3, 4, 5, 6, 0].forEach(dayOfWeek => {
     const spans = dayOfWeekSpans[dayOfWeek];
+    const starts = dayOfWeekStarts[dayOfWeek];
+    const ends = dayOfWeekEnds[dayOfWeek];
+    
     if (spans.length > 0) {
       spans.sort((a, b) => a - b);
+      starts.sort((a, b) => a - b);
+      ends.sort((a, b) => a - b);
+      
       const mid = Math.floor(spans.length / 2);
       const medianSpanMins = spans.length % 2 !== 0 ? spans[mid] : (spans[mid - 1] + spans[mid]) / 2;
+      const medianStartMins = Math.round(starts.length % 2 !== 0 ? starts[mid] : (starts[mid - 1] + starts[mid]) / 2);
+      const medianEndMins = Math.round(ends.length % 2 !== 0 ? ends[mid] : (ends[mid - 1] + ends[mid]) / 2);
       
       schedules[dayOfWeek] = {
         dayName: dayNames[dayOfWeek],
-        startMinutes: 0,
-        endMinutes: 0,
+        startMinutes: medianStartMins,
+        endMinutes: medianEndMins,
         spanHours: medianSpanMins / 60
       };
     } else {
@@ -220,7 +239,7 @@ export function calculateWeekDataList(
   return list;
 }
 
-export function calculateYoyData(weekDataList: WeekData[]): YoyDataResult {
+export function calculateYoyData(weekDataList: WeekData[], excludedYears: number[] = []): YoyDataResult {
   const dataByYear: Record<number, Record<number, number>> = {};
   const deseasonalizedDataByYear: Record<number, Record<number, number>> = {};
   const yearsSet = new Set<number>();
@@ -240,6 +259,7 @@ export function calculateYoyData(weekDataList: WeekData[]): YoyDataResult {
 
   weekDataList.forEach((w, idx) => {
     const year = w.weekStart.getFullYear();
+    if (excludedYears.includes(year)) return;
     yearsSet.add(year);
     
     const firstDayOfYear = new Date(year, 0, 1);
@@ -259,16 +279,17 @@ export function calculateYoyData(weekDataList: WeekData[]): YoyDataResult {
   return { sortedYears, dataByYear, deseasonalizedDataByYear };
 }
 
-export function calculateYearlyAverages(yoyData: YoyDataResult): YearlyAverage[] {
+export function calculateYearlyAverages(yoyData: YoyDataResult, excludedYears: number[] = []): YearlyAverage[] {
   const { sortedYears, dataByYear } = yoyData;
-  return sortedYears.map((yr, idx) => {
-    const vals = Object.values(dataByYear[yr]);
+  const filteredYears = sortedYears.filter(yr => !excludedYears.includes(yr));
+  return filteredYears.map((yr, idx) => {
+    const vals = Object.values(dataByYear[yr] || {});
     const avg = vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
     
     let change = 0;
     if (idx > 0) {
-      const prevYr = sortedYears[idx - 1];
-      const prevVals = Object.values(dataByYear[prevYr]);
+      const prevYr = filteredYears[idx - 1];
+      const prevVals = Object.values(dataByYear[prevYr] || {});
       const prevAvg = prevVals.length > 0 ? prevVals.reduce((a, b) => a + b, 0) / prevVals.length : 0;
       change = avg - prevAvg;
     }
