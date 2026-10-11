@@ -109,7 +109,7 @@ render(container, data);`;
         }
         const result = await response.json();
         const parts = result?.candidates?.[0]?.content?.parts || [];
-        jsCode = parts.map((p: any) => p.text || '').join('');
+        jsCode = parts.map((p: { text?: string }) => p.text || '').join('');
       } else {
         const endpoint = 'https://api.openai.com/v1/chat/completions';
         const response = await fetch(endpoint, {

@@ -195,7 +195,7 @@ ${monthlyBreakdownStr || '- No monthly data available.\n'}
       let debugTrace = '';
 
       while (attempts < maxAttempts) {
-        const payload: any = {
+        const payload: Record<string, unknown> = {
           contents,
           generationConfig: {
             temperature: 0.2,
@@ -231,7 +231,7 @@ ${monthlyBreakdownStr || '- No monthly data available.\n'}
         const finishReason = candidate?.finishReason || 'STOP';
         finalFinishReason = finishReason;
         const parts = candidate?.content?.parts || [];
-        const currentChunk = parts.map((p: any) => p.text || '').join('');
+        const currentChunk = parts.map((p: { text?: string }) => p.text || '').join('');
 
         if (!currentChunk) {
           debugTrace += `\n[Attempt ${attempts}] Empty chunk received. Finish reason: ${finishReason}`;

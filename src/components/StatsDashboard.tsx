@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { CalendarEvent } from '../utils/icsParser';
 import { Calendar, BarChart3, Activity, ShieldAlert, Sparkles, RefreshCw, AlertCircle } from 'lucide-react';
 import { getCachedAiItem, setCachedAiItem, formatAiError } from '../utils/aiHelper';
+import { useWeeklyCapacity } from '../hooks/useWeeklyCapacity';
 
 const dayIndices = [1, 2, 3, 4, 5, 6, 0];
 const dayOfWeekNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -47,367 +48,51 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
   const [weeklyAiLoading, setWeeklyAiLoading] = useState(false);
   const [weeklyAiError, setWeeklyAiError] = useState<string | null>(null);
 
-  // Helper to check if student is globally non-paying
-  const isEventNonPaying = React.useCallback((summary: string) => {
-    const summaryLower = summary.toLowerCase();
-    return nonPayingList.some(keyword => summaryLower.includes(keyword));
-  }, [nonPayingList]);
-
-  // 1. Core KPIs for the active week
-  const timedInstructorEvents = useMemo(() => {
-    return instructorEvents.filter(e => !e.isAllDay && !isEventNonPaying(e.summary));
-  }, [instructorEvents, isEventNonPaying]);
-
-  const totalTeachMinutes = useMemo(() => {
-    return timedInstructorEvents.reduce((acc, curr) => acc + curr.durationMinutes, 0);
-  }, [timedInstructorEvents]);
-
-  const totalTeachHours = useMemo(() => {
-    return (totalTeachMinutes / 60).toFixed(1);
-  }, [totalTeachMinutes]);
-
-  // Lesson counts (exclude tests, CPD/training, and all-day blocks)
-  const allLessons = useMemo(() => {
-    return instructorEvents.filter(e => 
-      !e.isAllDay &&
-      !e.categories.includes('Training') && 
-      !e.categories.includes('CPD') && 
-      !e.summary.toLowerCase().includes('test') &&
-      !e.summary.toLowerCase().includes('mock') &&
-      !e.categories.includes('Tests')
-    );
-  }, [instructorEvents]);
-
-  const lessonsOnly = useMemo(() => {
-    return allLessons.filter(e => !isEventNonPaying(e.summary));
-  }, [allLessons, isEventNonPaying]);
-
-  const nonPayingLessons = useMemo(() => {
-    return allLessons.filter(e => isEventNonPaying(e.summary));
-  }, [allLessons, isEventNonPaying]);
-
-  const nonPayingTeachMinutes = useMemo(() => {
-    return nonPayingLessons.reduce((acc, curr) => acc + curr.durationMinutes, 0);
-  }, [nonPayingLessons]);
-
-  const nonPayingTeachHours = useMemo(() => {
-    return (nonPayingTeachMinutes / 60).toFixed(1);
-  }, [nonPayingTeachMinutes]);
-
-  const weeklyEarnings = useMemo(() => {
-    return Math.round(parseFloat(totalTeachHours) * hourlyRate);
-  }, [totalTeachHours, hourlyRate]);
-  
-  // Test bookings count (mock and official) for this week
-  const testBookings = useMemo(() => {
-    return instructorEvents.filter(e => 
-      !e.categories.includes('Training') && 
-      !e.categories.includes('CPD') && 
-      (e.summary.toLowerCase().includes('test') || 
-       e.summary.toLowerCase().includes('mock') || 
-       e.categories.includes('Tests'))
-    );
-  }, [instructorEvents]);
-
-  const now = useMemo(() => new Date(), []);
-  
-  // Weekly upcoming/completed calculation
-  const completedWeeklyLessons = useMemo(() => {
-    return lessonsOnly.filter(e => e.start < now).length;
-  }, [lessonsOnly, now]);
-
-  const upcomingWeeklyLessons = useMemo(() => {
-    return lessonsOnly.filter(e => e.start >= now).length;
-  }, [lessonsOnly, now]);
-
-  const weeklyLessonsCompletionPct = useMemo(() => {
-    return lessonsOnly.length > 0 
-      ? Math.round((completedWeeklyLessons / lessonsOnly.length) * 100) 
-      : 0;
-  }, [lessonsOnly, completedWeeklyLessons]);
-
-  // All-time future lessons and tests
-  const allFutureLessons = useMemo(() => {
-    return allInstructorEvents.filter(e => 
-      e.start >= now &&
-      !e.isAllDay &&
-      !e.categories.includes('Training') &&
-      !e.categories.includes('CPD') &&
-      !e.summary.toLowerCase().includes('test') &&
-      !e.summary.toLowerCase().includes('mock') &&
-      !e.categories.includes('Tests')
-    );
-  }, [allInstructorEvents, now]);
-
-  const allFutureTests = useMemo(() => {
-    return allInstructorEvents.filter(e => 
-      e.start >= now &&
-      !e.isAllDay &&
-      !e.categories.includes('Training') &&
-      !e.categories.includes('CPD') &&
-      (e.summary.toLowerCase().includes('test') || 
-       e.summary.toLowerCase().includes('mock') || 
-       e.categories.includes('Tests'))
-    );
-  }, [allInstructorEvents, now]);
-
-  // 1. Filter out non-lesson events and non-paying events for ideal hours calculations
-  const globalLessonsOnly = React.useMemo(() => {
-    return allInstructorEvents.filter(e => 
-      !e.isAllDay &&
-      !e.categories.includes('Training') &&
-      !e.categories.includes('CPD') &&
-      !e.summary.toLowerCase().includes('test') &&
-      !e.summary.toLowerCase().includes('mock') &&
-      !e.categories.includes('Tests') &&
-      !isEventNonPaying(e.summary)
-    );
-  }, [allInstructorEvents, isEventNonPaying]);
-
-  // 2. Calculate Average Ideal Working Hours based on historical average span for each day of week
-  const globalIdealSchedules = React.useMemo(() => {
-    if (capacityMode === 'custom' && customIdealHours) {
-      const dayNames: Record<number, string> = {
-        1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 0: 'Sunday'
-      };
-      const schedules: Record<number, { dayName: string; spanHours: number }> = {};
-      for (let day = 0; day < 7; day++) {
-        schedules[day] = {
-          dayName: dayNames[day],
-          spanHours: customIdealHours[day] || 0
-        };
-      }
-      return schedules;
-    }
-
-    const schedules: Record<number, { dayName: string; spanHours: number }> = {
-      1: { dayName: 'Monday', spanHours: 0 },
-      2: { dayName: 'Tuesday', spanHours: 0 },
-      3: { dayName: 'Wednesday', spanHours: 0 },
-      4: { dayName: 'Thursday', spanHours: 0 },
-      5: { dayName: 'Friday', spanHours: 0 },
-      6: { dayName: 'Saturday', spanHours: 0 },
-      0: { dayName: 'Sunday', spanHours: 0 }
-    };
-
-    const lessonsByDayOfWeek: Record<number, Record<string, typeof globalLessonsOnly>> = {};
-    for (let i = 0; i < 7; i++) lessonsByDayOfWeek[i] = {};
-
-    globalLessonsOnly.forEach(e => {
-      const day = e.start.getDay();
-      const dateStr = e.start.toISOString().split('T')[0];
-      if (!lessonsByDayOfWeek[day][dateStr]) {
-        lessonsByDayOfWeek[day][dateStr] = [];
-      }
-      lessonsByDayOfWeek[day][dateStr].push(e);
-    });
-
-    for (let day = 0; day < 7; day++) {
-      const activeDates = Object.values(lessonsByDayOfWeek[day]);
-      if (activeDates.length > 0) {
-        const spans: number[] = [];
-        activeDates.forEach(events => {
-          const sorted = [...events].sort((a, b) => a.start.getTime() - b.start.getTime());
-          const firstStart = sorted[0].start;
-          const lastEnd = sorted[sorted.length - 1].end;
-          const spanMins = (lastEnd.getTime() - firstStart.getTime()) / 60000;
-          spans.push(spanMins + 30); // Add standard 30 min travel buffer to the span
-        });
-        
-        spans.sort((a, b) => a - b);
-        const mid = Math.floor(spans.length / 2);
-        const medianSpanMins = spans.length % 2 !== 0 ? spans[mid] : (spans[mid - 1] + spans[mid]) / 2;
-        
-        schedules[day].spanHours = medianSpanMins / 60;
-      }
-    }
-    return schedules;
-  }, [globalLessonsOnly, capacityMode, customIdealHours]);
-
-  const todayMonday = React.useMemo(() => {
-    const today = new Date();
-    const day = today.getDay();
-    const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-    const mon = new Date(today.setDate(diff));
-    mon.setHours(0, 0, 0, 0);
-    return mon;
-  }, []);
-
-  const todayMidnight = React.useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, []);
-
-  const thisWeekEnd = React.useMemo(() => {
-    return new Date(todayMonday.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
-  }, [todayMonday]);
-
-  const nextWeekStart = React.useMemo(() => new Date(todayMonday.getTime() + 7 * 24 * 60 * 60 * 1000), [todayMonday]);
-  const twoWeeksOutStart = React.useMemo(() => new Date(todayMonday.getTime() + 14 * 24 * 60 * 60 * 1000), [todayMonday]);
-
-  // Helper to calculate used minutes on a day, taking into account:
-  // - lesson duration
-  // - 15 min travel buffer before/after lessons
-  // - Gaps smaller than 90 mins are treated as unusable and fully consumed (dead time)
-  const getUsedMinutesForDay = React.useCallback((dayLessons: CalendarEvent[]) => {
-    if (dayLessons.length === 0) return 0;
-    
-    // Sort lessons by start time
-    const sorted = [...dayLessons].sort((a, b) => a.start.getTime() - b.start.getTime());
-    
-    let usedMins = 0;
-    
-    // 1. Add durations of all lessons
-    sorted.forEach(l => {
-      usedMins += l.durationMinutes;
-    });
-    
-    // 2. Add travel times and unusable gaps
-    // Travel before first lesson: 15 mins
-    usedMins += 15;
-    
-    // Travel after last lesson: 15 mins
-    usedMins += 15;
-    
-    // Gaps between consecutive lessons
-    for (let i = 0; i < sorted.length - 1; i++) {
-      const currentEnd = sorted[i].end;
-      const nextStart = sorted[i+1].start;
-      const gapMins = Math.round((nextStart.getTime() - currentEnd.getTime()) / 60000);
-      
-      if (gapMins < 0) {
-        continue;
-      }
-      
-      if (gapMins < 90) {
-        // Gap is too small to fit a 1-hour lesson (which needs 15 mins travel before & after, i.e., 90 mins total)
-        // So the entire gap is unusable dead time. We count it as used time.
-        usedMins += gapMins;
-      } else {
-        // Gap is large enough. We only use 15 mins after current, and 15 mins before next for travel.
-        usedMins += 30;
-      }
-    }
-    
-    return usedMins;
-  }, []);
-
-  // Helper to get total used and ideal hours for a week (starting on startOfWeek date)
-  // if isPartial is true, it only calculates from todayMidnight onwards to the end of that week
-  const getWeekCapacityStats = (startOfWeek: Date, isPartial: boolean = false) => {
-    const endOfWeek = new Date(startOfWeek.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
-    const filterStart = isPartial ? todayMidnight : startOfWeek;
-    
-    const dayIndices = isPartial 
-      ? (() => {
-          const dayOfWeek = todayMidnight.getDay();
-          if (dayOfWeek === 0) return [0];
-          const days: number[] = [];
-          for (let d = dayOfWeek; d <= 6; d++) days.push(d);
-          days.push(0);
-          return days;
-        })()
-      : [1, 2, 3, 4, 5, 6, 0]; // Mon-Sun
-
-    let totalUsedMins = 0;
-    let totalIdealMins = 0;
-
-    dayIndices.forEach(d => {
-      // Get all events for day d that start within the target range
-      const dayLessons = allInstructorEvents.filter(e => 
-        e.start >= filterStart && 
-        e.start <= endOfWeek &&
-        e.start.getDay() === d &&
-        !e.isAllDay &&
-        !e.categories.includes('Training') &&
-        !e.categories.includes('CPD') &&
-        !e.summary.toLowerCase().includes('test') &&
-        !e.summary.toLowerCase().includes('mock') &&
-        !e.categories.includes('Tests') &&
-        !isEventNonPaying(e.summary)
-      );
-
-      totalUsedMins += getUsedMinutesForDay(dayLessons);
-      
-      if (capacityMode === 'custom' && customIdealHours) {
-        totalIdealMins += (customIdealHours[d] || 0) * 60;
-      } else {
-        totalIdealMins += (globalIdealSchedules[d]?.spanHours || 0) * 60;
-      }
-    });
-
-    const usedHours = totalUsedMins / 60;
-    const idealHours = totalIdealMins / 60;
-    const fillPct = idealHours > 0 ? Math.round((usedHours / idealHours) * 100) : 0;
-    const freePct = Math.max(0, 100 - fillPct);
-    const freeHours = Math.max(0, idealHours - usedHours);
-
-    return {
-      usedHours,
-      idealHours,
-      fillPct,
-      freePct,
-      freeHours
-    };
-  };
-
-  const thisWeekStats = getWeekCapacityStats(todayMonday, true);
-  const nextWeekStats = getWeekCapacityStats(nextWeekStart, false);
-  const twoWeeksOutStats = getWeekCapacityStats(twoWeeksOutStart, false);
-
-  const formatRangeShort = (start: Date) => {
-    const end = new Date(start.getTime() + 6 * 24 * 60 * 60 * 1000);
-    const opt: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-    return `${start.toLocaleDateString(undefined, opt)} - ${end.toLocaleDateString(undefined, opt)}`;
-  };
-
-  const formatRemainingThisWeek = () => {
-    const opt: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-    return `${todayMidnight.toLocaleDateString(undefined, opt)} – ${thisWeekEnd.toLocaleDateString(undefined, opt)}`;
-  };
-
-  const formatDateShort = (d: Date) => {
-    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-  };
-
-  // 2. Day of Week Hours Analysis (Monday to Sunday)
-  const dayOfWeekHours = useMemo(() => {
-    const hours = Array(7).fill(0);
-    timedInstructorEvents.forEach(e => {
-      const day = e.start.getDay();
-      hours[day] += e.durationMinutes / 60;
-    });
-    return hours;
-  }, [timedInstructorEvents]);
-
-  const maxDayHours = useMemo(() => Math.max(...dayOfWeekHours, 1), [dayOfWeekHours]);
-
-  const weekdayStatsString = useMemo(() => {
-    return dayIndices.map((dayIdx, i) => {
-      return `${dayOfWeekNames[i]}: ${dayOfWeekHours[dayIdx].toFixed(1)}h`;
-    }).join(', ');
-  }, [dayOfWeekHours]);
-
-  // 3. Time of Day Distribution for lessons this week
-  let morningCount = 0;
-  let afternoonCount = 0;
-  let eveningCount = 0;
-  let nightCount = 0;
-
-  timedInstructorEvents.forEach(e => {
-    const hour = e.start.getHours();
-    if (hour >= 6 && hour < 12) morningCount++;
-    else if (hour >= 12 && hour < 18) afternoonCount++;
-    else if (hour >= 18 && hour < 24) eveningCount++;
-    else nightCount++;
+  // Decoupled capacity and scheduling analytics
+  const {
+    now,
+    totalTeachHours,
+    lessonsOnly,
+    nonPayingLessons,
+    nonPayingTeachHours,
+    weeklyEarnings,
+    testBookings,
+    completedWeeklyLessons,
+    upcomingWeeklyLessons,
+    weeklyLessonsCompletionPct,
+    allFutureLessons,
+    allFutureTests,
+    thisWeekStats,
+    nextWeekStats,
+    twoWeeksOutStats,
+    nextWeekStart,
+    twoWeeksOutStart,
+    dayOfWeekHours,
+    maxDayHours,
+    weekdayStatsString,
+    timeOfDay: {
+      morningCount,
+      afternoonCount,
+      eveningCount,
+      nightCount,
+      morningPct,
+      afternoonPct,
+      eveningPct,
+      nightPct,
+    },
+    formatRangeShort,
+    formatRemainingThisWeek,
+    formatDateShort,
+  } = useWeeklyCapacity({
+    instructorEvents,
+    allInstructorEvents,
+    weekStart,
+    weekEnd,
+    hourlyRate,
+    nonPayingList,
+    capacityMode,
+    customIdealHours,
   });
-
-  const totalTimeOfDays = (morningCount + afternoonCount + eveningCount + nightCount) || 1;
-  const morningPct = Math.round((morningCount / totalTimeOfDays) * 100);
-  const afternoonPct = Math.round((afternoonCount / totalTimeOfDays) * 100);
-  const eveningPct = Math.round((eveningCount / totalTimeOfDays) * 100);
-  const nightPct = Math.round((nightCount / totalTimeOfDays) * 100);
 
   const lessonsSig = useMemo(() => {
     return lessonsOnly.map(e => `${e.id}-${e.start.getTime()}-${e.end.getTime()}`).join('|');
@@ -463,7 +148,7 @@ The JSON must follow this exact structure:
 
 Analyze and return the JSON object.`;
 
-      let contents = [
+      let contents: Array<Record<string, unknown>> = [
         {
           role: 'user',
           parts: [{ text: userPrompt }]
@@ -480,7 +165,7 @@ Analyze and return the JSON object.`;
         if (aiProvider === 'gemini') {
           const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${aiApiKey.trim()}`;
           
-          const payload: any = {
+          const payload: Record<string, unknown> = {
             contents,
             generationConfig: {
               temperature: 0.2,
@@ -511,7 +196,7 @@ Analyze and return the JSON object.`;
           }
           const res = await response.json();
           const parts = res?.candidates?.[0]?.content?.parts || [];
-          const text = parts.map((p: any) => p.text || '').join('');
+          const text = parts.map((p: { text?: string }) => p.text || '').join('');
           accumulatedAnswer += text;
           finalFinishReason = res?.candidates?.[0]?.finishReason;
         } else {
@@ -571,8 +256,8 @@ Analyze and return the JSON object.`;
         } else {
           contents = [
             ...contents,
-            { role: 'assistant', content: accumulatedAnswer } as any,
-            { role: 'user', content: 'Your previous response was cut off. Please continue writing the response from where you left off. Start immediately with the continuation, without repeating what you already wrote.' } as any
+            { role: 'assistant', content: accumulatedAnswer },
+            { role: 'user', content: 'Your previous response was cut off. Please continue writing the response from where you left off. Start immediately with the continuation, without repeating what you already wrote.' }
           ];
         }
       }

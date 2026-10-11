@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local Agent / IDE directories
+.agent/
+.gemini/
+
+# Reports
+*-Report-*.html
+
