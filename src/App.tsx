@@ -1166,106 +1166,73 @@ function App() {
                   </div>
 
                   {/* Live Calendar Integration Section */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', gridColumn: '1 / -1', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem' }}>
-                    <label style={{ fontSize: '1rem', color: 'var(--text-main)', fontWeight: 700 }}>Calendar Connections & Live Integration</label>
-                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
-                      Connect directly to your calendar provider via secure client-side OAuth login (Recommended) or add a private iCalendar feed.
-                    </p>
+                  {(fileName || (googleClientId && !googleClientId.includes('your-default-')) || (outlookClientId && !outlookClientId.includes('your-default-')) || syncError) && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', gridColumn: '1 / -1', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem' }}>
+                      <label style={{ fontSize: '1rem', color: 'var(--text-main)', fontWeight: 700 }}>Calendar Connections &amp; Live Sync</label>
 
-                    {syncError && (
-                      <div style={{ padding: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', color: '#f87171', fontSize: '0.8rem' }}>
-                        Sync Error: {syncError}
-                      </div>
-                    )}
-
-                    {fileName && (
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', background: 'rgba(6, 182, 212, 0.06)', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid rgba(6, 182, 212, 0.2)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <div style={{ width: '8px', height: '8px', background: 'var(--accent-cyan)', borderRadius: '50%' }} />
-                          <span style={{ fontSize: '0.85rem', color: 'var(--text-main)' }}>
-                            Currently Connected: <strong>{fileName}</strong>
-                          </span>
+                      {syncError && (
+                        <div style={{ padding: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', color: '#f87171', fontSize: '0.8rem' }}>
+                          Sync Error: {syncError}
                         </div>
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          style={{ width: 'auto', padding: '0.3rem 0.6rem', fontSize: '0.75rem', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#ef4444' }}
-                          onClick={handleDisconnectLiveSync}
-                        >
-                          Disconnect Sync
-                        </button>
-                      </div>
-                    )}
+                      )}
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.5rem', marginTop: '0.25rem' }}>
-                      {/* Google Calendar Link */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'rgba(255, 255, 255, 0.01)', border: '1px solid var(--border-light)', padding: '1rem', borderRadius: '10px' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', display: 'block' }}>1. Google Calendar Integration</span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                          Direct one-click connection to sync your Google Calendar lessons in real time.
-                        </span>
-                        
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', margin: '0.25rem 0' }}>
-                          <div style={{ 
-                            width: '8px', 
-                            height: '8px', 
-                            borderRadius: '50%', 
-                            background: googleClientId && !googleClientId.includes('your-default-') ? 'var(--accent-emerald)' : '#ef4444' 
-                          }} />
-                          <span style={{ color: 'var(--text-muted)' }}>
-                            {googleClientId && !googleClientId.includes('your-default-') 
-                              ? 'Developer Status: Pre-Configured' 
-                              : 'Developer Status: Missing VITE_GOOGLE_CLIENT_ID in .env.local'}
-                          </span>
+                      {fileName && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', background: 'rgba(6, 182, 212, 0.06)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid rgba(6, 182, 212, 0.2)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div style={{ width: '8px', height: '8px', background: 'var(--accent-cyan)', borderRadius: '50%' }} />
+                            <span style={{ fontSize: '0.85rem', color: 'var(--text-main)' }}>
+                              Currently Connected: <strong>{fileName}</strong>
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            style={{ width: 'auto', padding: '0.3rem 0.6rem', fontSize: '0.75rem', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#ef4444' }}
+                            onClick={handleDisconnectLiveSync}
+                          >
+                            Disconnect Sync
+                          </button>
                         </div>
+                      )}
 
-                        <button
-                          type="button"
-                          className="btn btn-primary animate-hover"
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: '0.25rem' }}
-                          onClick={handleConnectGoogle}
-                          disabled={!googleClientId || googleClientId.includes('your-default-')}
-                        >
-                          <RefreshCw size={14} className={isSyncing && fileName?.includes("Google") ? 'spin-animation' : ''} />
-                          {fileName === "Google Calendar Sync" ? "Re-auth & Sync Google" : "Login & Sync Google Calendar"}
-                        </button>
-                      </div>
+                      {/* Direct OAuth Provider Cards (Only visible when OAuth Client IDs are configured) */}
+                      {((googleClientId && !googleClientId.includes('your-default-')) || (outlookClientId && !outlookClientId.includes('your-default-'))) && (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.25rem', marginTop: '0.25rem' }}>
+                          {googleClientId && !googleClientId.includes('your-default-') && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-hairline)', padding: '1rem', borderRadius: '14px' }}>
+                              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>Google Calendar</span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Direct one-click connection to sync Google Calendar lessons in real time.</span>
+                              <button
+                                type="button"
+                                className="btn btn-primary animate-hover"
+                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: '0.25rem' }}
+                                onClick={handleConnectGoogle}
+                              >
+                                <RefreshCw size={14} className={isSyncing && fileName?.includes("Google") ? 'spin-animation' : ''} />
+                                {fileName === "Google Calendar Sync" ? "Re-auth & Sync Google" : "Login & Sync Google Calendar"}
+                              </button>
+                            </div>
+                          )}
 
-                      {/* Outlook Calendar Link */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'rgba(255, 255, 255, 0.01)', border: '1px solid var(--border-light)', padding: '1rem', borderRadius: '10px' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', display: 'block' }}>2. Outlook / Office 365 Calendar</span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-                          Direct one-click connection to sync your Microsoft Outlook lessons in real time.
-                        </span>
-                        
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', margin: '0.25rem 0' }}>
-                          <div style={{ 
-                            width: '8px', 
-                            height: '8px', 
-                            borderRadius: '50%', 
-                            background: outlookClientId && !outlookClientId.includes('your-default-') ? 'var(--accent-emerald)' : '#ef4444' 
-                          }} />
-                          <span style={{ color: 'var(--text-muted)' }}>
-                            {outlookClientId && !outlookClientId.includes('your-default-') 
-                              ? 'Developer Status: Pre-Configured' 
-                              : 'Developer Status: Missing VITE_OUTLOOK_CLIENT_ID in .env.local'}
-                          </span>
+                          {outlookClientId && !outlookClientId.includes('your-default-') && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-hairline)', padding: '1rem', borderRadius: '14px' }}>
+                              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>Outlook / Office 365 Calendar</span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Direct one-click connection to sync Microsoft Outlook lessons in real time.</span>
+                              <button
+                                type="button"
+                                className="btn btn-primary animate-hover"
+                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: '0.25rem' }}
+                                onClick={handleConnectOutlook}
+                              >
+                                <RefreshCw size={14} className={isSyncing && fileName?.includes("Outlook") ? 'spin-animation' : ''} />
+                                {fileName === "Outlook Calendar Sync" ? "Re-auth & Sync Outlook" : "Login & Sync Outlook Calendar"}
+                              </button>
+                            </div>
+                          )}
                         </div>
-
-                        <button
-                          type="button"
-                          className="btn btn-primary animate-hover"
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', marginTop: '0.25rem' }}
-                          onClick={handleConnectOutlook}
-                          disabled={!outlookClientId || outlookClientId.includes('your-default-')}
-                        >
-                          <RefreshCw size={14} className={isSyncing && fileName?.includes("Outlook") ? 'spin-animation' : ''} />
-                          {fileName === "Outlook Calendar Sync" ? "Re-auth & Sync Outlook" : "Login & Sync Outlook Calendar"}
-                        </button>
-                      </div>
-
+                      )}
                     </div>
-                  </div>
+                  )}
 
                   {/* Vehicle Operating Costs & Net Take-Home Calculator */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', gridColumn: '1 / -1', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem', marginTop: '0.5rem' }}>
