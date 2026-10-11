@@ -3,6 +3,7 @@ name: DriveStats ADI
 description: High-craft, fluid schedule intelligence for UK Approved Driving Instructors inspired by Unseen Studio
 colors:
   primary: "#1d4ed8"
+  primary-bright: "#2563eb"
   primary-hover: "#1e40af"
   primary-active: "#172554"
   surface-ground: "#f8f9fb"
@@ -55,10 +56,10 @@ typography:
     letterSpacing: "0.01em"
 rounded:
   xs: "6px"
-  sm: "10px"
-  md: "18px"
-  lg: "24px"
-  xl: "32px"
+  sm: "12px"
+  md: "16px"
+  lg: "20px"
+  xl: "26px"
   full: "9999px"
 spacing:
   xs: "4px"

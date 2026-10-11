@@ -68,6 +68,38 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
         </div>
 
         <div className="sfd-header-controls">
+          {/* Kota Liquid Glass Navigation Strip */}
+          <nav className="sfd-liquid-glass-strip" aria-label="Header Navigation">
+            <button
+              type="button"
+              className={`sfd-strip-btn ${activeTab === 'weekly' ? 'active' : ''}`}
+              onClick={() => setActiveTab('weekly')}
+            >
+              Weekly
+            </button>
+            <button
+              type="button"
+              className={`sfd-strip-btn ${activeTab === 'yearly' ? 'active' : ''}`}
+              onClick={() => setActiveTab('yearly')}
+            >
+              Yearly
+            </button>
+            <button
+              type="button"
+              className={`sfd-strip-btn ${activeTab === 'explorer' ? 'active' : ''}`}
+              onClick={() => setActiveTab('explorer')}
+            >
+              Explorer
+            </button>
+            <button
+              type="button"
+              className={`sfd-strip-btn ${activeTab === 'settings' ? 'active' : ''}`}
+              onClick={() => setActiveTab('settings')}
+            >
+              Settings
+            </button>
+          </nav>
+
           {/* Week Selector Pill */}
           <div className="sfd-week-chip">
             <button 

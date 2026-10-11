@@ -174,6 +174,52 @@
   flex-wrap: wrap;
 }
 
+/* Kota Liquid Glass Navigation Strip (Header) */
+.sfd-liquid-glass-strip {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 9999px;
+  padding: 4px 6px;
+  box-shadow: 
+    0 8px 24px -6px rgba(15, 23, 42, 0.08),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sfd-strip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  color: var(--sfd-ink-muted);
+  font-family: var(--sfd-font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--sfd-ease-fluid);
+}
+
+.sfd-strip-btn:hover {
+  color: var(--sfd-ink-primary);
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.sfd-strip-btn.active {
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 
+    0 4px 12px -2px rgba(29, 78, 216, 0.35),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3);
+}
+
 /* Week Selector Pill */
 .sfd-week-chip {
   display: inline-flex;
@@ -626,7 +672,7 @@
   color: var(--sfd-emerald);
 }
 
-/* Floating Bottom Navigation Dock */
+/* Floating Bottom Navigation Dock - Kota Liquid Glass Craft */
 .sfd-dock-container {
   position: fixed;
   bottom: 24px;
@@ -640,13 +686,17 @@
 
 .sfd-dock {
   pointer-events: auto;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 9999px;
   padding: 6px 8px;
-  box-shadow: var(--sfd-shadow-dock);
+  box-shadow: 
+    0 16px 38px -10px rgba(15, 23, 42, 0.12),
+    0 4px 12px -2px rgba(15, 23, 42, 0.04),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px 0 rgba(15, 23, 42, 0.03);
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -671,7 +721,7 @@
 
 .sfd-dock-btn:hover {
   color: var(--sfd-ink-primary);
-  background: rgba(15, 23, 42, 0.04);
+  background: rgba(15, 23, 42, 0.05);
 }
 
 .sfd-dock-btn:active {
@@ -679,8 +729,10 @@
 }
 
 .sfd-dock-btn.active {
-  background: var(--sfd-primary);
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
   color: #ffffff;
   font-weight: 600;
-  box-shadow: 0 6px 16px -2px rgba(29, 78, 216, 0.35);
+  box-shadow: 
+    0 6px 18px -3px rgba(29, 78, 216, 0.4),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3);
 }
