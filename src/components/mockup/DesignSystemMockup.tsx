@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useLayoutEffect, useEffect } from 'react';
 import './design-system-mockup.css';
 import { 
   ChevronLeft, 
@@ -18,13 +18,52 @@ import {
 
 interface DesignSystemMockupProps {
   onDismissMockup?: () => void;
+  isEmbeddedView?: boolean;
 }
 
-export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps) {
+export function DesignSystemMockup({ onDismissMockup, isEmbeddedView = false }: DesignSystemMockupProps) {
   const [activeTab, setActiveTab] = useState<'weekly' | 'yearly' | 'explorer' | 'settings'>('weekly');
   const [enableAi, setEnableAi] = useState(true);
   const [weekIndex, setWeekIndex] = useState(41);
   const [isShiftSimulated, setIsShiftSimulated] = useState(false);
+
+  const dockRef = useRef<HTMLElement>(null);
+  const dockTabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [dockSliderPos, setDockSliderPos] = useState({ left: 0, width: 0, ready: false });
+
+  const headerNavRef = useRef<HTMLElement>(null);
+  const headerTabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [headerSliderPos, setHeaderSliderPos] = useState({ left: 0, width: 0, ready: false });
+
+  const updateSliders = useCallback(() => {
+    const dockBtn = dockTabRefs.current[activeTab];
+    if (dockBtn && dockRef.current) {
+      setDockSliderPos({
+        left: dockBtn.offsetLeft,
+        width: dockBtn.offsetWidth,
+        ready: true,
+      });
+    }
+    const headerBtn = headerTabRefs.current[activeTab];
+    if (headerBtn && headerNavRef.current) {
+      setHeaderSliderPos({
+        left: headerBtn.offsetLeft,
+        width: headerBtn.offsetWidth,
+        ready: true,
+      });
+    }
+  }, [activeTab]);
+
+  useLayoutEffect(() => {
+    updateSliders();
+    const rafId = requestAnimationFrame(updateSliders);
+    return () => cancelAnimationFrame(rafId);
+  }, [updateSliders]);
+
+  useEffect(() => {
+    window.addEventListener('resize', updateSliders);
+    return () => window.removeEventListener('resize', updateSliders);
+  }, [updateSliders]);
 
   // Dynamic values that update when simulating AI recommendation
   const billableHours = isShiftSimulated ? '35.0h' : '33.0h';
@@ -39,10 +78,10 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <span className="sfd-prototype-badge">
             <Sparkles size={13} />
-            UNSEEN.CO SMOOTH CRAFT
+            COCKPIT STUDIO
           </span>
           <span className="sfd-prototype-text">
-            Sculpted organic curves, soft ambient light, fluid pill controls & serene editorial clarity.
+            7:3 Split Schedule Visualizer • Live timeline caustics, smart travel buffers & shift simulation.
           </span>
         </div>
         {onDismissMockup && (
@@ -50,71 +89,85 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
             type="button" 
             className="sfd-prototype-btn-return"
             onClick={onDismissMockup}
-            title="Switch back to classic view"
+            title="Switch back to Weekly View"
           >
-            Classic View
+            Weekly Dashboard
           </button>
         )}
       </div>
 
-      {/* Fluid Header Card */}
-      <header className="sfd-header">
-        <div className="sfd-brand">
-          <div className="sfd-brand-symbol">ADI</div>
-          <div className="sfd-brand-text">
-            <span className="sfd-brand-title hover-serif-switch">DriveStats</span>
-            <span className="sfd-brand-sub font-editorial">Effortless Schedule & Capacity Intelligence</span>
+      {/* Fluid Header Card (standalone preview only) */}
+      {!isEmbeddedView && (
+        <header className="sfd-header">
+          <div className="sfd-brand">
+            <div className="sfd-brand-symbol">ADI</div>
+            <div className="sfd-brand-text">
+              <span className="sfd-brand-title hover-serif-switch">DriveStats</span>
+              <span className="sfd-brand-sub font-editorial">Effortless Schedule & Capacity Intelligence</span>
+            </div>
           </div>
-        </div>
 
-        <div className="sfd-header-controls">
-          {/* Kota Liquid Glass Navigation Strip */}
-          <nav className="sfd-liquid-glass-strip" aria-label="Header Navigation">
-            <button
-              type="button"
-              className={`sfd-strip-btn sfd-char-hover ${activeTab === 'weekly' ? 'active' : ''}`}
-              onClick={() => setActiveTab('weekly')}
-            >
-              <span className="sfd-char-wave">
-                {'Weekly'.split('').map((c, i) => (
-                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
-                ))}
-              </span>
-            </button>
-            <button
-              type="button"
-              className={`sfd-strip-btn sfd-char-hover ${activeTab === 'yearly' ? 'active' : ''}`}
-              onClick={() => setActiveTab('yearly')}
-            >
-              <span className="sfd-char-wave">
-                {'Yearly'.split('').map((c, i) => (
-                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
-                ))}
-              </span>
-            </button>
-            <button
-              type="button"
-              className={`sfd-strip-btn sfd-char-hover ${activeTab === 'explorer' ? 'active' : ''}`}
-              onClick={() => setActiveTab('explorer')}
-            >
-              <span className="sfd-char-wave">
-                {'Explorer'.split('').map((c, i) => (
-                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
-                ))}
-              </span>
-            </button>
-            <button
-              type="button"
-              className={`sfd-strip-btn sfd-char-hover ${activeTab === 'settings' ? 'active' : ''}`}
-              onClick={() => setActiveTab('settings')}
-            >
-              <span className="sfd-char-wave">
-                {'Settings'.split('').map((c, i) => (
-                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
-                ))}
-              </span>
-            </button>
-          </nav>
+          <div className="sfd-header-controls">
+            {/* Kota Liquid Glass Navigation Strip with Animated Toggle Slider */}
+            <nav ref={headerNavRef} className="sfd-liquid-glass-strip" aria-label="Header Navigation">
+              <div 
+                className="sfd-nav-toggle-indicator"
+                style={{
+                  transform: `translateX(${headerSliderPos.left}px)`,
+                  width: `${headerSliderPos.width}px`,
+                  opacity: headerSliderPos.ready ? 1 : 0,
+                }}
+                aria-hidden="true"
+              />
+              <button
+                ref={(el) => { headerTabRefs.current['weekly'] = el; }}
+                type="button"
+                className={`sfd-strip-btn sfd-char-hover ${activeTab === 'weekly' ? 'active' : ''}`}
+                onClick={() => setActiveTab('weekly')}
+              >
+                <span className="sfd-char-wave">
+                  {'Weekly'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
+              </button>
+              <button
+                ref={(el) => { headerTabRefs.current['yearly'] = el; }}
+                type="button"
+                className={`sfd-strip-btn sfd-char-hover ${activeTab === 'yearly' ? 'active' : ''}`}
+                onClick={() => setActiveTab('yearly')}
+              >
+                <span className="sfd-char-wave">
+                  {'Yearly'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
+              </button>
+              <button
+                ref={(el) => { headerTabRefs.current['explorer'] = el; }}
+                type="button"
+                className={`sfd-strip-btn sfd-char-hover ${activeTab === 'explorer' ? 'active' : ''}`}
+                onClick={() => setActiveTab('explorer')}
+              >
+                <span className="sfd-char-wave">
+                  {'Explorer'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
+              </button>
+              <button
+                ref={(el) => { headerTabRefs.current['settings'] = el; }}
+                type="button"
+                className={`sfd-strip-btn sfd-char-hover ${activeTab === 'settings' ? 'active' : ''}`}
+                onClick={() => setActiveTab('settings')}
+              >
+                <span className="sfd-char-wave">
+                  {'Settings'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
+              </button>
+            </nav>
 
           {/* Week Selector Pill */}
           <div className="sfd-week-chip">
@@ -167,6 +220,7 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
           </button>
         </div>
       </header>
+      )}
 
       {/* Soft Sculpted KPI Cards */}
       <section className="sfd-kpi-grid">
@@ -483,62 +537,77 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
         </div>
       </main>
 
-      {/* Floating Bottom Navigation Dock with Smooth Glass Frosting */}
-      <footer className="sfd-dock-container">
-        <nav className="sfd-dock" aria-label="Navigation Dock">
-          <button 
-            type="button" 
-            className={`sfd-dock-btn sfd-char-hover ${activeTab === 'weekly' ? 'active' : ''}`}
-            onClick={() => setActiveTab('weekly')}
-          >
-            <LayoutDashboard size={16} />
-            <span className="sfd-char-wave">
-              {'Weekly'.split('').map((c, i) => (
-                <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
-              ))}
-            </span>
-          </button>
+      {/* Floating Bottom Navigation Dock with Smooth Glass Frosting (standalone preview only) */}
+      {!isEmbeddedView && (
+        <footer className="sfd-dock-container">
+          <nav ref={dockRef} className="sfd-dock" aria-label="Navigation Dock">
+            <div 
+              className="sfd-dock-slider"
+              style={{
+                transform: `translateX(${dockSliderPos.left}px)`,
+                width: `${dockSliderPos.width}px`,
+                opacity: dockSliderPos.ready ? 1 : 0,
+              }}
+              aria-hidden="true"
+            />
+            <button 
+              ref={(el) => { dockTabRefs.current['weekly'] = el; }}
+              type="button" 
+              className={`sfd-dock-btn sfd-char-hover ${activeTab === 'weekly' ? 'active' : ''}`}
+              onClick={() => setActiveTab('weekly')}
+            >
+              <LayoutDashboard size={16} />
+              <span className="sfd-char-wave">
+                {'Weekly'.split('').map((c, i) => (
+                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                ))}
+              </span>
+            </button>
 
-          <button 
-            type="button" 
-            className={`sfd-dock-btn sfd-char-hover ${activeTab === 'yearly' ? 'active' : ''}`}
-            onClick={() => setActiveTab('yearly')}
-          >
-            <BarChart3 size={16} />
-            <span className="sfd-char-wave">
-              {'Yearly'.split('').map((c, i) => (
-                <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
-              ))}
-            </span>
-          </button>
+            <button 
+              ref={(el) => { dockTabRefs.current['yearly'] = el; }}
+              type="button" 
+              className={`sfd-dock-btn sfd-char-hover ${activeTab === 'yearly' ? 'active' : ''}`}
+              onClick={() => setActiveTab('yearly')}
+            >
+              <BarChart3 size={16} />
+              <span className="sfd-char-wave">
+                {'Yearly'.split('').map((c, i) => (
+                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                ))}
+              </span>
+            </button>
 
-          <button 
-            type="button" 
-            className={`sfd-dock-btn sfd-char-hover ${activeTab === 'explorer' ? 'active' : ''}`}
-            onClick={() => setActiveTab('explorer')}
-          >
-            <FolderKanban size={16} />
-            <span className="sfd-char-wave">
-              {'Explorer'.split('').map((c, i) => (
-                <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
-              ))}
-            </span>
-          </button>
+            <button 
+              ref={(el) => { dockTabRefs.current['explorer'] = el; }}
+              type="button" 
+              className={`sfd-dock-btn sfd-char-hover ${activeTab === 'explorer' ? 'active' : ''}`}
+              onClick={() => setActiveTab('explorer')}
+            >
+              <FolderKanban size={16} />
+              <span className="sfd-char-wave">
+                {'Explorer'.split('').map((c, i) => (
+                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                ))}
+              </span>
+            </button>
 
-          <button 
-            type="button" 
-            className={`sfd-dock-btn sfd-char-hover ${activeTab === 'settings' ? 'active' : ''}`}
-            onClick={() => setActiveTab('settings')}
-          >
-            <Settings size={16} />
-            <span className="sfd-char-wave">
-              {'Settings'.split('').map((c, i) => (
-                <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
-              ))}
-            </span>
-          </button>
-        </nav>
-      </footer>
+            <button 
+              ref={(el) => { dockTabRefs.current['settings'] = el; }}
+              type="button" 
+              className={`sfd-dock-btn sfd-char-hover ${activeTab === 'settings' ? 'active' : ''}`}
+              onClick={() => setActiveTab('settings')}
+            >
+              <Settings size={16} />
+              <span className="sfd-char-wave">
+                {'Settings'.split('').map((c, i) => (
+                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                ))}
+              </span>
+            </button>
+          </nav>
+        </footer>
+      )}
     </div>
   );
 }

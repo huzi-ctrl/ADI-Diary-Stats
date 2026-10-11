@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import { useMagnetic } from '../../hooks/useMagnetic';
 import type { MagneticOptions } from '../../hooks/useMagnetic';
 
@@ -21,14 +21,21 @@ export const MagneticPill = forwardRef<HTMLButtonElement, MagneticPillProps>(({
   style,
   ...props
 }, externalRef) => {
-  const options: MagneticOptions = { pullFactor, maxDistance };
+  const options: MagneticOptions = { pullFactor, maxDistance, enabled: true };
   const internalRef = useMagnetic<HTMLButtonElement>(options);
 
-  useImperativeHandle(externalRef, () => internalRef.current as HTMLButtonElement);
+  const setCombinedRef = useCallback((node: HTMLButtonElement | null) => {
+    internalRef.current = node;
+    if (typeof externalRef === 'function') {
+      externalRef(node);
+    } else if (externalRef && 'current' in externalRef) {
+      (externalRef as React.MutableRefObject<HTMLButtonElement | null>).current = node;
+    }
+  }, [externalRef, internalRef]);
 
   return (
     <button
-      ref={internalRef}
+      ref={setCombinedRef}
       className={`magnetic-pill ${className}`}
       style={style}
       {...props}

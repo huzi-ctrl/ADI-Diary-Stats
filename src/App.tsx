@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useLayoutEffect } from 'react';
 import { OnboardingWizard } from './components/OnboardingWizard';
 import { StatsDashboard } from './components/StatsDashboard';
 import { EventList } from './components/EventList';
@@ -14,9 +14,10 @@ import { MagneticPill } from './components/ui/MagneticPill';
 
 import './components/mockup/design-system-mockup.css';
 
+type ViewMode = 'dashboard' | 'cockpit' | 'yearly' | 'events' | 'ai' | 'settings';
+
 function App() {
-  const [showMockup, setShowMockup] = useState<boolean>(false);
-  const [viewMode, setViewMode] = useState<'dashboard' | 'yearly' | 'events' | 'ai' | 'settings'>('dashboard');
+  const [viewMode, setViewMode] = useState<ViewMode>('dashboard');
   const [legalModal, setLegalModal] = useState<'privacy' | 'tos' | null>(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('policy') === 'privacy') return 'privacy';
@@ -113,9 +114,33 @@ function App() {
     weekNavActionsRef.current.resetYear = () => setSelectedYear(null);
   }, [setCurrentWeekStart, setSelectedYear]);
 
-  if (showMockup) {
-    return <DesignSystemMockup onDismissMockup={() => setShowMockup(false)} />;
-  }
+  // Sliding toggle indicator physics for liquid glass navigation strip
+  const navStripRef = useRef<HTMLElement>(null);
+  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [indicatorPos, setIndicatorPos] = useState({ left: 0, width: 0, ready: false });
+
+  const updateIndicator = useCallback(() => {
+    const currentBtn = tabRefs.current[viewMode];
+    const container = navStripRef.current;
+    if (currentBtn && container) {
+      setIndicatorPos({
+        left: currentBtn.offsetLeft,
+        width: currentBtn.offsetWidth,
+        ready: true,
+      });
+    }
+  }, [viewMode]);
+
+  useLayoutEffect(() => {
+    updateIndicator();
+    const rafId = requestAnimationFrame(updateIndicator);
+    return () => cancelAnimationFrame(rafId);
+  }, [updateIndicator]);
+
+  useEffect(() => {
+    window.addEventListener('resize', updateIndicator);
+    return () => window.removeEventListener('resize', updateIndicator);
+  }, [updateIndicator]);
 
   return (
     <div className="sfd-mockup-root">
@@ -132,10 +157,20 @@ function App() {
         </div>
 
         <div className="sfd-header-controls">
-          {/* Liquid Glass Navigation Strip */}
+          {/* Kota Liquid Glass Navigation Strip with Animated Toggle Slider */}
           {onboardingComplete && (
-            <nav className="sfd-liquid-glass-strip" aria-label="Main Navigation">
+            <nav ref={navStripRef} className="sfd-liquid-glass-strip" aria-label="Main Navigation">
+              <div 
+                className="sfd-nav-toggle-indicator"
+                style={{
+                  transform: `translateX(${indicatorPos.left}px)`,
+                  width: `${indicatorPos.width}px`,
+                  opacity: indicatorPos.ready ? 1 : 0,
+                }}
+                aria-hidden="true"
+              />
               <MagneticPill
+                ref={(el) => { tabRefs.current['dashboard'] = el; }}
                 type="button"
                 className={`sfd-strip-btn sfd-char-hover ${viewMode === 'dashboard' ? 'active' : ''}`}
                 onClick={() => setViewMode('dashboard')}
@@ -148,6 +183,20 @@ function App() {
                 </span>
               </MagneticPill>
               <MagneticPill
+                ref={(el) => { tabRefs.current['cockpit'] = el; }}
+                type="button"
+                className={`sfd-strip-btn sfd-char-hover ${viewMode === 'cockpit' ? 'active' : ''}`}
+                onClick={() => setViewMode('cockpit')}
+              >
+                <Sparkles size={14} />
+                <span className="sfd-char-wave">
+                  {'Cockpit'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
+              </MagneticPill>
+              <MagneticPill
+                ref={(el) => { tabRefs.current['yearly'] = el; }}
                 type="button"
                 className={`sfd-strip-btn sfd-char-hover ${viewMode === 'yearly' ? 'active' : ''}`}
                 onClick={() => setViewMode('yearly')}
@@ -160,6 +209,7 @@ function App() {
                 </span>
               </MagneticPill>
               <MagneticPill
+                ref={(el) => { tabRefs.current['events'] = el; }}
                 type="button"
                 className={`sfd-strip-btn sfd-char-hover ${viewMode === 'events' ? 'active' : ''}`}
                 onClick={() => setViewMode('events')}
@@ -173,6 +223,7 @@ function App() {
               </MagneticPill>
               {enableAiInsights && (
                 <MagneticPill
+                  ref={(el) => { tabRefs.current['ai'] = el; }}
                   type="button"
                   className={`sfd-strip-btn sfd-char-hover ${viewMode === 'ai' ? 'active' : ''}`}
                   onClick={() => setViewMode('ai')}
@@ -186,6 +237,7 @@ function App() {
                 </MagneticPill>
               )}
               <MagneticPill
+                ref={(el) => { tabRefs.current['settings'] = el; }}
                 type="button"
                 className={`sfd-strip-btn sfd-char-hover ${viewMode === 'settings' ? 'active' : ''}`}
                 onClick={() => setViewMode('settings')}
@@ -353,17 +405,6 @@ function App() {
               </MagneticPill>
             </div>
           )}
-
-          {/* Showcase Pill */}
-          <MagneticPill 
-            type="button" 
-            className="sfd-prototype-btn-return"
-            onClick={() => setShowMockup(true)}
-            title="Inspect isolated Design System Showcase"
-          >
-            <Sparkles size={12} style={{ display: 'inline', marginRight: '4px' }} />
-            Showcase
-          </MagneticPill>
         </div>
       </header>
 
@@ -414,6 +455,11 @@ function App() {
                 aiProvider={aiProvider}
                 aiModel={aiModel}
                 aiApiKey={aiApiKey}
+              />
+            ) : viewMode === 'cockpit' ? (
+              <DesignSystemMockup 
+                isEmbeddedView 
+                onDismissMockup={() => setViewMode('dashboard')} 
               />
             ) : viewMode === 'yearly' ? (
               <YearlyStats 
