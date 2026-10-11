@@ -238,7 +238,12 @@ export function useUserSettings(): UserSettings {
 
   const [milesPerHour, setMilesPerHour] = useState<number>(() => {
     const saved = localStorage.getItem('adi_miles_per_hour');
-    return saved !== null ? parseFloat(saved) : DEFAULT_VEHICLE_SETTINGS.milesPerHour;
+    if (saved !== null) {
+      const val = parseFloat(saved);
+      if (val === 15) return DEFAULT_VEHICLE_SETTINGS.milesPerHour; // Upgrade old default to 25
+      return val;
+    }
+    return DEFAULT_VEHICLE_SETTINGS.milesPerHour;
   });
 
   useEffect(() => {

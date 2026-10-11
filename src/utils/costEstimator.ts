@@ -9,7 +9,7 @@ export interface VehicleCostSettings {
   fuelType: VehicleFuelType;
   fuelCostPerUnit: number; // £ per Litre (petrol/diesel) or £ per kWh (electric)
   efficiency: number; // MPG (petrol/diesel) or mi/kWh (electric)
-  milesPerHour: number; // Average miles driven per teaching hour (default: 15)
+  milesPerHour: number; // Average miles driven per teaching hour (default: 25)
   enableDepreciation: boolean; // Include wear, tires, dual controls, and car depreciation
   depreciationPerMile: number; // £ per mile (default: £0.12)
 }
@@ -58,7 +58,7 @@ export const DEFAULT_VEHICLE_SETTINGS: VehicleCostSettings = {
   fuelType: 'petrol',
   fuelCostPerUnit: DEFAULT_UK_BENCHMARKS.petrol.costPerUnit,
   efficiency: DEFAULT_UK_BENCHMARKS.petrol.defaultMpg,
-  milesPerHour: 15.0, // UK average for learner lesson driving including manoeuvres and inter-lesson transit
+  milesPerHour: 25.0, // UK average for lesson driving including transit and higher-speed routes
   enableDepreciation: true,
   depreciationPerMile: 0.12, // £0.12/mile covers tyres, brakes, dual controls, servicing & depreciation
 };

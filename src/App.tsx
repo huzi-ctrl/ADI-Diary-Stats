@@ -1402,7 +1402,7 @@ function App() {
                           onChange={(e) => setMilesPerHour(parseFloat(e.target.value) || 0)}
                         />
                         <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
-                          Distance driven per teaching hour (UK avg: 15 mph)
+                          Distance driven per teaching hour (UK avg: 25 mph)
                         </span>
                       </div>
 
