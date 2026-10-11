@@ -480,7 +480,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           ))}
         </div>
 
-        <div className="responsive-split-grid">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div className="chart-container" style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
             <svg 
               viewBox={`0 0 ${width} ${height}`} 
@@ -794,26 +794,16 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                       <title>{`${mData.label}:\nGross: £${mData.earnings.toLocaleString()}\nNet Take-Home: £${mData.netRevenue.toLocaleString()} (${mData.profitMargin.toFixed(0)}% margin)\nLessons: ${mData.lessonCount}\nTests: ${mData.testCount}`}</title>
                     </rect>
 
-                    {/* Net & Gross labels above bar */}
+                    {/* Net label above bar */}
                     <text
                       x={x}
-                      y={y - 14}
+                      y={y - 8}
                       fill="var(--accent-emerald)"
-                      fontSize="8"
+                      fontSize="8.5"
                       fontWeight="700"
                       textAnchor="middle"
                     >
                       Net £{mData.netRevenue.toLocaleString()}
-                    </text>
-                    <text
-                      x={x}
-                      y={y - 4}
-                      fill="var(--text-dim)"
-                      fontSize="8"
-                      fontWeight="600"
-                      textAnchor="middle"
-                    >
-                      (£{mData.earnings.toLocaleString()})
                     </text>
 
                     {/* X-axis label (Year) */}
@@ -857,10 +847,17 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                 );
               })()}
 
-              {/* Capacity dots and percentage labels */}
+              {/* Capacity dots and percentage labels with collision avoidance */}
               {specificMonthTrendData.map((mData, idx) => {
                 const x = getX(idx);
                 const y = getYRight(mData.fillPct);
+                const barY = getYLeft(mData.earnings);
+
+                // Collision detection: if capacity dot is vertically near the bar top label
+                const isNearBarTop = Math.abs(y - barY) < 28;
+                const capLabelX = isNearBarTop ? x + 16 : x;
+                const capLabelY = isNearBarTop ? y + 3 : (y - 8);
+                const textAnchor = isNearBarTop ? "start" : "middle";
 
                 return (
                   <g key={`dot-${mData.monthKey}`}>
@@ -876,14 +873,14 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                       <title>{`${mData.label}:\nUtilization: ${mData.fillPct.toFixed(0)}%`}</title>
                     </circle>
 
-                    {/* Capacity label above circle */}
+                    {/* Capacity label above/beside circle */}
                     <text
-                      x={x}
-                      y={y - 8}
+                      x={capLabelX}
+                      y={capLabelY}
                       fill="var(--accent-emerald)"
                       fontSize="9"
                       fontWeight="800"
-                      textAnchor="middle"
+                      textAnchor={textAnchor}
                     >
                       {mData.fillPct.toFixed(0)}%
                     </text>
@@ -937,8 +934,8 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           </button>
         </div>
 
-        <div className="responsive-split-grid" style={{ marginTop: '1rem' }}>
-          <div className="table-wrapper" style={{ padding: '0px', overflow: 'hidden' }}>
+        <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column' }}>
+          <div className="table-wrapper" style={{ padding: '0px', overflowX: 'auto', width: '100%' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-light)', textAlign: 'left', background: 'var(--bg-nested)' }}>
@@ -947,7 +944,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                 <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Scheduling Efficiency</th>
                 <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Earnings / Workday</th>
                 <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Active Days</th>
-                <th style={{ padding: '0.85rem 1rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Annual Revenue (Gross &amp; Net)</th>
+                <th style={{ padding: '0.85rem 1rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Annual Revenue (Net &amp; Gross)</th>
               </tr>
             </thead>
             <tbody>
@@ -975,17 +972,21 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                     </td>
                     <td style={{ padding: '0.85rem 0.5rem', textAlign: 'center' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>£{m.earningsPerActiveDay.toFixed(0)}</span>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--accent-emerald)', fontWeight: 600 }}>Net £{m.netEarningsPerActiveDay.toFixed(0)}/day</span>
+                        <span style={{ color: 'var(--accent-emerald)', fontWeight: 700, fontSize: '0.9rem' }}>Net £{m.netEarningsPerActiveDay.toFixed(0)}/day</span>
+                        <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>£{m.earningsPerActiveDay.toFixed(0)} gross</span>
                       </div>
                     </td>
                     <td style={{ padding: '0.85rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                       {m.activeDaysCount} days
                     </td>
                     <td style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 600 }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                        <span style={{ color: 'var(--text-main)' }}>£{m.earnings.toLocaleString()} <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 400 }}>gross</span></span>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--accent-emerald)', fontWeight: 700 }}>Net £{m.netRevenue.toLocaleString()} ({m.profitMargin.toFixed(0)}%)</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                        <span style={{ color: 'var(--accent-emerald)', fontWeight: 700, fontSize: '0.95rem' }}>Net £{m.netRevenue.toLocaleString()}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                          <span>£{m.earnings.toLocaleString()} gross</span>
+                          <span>&bull;</span>
+                          <span style={{ color: 'var(--accent-emerald)', fontWeight: 600 }}>{m.profitMargin.toFixed(0)}% margin</span>
+                        </div>
                         {m.projectedEarnings && (
                           <div style={{ fontSize: '0.68rem', color: 'var(--accent-cyan)', marginTop: '2px' }}>
                             Proj. EoY Net: £{m.projectedNetEarnings?.toLocaleString()}
@@ -1006,28 +1007,34 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           </div>
 
           {enableAiInsights && aiApiKey && (
-            <div className="glass-card animate-slide-up" style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '0.75rem', borderRadius: '14px', height: 'fit-content' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.5rem' }}>
-                <Sparkles size={15} style={{ color: 'var(--accent-purple)' }} />
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>AI YoY Growth Analyst</span>
+            <div className="glass-card animate-slide-up" style={{ marginTop: '1.25rem', padding: '1.25rem 1.5rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '1rem', borderRadius: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.6rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Sparkles size={16} style={{ color: 'var(--accent-purple)' }} />
+                  <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-main)' }}>AI YoY Growth Analyst</span>
+                </div>
+                {yoyAiLoading && <RefreshCw size={14} className="spin-animation" style={{ color: 'var(--accent-cyan)' }} />}
               </div>
               {yoyAiLoading ? (
-                <div style={{ padding: '2rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-muted)' }}>
+                <div style={{ padding: '1.5rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-muted)' }}>
                   <RefreshCw size={18} className="spin-animation" style={{ margin: '0 auto' }} />
-                  <span style={{ fontSize: '0.75rem' }}>Analyzing financial trajectory...</span>
+                  <span style={{ fontSize: '0.8rem' }}>Analyzing financial trajectory...</span>
                 </div>
               ) : yoyAiError ? (
-                <span style={{ fontSize: '0.75rem', color: '#f87171' }}>Failed to load AI Insights: {yoyAiError}</span>
+                <span style={{ fontSize: '0.8rem', color: '#f87171' }}>Failed to load AI Insights: {yoyAiError}</span>
               ) : yoyAiReport ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.8rem' }}>
-                  <p style={{ color: 'var(--text-main)', lineHeight: 1.45, margin: 0 }}>{yoyAiReport.summary}</p>
-                  <div style={{ background: 'rgba(99, 102, 241, 0.08)', padding: '0.65rem 0.85rem', borderRadius: '12px', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-                    <span style={{ fontWeight: 700, display: 'block', marginBottom: '0.15rem', color: 'var(--text-main)', fontSize: '0.75rem' }}>Efficiency Analysis</span>
-                    <span style={{ color: 'var(--text-muted)', lineHeight: 1.4 }}>{yoyAiReport.efficiencyInsight}</span>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', alignItems: 'stretch' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', justifyContent: 'center' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Growth Overview</span>
+                    <p style={{ color: 'var(--text-main)', lineHeight: 1.5, margin: 0, fontSize: '0.85rem' }}>{yoyAiReport.summary}</p>
+                  </div>
+                  <div style={{ background: 'rgba(99, 102, 241, 0.08)', padding: '0.85rem 1rem', borderRadius: '14px', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+                    <span style={{ fontWeight: 700, display: 'block', marginBottom: '0.35rem', color: 'var(--text-main)', fontSize: '0.8rem' }}>Efficiency Analysis</span>
+                    <span style={{ color: 'var(--text-muted)', lineHeight: 1.45, fontSize: '0.825rem' }}>{yoyAiReport.efficiencyInsight}</span>
                   </div>
                 </div>
               ) : (
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>No report data.</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>No report data.</span>
               )}
             </div>
           )}
@@ -1733,20 +1740,20 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span className="kpi-title">Estimated Total Revenue</span>
               <InfoPlacard
-                title="Annual Gross & Net Revenue"
+                title="Annual Net & Gross Revenue"
                 badge="Net Take-Home"
-                description="Projected gross tuition earnings from driving lessons and practical driving tests alongside net take-home earnings after deducting annual vehicle operating costs."
+                description="Projected net take-home earnings after deducting annual vehicle operating costs, alongside gross tuition revenue from driving lessons and practical driving tests."
                 calculation={`Gross = (£${hourlyRate} × ${globalSummary.totalHours.toFixed(1)}h)${globalSummary.totalTests > 0 ? ` + tests` : ''}. Net = Gross − Estimated Vehicle Expenses (£${globalSummary.totalExpenses.toLocaleString()} fuel & depreciation at ${vehicleCostSettings.milesPerHour} mph).`}
                 tip="Net revenue accounts for real business running costs including fuel and vehicle depreciation."
               />
             </div>
             <span 
               style={{
-                fontSize: '0.6875rem',
+                fontSize: '0.72rem',
                 fontWeight: 700,
                 color: 'var(--text-muted)',
                 background: 'var(--bg-nested)',
-                padding: '0.15rem 0.5rem',
+                padding: '0.2rem 0.55rem',
                 borderRadius: '9999px',
                 border: '1px solid var(--border-light)'
               }}
@@ -1755,10 +1762,12 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
               Gross £{globalSummary.totalEarnings.toLocaleString()}
             </span>
           </div>
-          <div className="kpi-value" style={{ color: 'var(--accent-emerald)' }}>
+          <div className="kpi-value" style={{ color: 'var(--accent-emerald)', fontSize: '2rem', fontWeight: 800 }}>
             £{globalSummary.netRevenue.toLocaleString()}
           </div>
-          <span className="kpi-footer">{globalSummary.profitMargin.toFixed(0)}% take-home margin • -£${globalSummary.totalExpenses.toLocaleString()} vehicle costs (~{Math.round(globalSummary.estimatedMiles).toLocaleString()} mi)</span>
+          <span className="kpi-footer" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            <strong style={{ color: 'var(--accent-emerald)' }}>{globalSummary.profitMargin.toFixed(0)}% margin</strong> &bull; £{globalSummary.totalExpenses.toLocaleString()} vehicle costs
+          </span>
         </div>
 
       </div>
@@ -1888,7 +1897,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                 <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Hours Taught</th>
                 <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Ideal Span Hours</th>
                 <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Fill Percentage</th>
-                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Revenue (Gross &amp; Net)</th>
+                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Revenue (Net &amp; Gross)</th>
               </tr>
             </thead>
             <tbody>
@@ -1905,9 +1914,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                   <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>{mData.idealHours.toFixed(1)} hrs</td>
                   <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', fontWeight: 600, color: 'var(--accent-emerald)' }}>{mData.fillPct.toFixed(0)}%</td>
                   <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right', fontWeight: 600 }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                      <span style={{ color: 'var(--text-main)', fontSize: '0.85rem' }}>£{mData.earnings.toLocaleString()} <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 400 }}>gross</span></span>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--accent-emerald)', fontWeight: 700 }}>Net £{mData.netRevenue.toLocaleString()} ({mData.profitMargin.toFixed(0)}%)</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                      <span style={{ color: 'var(--accent-emerald)', fontSize: '0.85rem', fontWeight: 700 }}>Net £{mData.netRevenue.toLocaleString()}</span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 500 }}>£{mData.earnings.toLocaleString()} gross &bull; {mData.profitMargin.toFixed(0)}%</span>
                     </div>
                   </td>
                 </tr>
