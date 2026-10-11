@@ -457,6 +457,25 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--border-light);
   background: var(--bg-card);
   box-shadow: var(--card-shadow);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.event-cards-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .table-wrapper {
+    display: none !important;
+  }
+  .event-cards-mobile {
+    display: flex !important;
+  }
 }
 
 .event-table {

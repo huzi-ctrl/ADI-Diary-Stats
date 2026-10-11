@@ -329,7 +329,7 @@ export const EventList: React.FC<EventListProps> = ({
       <div className="event-cards-mobile">
         {paginatedEvents.length > 0 ? (
           paginatedEvents.map(e => (
-            <div key={`mob-${e.id}`} className="glass-card" style={{ padding: '1rem', border: '1px solid var(--border-medium)', background: 'var(--bg-nested)' }}>
+            <div key={`mob-${e.id}`} className="glass-card" style={{ padding: '1.1rem 1.25rem', borderRadius: '16px', border: '1px solid var(--border-medium)', background: 'var(--bg-nested)', width: '100%', boxSizing: 'border-box' }}>
               <div style={{ fontWeight: 600, color: 'var(--text-main)', marginBottom: '0.25rem', fontSize: '1.05rem' }}>{e.summary}</div>
               
               {e.description && (

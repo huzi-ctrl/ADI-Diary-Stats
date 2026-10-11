@@ -204,7 +204,7 @@ function App() {
           {onboardingComplete && (
             <nav 
               ref={navStripRef} 
-              className={`sfd-liquid-glass-strip ${indicatorPos.ready ? 'indicator-ready' : ''}`} 
+              className={`sfd-liquid-glass-strip sfd-desktop-nav-strip ${indicatorPos.ready ? 'indicator-ready' : ''}`} 
               aria-label="Main Navigation"
             >
               <div 
@@ -689,98 +689,227 @@ function App() {
               aria-hidden="true" 
             />
             <div ref={mobileMenuRef} className="sfd-mobile-drawer" role="dialog" aria-modal="true">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <img src="/favicon.png" alt="ADI stats logo" style={{ height: '22px', width: '22px', objectFit: 'contain' }} />
-                  <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-main)' }}>Menu & Actions</span>
+              {/* Drawer Header */}
+              <div className="sfd-drawer-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src="/favicon.png" alt="ADI stats logo" style={{ height: '20px', width: '20px', objectFit: 'contain' }} />
+                  </div>
+                  <div>
+                    <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--text-main)', display: 'block', lineHeight: 1.2 }}>ADI stats</span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>Navigation & Controls</span>
+                  </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px', color: 'var(--text-muted)' }}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid var(--border-light)', background: 'var(--bg-nested)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)' }}
                   aria-label="Close menu"
                 >
-                  <X size={20} />
+                  <X size={18} />
                 </button>
               </div>
 
-              {/* Connected File info */}
-              {onboardingComplete && fileName && (
-                <div style={{ background: 'var(--bg-nested)', padding: '10px 14px', borderRadius: '14px', border: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>Active Calendar Source</span>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-main)', wordBreak: 'break-all' }}>{fileName}</span>
+              {/* Main Navigation Links */}
+              {onboardingComplete && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-dim)', paddingLeft: '4px' }}>
+                    Views & Analytics
+                  </span>
+                  <div className="sfd-drawer-nav-list">
+                    <button
+                      type="button"
+                      className={`sfd-drawer-nav-item ${viewMode === 'dashboard' ? 'active' : ''}`}
+                      onClick={() => {
+                        setViewMode('dashboard');
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div className="sfd-drawer-icon-wrap">
+                          <LayoutDashboard size={16} />
+                        </div>
+                        <span>Weekly Workload</span>
+                      </div>
+                      <ChevronRight size={15} style={{ opacity: 0.5 }} />
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`sfd-drawer-nav-item ${viewMode === 'day' ? 'active' : ''}`}
+                      onClick={() => {
+                        setViewMode('day');
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div className="sfd-drawer-icon-wrap">
+                          <Calendar size={16} />
+                        </div>
+                        <span>Day Schedule</span>
+                      </div>
+                      <ChevronRight size={15} style={{ opacity: 0.5 }} />
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`sfd-drawer-nav-item ${viewMode === 'yearly' ? 'active' : ''}`}
+                      onClick={() => {
+                        setViewMode('yearly');
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div className="sfd-drawer-icon-wrap">
+                          <TrendingUp size={16} />
+                        </div>
+                        <span>Yearly Metrics</span>
+                      </div>
+                      <ChevronRight size={15} style={{ opacity: 0.5 }} />
+                    </button>
+
+                    <button
+                      type="button"
+                      className={`sfd-drawer-nav-item ${viewMode === 'events' ? 'active' : ''}`}
+                      onClick={() => {
+                        setViewMode('events');
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div className="sfd-drawer-icon-wrap">
+                          <List size={16} />
+                        </div>
+                        <span>Event Explorer</span>
+                      </div>
+                      <ChevronRight size={15} style={{ opacity: 0.5 }} />
+                    </button>
+
+                    {enableAiInsights && (
+                      <button
+                        type="button"
+                        className={`sfd-drawer-nav-item ${viewMode === 'ai' ? 'active' : ''}`}
+                        onClick={() => {
+                          setViewMode('ai');
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <div className="sfd-drawer-icon-wrap" style={{ color: 'var(--accent-purple)' }}>
+                            <Sparkles size={16} />
+                          </div>
+                          <span>AI Copilot Insights</span>
+                        </div>
+                        <ChevronRight size={15} style={{ opacity: 0.5 }} />
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      className={`sfd-drawer-nav-item ${viewMode === 'settings' ? 'active' : ''}`}
+                      onClick={() => {
+                        setViewMode('settings');
+                        setMobileMenuOpen(false);
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div className="sfd-drawer-icon-wrap">
+                          <Settings size={16} />
+                        </div>
+                        <span>Settings & Rates</span>
+                      </div>
+                      <ChevronRight size={15} style={{ opacity: 0.5 }} />
+                    </button>
+                  </div>
                 </div>
               )}
 
-              {/* AI Copilot Switch */}
+              {/* Connected File / Live Calendar Info */}
+              {onboardingComplete && fileName && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-dim)', paddingLeft: '4px' }}>
+                    Connected Calendar
+                  </span>
+                  <div style={{ background: 'var(--sfd-surface-nested)', padding: '12px 14px', borderRadius: '16px', border: '1px solid var(--sfd-border-hairline)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>Active Source</span>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-main)', wordBreak: 'break-all' }}>{fileName}</span>
+                    {calendarUrl && (
+                      <button
+                        type="button"
+                        className="sfd-btn-primary"
+                        style={{ marginTop: '8px', width: '100%', justifyContent: 'center', padding: '8px', fontSize: '12.5px' }}
+                        onClick={() => {
+                          handleSyncLiveCalendar();
+                          setMobileMenuOpen(false);
+                        }}
+                        disabled={isSyncing}
+                      >
+                        <RefreshCw size={13} className={isSyncing ? 'spin-animation' : ''} />
+                        <span>{isSyncing ? 'Syncing...' : 'Sync Live Calendar'}</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Preferences Section */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>AI Insights</span>
-                <button
-                  type="button"
-                  className={`sfd-ai-toggle ${enableAiInsights ? 'active' : ''}`}
-                  style={{ width: '100%', justifyContent: 'center' }}
-                  onClick={() => {
-                    const val = !enableAiInsights;
-                    setEnableAiInsights(val);
-                    if (!val && viewMode === 'ai') {
-                      setViewMode('dashboard');
-                    }
-                  }}
-                >
-                  <Sparkles size={14} />
-                  <span>AI Copilot: {enableAiInsights ? 'Enabled' : 'Disabled'}</span>
-                </button>
+                <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-dim)', paddingLeft: '4px' }}>
+                  Preferences
+                </span>
+
+                {/* AI Copilot Toggle */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--sfd-surface-nested)', borderRadius: '14px', border: '1px solid var(--sfd-border-hairline)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Sparkles size={15} style={{ color: enableAiInsights ? 'var(--accent-purple)' : 'var(--text-dim)' }} />
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>AI Copilot</span>
+                  </div>
+                  <button
+                    type="button"
+                    className={`sfd-ai-toggle ${enableAiInsights ? 'active' : ''}`}
+                    style={{ padding: '4px 12px', fontSize: '12px' }}
+                    onClick={() => {
+                      const val = !enableAiInsights;
+                      setEnableAiInsights(val);
+                      if (!val && viewMode === 'ai') {
+                        setViewMode('dashboard');
+                      }
+                    }}
+                  >
+                    <span>{enableAiInsights ? 'Enabled' : 'Disabled'}</span>
+                  </button>
+                </div>
+
+                {/* Theme Toggle Button */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--sfd-surface-nested)', borderRadius: '14px', border: '1px solid var(--sfd-border-hairline)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {theme === 'dark' ? <Moon size={15} style={{ color: 'var(--accent-rose)' }} /> : <Sun size={15} style={{ color: 'var(--accent-amber)' }} />}
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Dark Mode</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="sfd-strip-btn"
+                    style={{ padding: '4px 12px', fontSize: '12px' }}
+                    onClick={toggleTheme}
+                  >
+                    <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Theme Toggle Button */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Display Mode</span>
-                <button
-                  type="button"
-                  className="sfd-strip-btn"
-                  style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
-                  onClick={toggleTheme}
-                >
-                  {theme === 'dark' ? (
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                      <Sun size={15} style={{ color: 'var(--accent-amber)' }} /> Switch to Light Mode
-                    </span>
-                  ) : (
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                      <Moon size={15} style={{ color: 'var(--accent-rose)' }} /> Switch to Dark Mode
-                    </span>
-                  )}
-                </button>
-              </div>
-
-              {/* Calendar Actions */}
+              {/* Log Out Action */}
               {onboardingComplete && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
-                  {calendarUrl && (
-                    <button
-                      type="button"
-                      className="sfd-btn-primary"
-                      style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
-                      onClick={() => {
-                        handleSyncLiveCalendar();
-                        setMobileMenuOpen(false);
-                      }}
-                      disabled={isSyncing}
-                    >
-                      <RefreshCw size={14} className={isSyncing ? 'spin-animation' : ''} />
-                      <span>{isSyncing ? 'Syncing Calendar...' : 'Sync Live Calendar'}</span>
-                    </button>
-                  )}
+                <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid var(--sfd-border-hairline)' }}>
                   <button
                     type="button"
                     className="btn btn-danger"
-                    style={{ width: '100%', justifyContent: 'center', padding: '10px', borderRadius: '9999px' }}
+                    style={{ width: '100%', justifyContent: 'center', padding: '11px', borderRadius: '14px', fontSize: '13.5px', fontWeight: 700 }}
                     onClick={() => {
                       handleClear();
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <LogOut size={14} />
+                    <LogOut size={15} />
                     <span>Log out</span>
                   </button>
                 </div>
