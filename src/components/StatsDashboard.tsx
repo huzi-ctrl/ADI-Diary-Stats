@@ -618,48 +618,105 @@ Analyze and return the JSON object.`;
             </div>
           </div>
 
-          {/* Card 3: Lesson Time-of-Day Slots */}
-          <div className="sfd-card-container">
-            <div className="sfd-card-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
-                  <Activity size={18} />
+          {/* Card 3: AI Copilot Coaching & Report */}
+          {enableAiInsights && (
+            <div className="sfd-card-container">
+              <div className="sfd-card-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
+                    <Sparkles size={18} />
+                  </div>
+                  <h3 className="sfd-card-heading">AI Weekly Copilot</h3>
+                  <InfoPlacard
+                    title="AI Weekly Copilot"
+                    badge="Smart Coaching"
+                    description="Automated business coaching intelligence that reviews your diary structure, bottlenecks, and productivity pacing."
+                    calculation="Analyzes weekly distribution, gap ratios, and lesson times through secure client-side AI analysis."
+                    tip="Review the AI tips at the beginning of each week to eliminate scheduling bottlenecks and protect your rest days."
+                  />
                 </div>
-                <h2 className="sfd-card-heading">Lesson Time-of-Day Slots</h2>
-                <InfoPlacard
-                  title="Time-of-Day Slot Distribution"
-                  badge="Timing Insights"
-                  description="Categorizes lessons by student appointment time: Morning (6am–12pm), Afternoon (12pm–6pm), Evening (6pm–12am), and Night (12am–6am)."
-                  calculation="Calculates percentage share and slot counts across each time window based on lesson start times."
-                  tip="Pupil demand is highest after 4pm and on weekends. Charging premium rates for peak evening slots can optimize income."
-                />
-              </div>
-              <span className="sfd-card-tag">Slot Distribution</span>
-            </div>
 
-            <div className="sfd-timeofday-grid">
-              <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Morning (6am &ndash; 12pm)</span>
-                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-primary)' }}>{morningPct}%</span>
-                <span className="sfd-timeofday-sub">{morningCount} slots</span>
+                {effectiveApiKey && (
+                  <button
+                    type="button"
+                    onClick={() => fetchWeeklyAiReport(true)}
+                    disabled={weeklyAiLoading}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--sfd-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    title="Regenerate Weekly Insights"
+                  >
+                    <RefreshCw size={13} className={weeklyAiLoading ? 'spin-animation' : ''} />
+                  </button>
+                )}
               </div>
-              <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Afternoon (12pm &ndash; 6pm)</span>
-                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-ink-primary)' }}>{afternoonPct}%</span>
-                <span className="sfd-timeofday-sub">{afternoonCount} slots</span>
-              </div>
-              <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Evening (6pm &ndash; 12am)</span>
-                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-emerald)' }}>{eveningPct}%</span>
-                <span className="sfd-timeofday-sub">{eveningCount} slots</span>
-              </div>
-              <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Night (12am &ndash; 6am)</span>
-                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-amber)' }}>{nightPct}%</span>
-                <span className="sfd-timeofday-sub">{nightCount} slots</span>
-              </div>
+
+              {!effectiveApiKey ? (
+                <p style={{ fontSize: '13px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.5 }}>
+                  AI Coaching is active. Add a Gemini or OpenAI API Key in <strong>Settings</strong> to receive automated weekly schedule analysis.
+                </p>
+              ) : weeklyAiLoading ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem', color: 'var(--sfd-primary)', gap: '10px' }}>
+                  <RefreshCw size={22} className="spin-animation" />
+                  <span style={{ fontSize: '13px', fontWeight: 600 }}>Analyzing weekly pacing...</span>
+                </div>
+              ) : weeklyAiError ? (
+                <div style={{ background: 'var(--sfd-coral-soft)', color: 'var(--sfd-coral)', border: '1px solid var(--sfd-coral-border)', padding: '12px', borderRadius: '14px', fontSize: '12px' }}>
+                  {weeklyAiError}
+                </div>
+              ) : weeklyAiReport ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  {/* Score Gauge & Executive Summary */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: 'var(--sfd-surface-nested)', padding: '12px 16px', borderRadius: '18px' }}>
+                      <svg 
+                        width="60" 
+                        height="60" 
+                        viewBox="0 0 100 100" 
+                        style={{ flexShrink: 0, width: '60px', height: '60px', minWidth: '60px', minHeight: '60px' }}
+                      >
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--sfd-border-hairline)" strokeWidth="8"/>
+                        <circle 
+                          cx="50" 
+                          cy="50" 
+                          r="40" 
+                          fill="none" 
+                          stroke={weeklyAiReport.score >= 80 ? 'var(--sfd-emerald)' : weeklyAiReport.score >= 60 ? 'var(--sfd-primary)' : 'var(--sfd-coral)'} 
+                          strokeWidth="8" 
+                          strokeDasharray="251" 
+                          strokeDashoffset={251 - (251 * weeklyAiReport.score) / 100} 
+                          strokeLinecap="round" 
+                          transform="rotate(-90 50 50)"
+                          style={{ transition: 'stroke-dashoffset 0.8s ease-out' }}
+                        />
+                        <text x="50" y="56" textAnchor="middle" fill="var(--sfd-ink-primary)" fontSize="20" fontWeight="bold">{weeklyAiReport.score}%</text>
+                      </svg>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
+                        <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>Efficiency Score</span>
+                        <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', lineHeight: 1.3 }}>{weeklyAiReport.scoreReason}</span>
+                      </div>
+                    </div>
+
+                    <p style={{ fontSize: '13px', color: 'var(--sfd-ink-secondary)', margin: 0, lineHeight: 1.5 }}>
+                      {weeklyAiReport.summary}
+                    </p>
+                  </div>
+
+                  {weeklyAiReport.recommendations?.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--sfd-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Recommendations</span>
+                      <div style={{ display: 'grid', gridTemplateColumns: weeklyAiReport.recommendations.length > 1 ? 'repeat(auto-fit, minmax(240px, 1fr))' : '1fr', gap: '8px' }}>
+                        {weeklyAiReport.recommendations.map((rec, rIdx) => (
+                          <div key={rIdx} style={{ display: 'flex', gap: '8px', fontSize: '12.5px', color: 'var(--sfd-ink-secondary)', lineHeight: 1.4, background: 'var(--sfd-surface-nested)', padding: '10px 14px', borderRadius: '12px', border: '1px solid var(--sfd-border-hairline)' }}>
+                            <span style={{ color: 'var(--sfd-primary)', fontWeight: 700 }}>&bull;</span>
+                            <span>{rec}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </div>
-          </div>
+          )}
         </div>
 
         {/* Right Column: Executive Summary & Details */}
@@ -801,129 +858,83 @@ Analyze and return the JSON object.`;
             </div>
           </div>
 
-          {/* Card: AI Copilot Coaching & Report */}
-          {enableAiInsights && (
-            <div className="sfd-card-container">
-              <div className="sfd-card-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
-                    <Sparkles size={18} />
-                  </div>
-                  <h3 className="sfd-card-heading">AI Weekly Copilot</h3>
-                  <InfoPlacard
-                    title="AI Weekly Copilot"
-                    badge="Smart Coaching"
-                    description="Automated business coaching intelligence that reviews your diary structure, bottlenecks, and productivity pacing."
-                    calculation="Analyzes weekly distribution, gap ratios, and lesson times through secure client-side AI analysis."
-                    tip="Review the AI tips at the beginning of each week to eliminate scheduling bottlenecks and protect your rest days."
-                  />
+          {/* Card: Lesson Time-of-Day Slots */}
+          <div className="sfd-card-container">
+            <div className="sfd-card-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
+                  <Activity size={18} />
                 </div>
-
-                {effectiveApiKey && (
-                  <button
-                    type="button"
-                    onClick={() => fetchWeeklyAiReport(true)}
-                    disabled={weeklyAiLoading}
-                    style={{ background: 'transparent', border: 'none', color: 'var(--sfd-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                    title="Regenerate Weekly Insights"
-                  >
-                    <RefreshCw size={13} className={weeklyAiLoading ? 'spin-animation' : ''} />
-                  </button>
-                )}
+                <h3 className="sfd-card-heading">Lesson Time-of-Day Slots</h3>
+                <InfoPlacard
+                  title="Time-of-Day Slot Distribution"
+                  badge="Timing Insights"
+                  description="Categorizes lessons by student appointment time: Morning (6am–12pm), Afternoon (12pm–6pm), Evening (6pm–12am), and Night (12am–6am)."
+                  calculation="Calculates percentage share and slot counts across each time window based on lesson start times."
+                  tip="Pupil demand is highest after 4pm and on weekends. Charging premium rates for peak evening slots can optimize income."
+                />
               </div>
-
-              {!effectiveApiKey ? (
-                <p style={{ fontSize: '13px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.5 }}>
-                  AI Coaching is active. Add a Gemini or OpenAI API Key in <strong>Settings</strong> to receive automated weekly schedule analysis.
-                </p>
-              ) : weeklyAiLoading ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem', color: 'var(--sfd-primary)', gap: '10px' }}>
-                  <RefreshCw size={22} className="spin-animation" />
-                  <span style={{ fontSize: '13px', fontWeight: 600 }}>Analyzing weekly pacing...</span>
-                </div>
-              ) : weeklyAiError ? (
-                <div style={{ background: 'var(--sfd-coral-soft)', color: 'var(--sfd-coral)', border: '1px solid var(--sfd-coral-border)', padding: '12px', borderRadius: '14px', fontSize: '12px' }}>
-                  {weeklyAiError}
-                </div>
-              ) : weeklyAiReport ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  {/* Score Gauge */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: 'var(--sfd-surface-nested)', padding: '12px 16px', borderRadius: '18px' }}>
-                    <svg 
-                      width="60" 
-                      height="60" 
-                      viewBox="0 0 100 100" 
-                      style={{ flexShrink: 0, width: '60px', height: '60px', minWidth: '60px', minHeight: '60px' }}
-                    >
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="var(--sfd-border-hairline)" strokeWidth="8"/>
-                      <circle 
-                        cx="50" 
-                        cy="50" 
-                        r="40" 
-                        fill="none" 
-                        stroke={weeklyAiReport.score >= 80 ? 'var(--sfd-emerald)' : weeklyAiReport.score >= 60 ? 'var(--sfd-primary)' : 'var(--sfd-coral)'} 
-                        strokeWidth="8" 
-                        strokeDasharray="251" 
-                        strokeDashoffset={251 - (251 * weeklyAiReport.score) / 100} 
-                        strokeLinecap="round" 
-                        transform="rotate(-90 50 50)"
-                        style={{ transition: 'stroke-dashoffset 0.8s ease-out' }}
-                      />
-                      <text x="50" y="56" textAnchor="middle" fill="var(--sfd-ink-primary)" fontSize="20" fontWeight="bold">{weeklyAiReport.score}%</text>
-                    </svg>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>Efficiency Score</span>
-                      <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', lineHeight: 1.3 }}>{weeklyAiReport.scoreReason}</span>
-                    </div>
-                  </div>
-
-                  <p style={{ fontSize: '13px', color: 'var(--sfd-ink-secondary)', margin: 0, lineHeight: 1.5 }}>
-                    {weeklyAiReport.summary}
-                  </p>
-
-                  {weeklyAiReport.recommendations?.length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--sfd-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Recommendations</span>
-                      {weeklyAiReport.recommendations.map((rec, rIdx) => (
-                        <div key={rIdx} style={{ display: 'flex', gap: '6px', fontSize: '12.5px', color: 'var(--sfd-ink-secondary)', lineHeight: 1.4 }}>
-                          <span style={{ color: 'var(--sfd-primary)' }}>&bull;</span>
-                          <span>{rec}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : null}
+              <span className="sfd-card-tag">Slot Distribution</span>
             </div>
-          )}
 
-          {/* Card: Tests & Practical Exams */}
-          {testBookings.length > 0 && (
-            <div className="sfd-card-container">
-              <div className="sfd-card-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-amber-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#92400e' }}>
-                    <Calendar size={18} />
-                  </div>
-                  <h3 className="sfd-card-heading">Practical Driving Tests</h3>
-                </div>
-                <span className="sfd-card-tag" style={{ color: '#92400e' }}>{testBookings.length} This Week</span>
+            <div className="sfd-timeofday-grid">
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Morning (6am &ndash; 12pm)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-primary)' }}>{morningPct}%</span>
+                <span className="sfd-timeofday-sub">{morningCount} slots</span>
               </div>
-              <p style={{ fontSize: '13px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.5 }}>
-                You have {testBookings.length} driving test appointments scheduled this week ({allFutureTests.length} total across calendar).
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Afternoon (12pm &ndash; 6pm)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-ink-primary)' }}>{afternoonPct}%</span>
+                <span className="sfd-timeofday-sub">{afternoonCount} slots</span>
+              </div>
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Evening (6pm &ndash; 12am)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-emerald)' }}>{eveningPct}%</span>
+                <span className="sfd-timeofday-sub">{eveningCount} slots</span>
+              </div>
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Night (12am &ndash; 6am)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-amber)' }}>{nightPct}%</span>
+                <span className="sfd-timeofday-sub">{nightCount} slots</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Practical Driving Tests & Local Privacy Twin Row */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: testBookings.length > 0 ? 'repeat(auto-fit, minmax(200px, 1fr))' : '1fr', 
+            gap: '16px' 
+          }}>
+            {/* Card: Tests & Practical Exams */}
+            {testBookings.length > 0 && (
+              <div className="sfd-card-container" style={{ padding: '18px 20px', gap: '10px' }}>
+                <div className="sfd-card-header" style={{ marginBottom: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--sfd-amber-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#92400e' }}>
+                      <Calendar size={15} />
+                    </div>
+                    <h3 className="sfd-card-heading" style={{ fontSize: '13.5px' }}>Practical Driving Tests</h3>
+                  </div>
+                  <span className="sfd-card-tag" style={{ color: '#92400e', fontSize: '11px', padding: '2px 8px' }}>{testBookings.length} Active</span>
+                </div>
+                <p style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.4 }}>
+                  You have {testBookings.length} driving test appointment{testBookings.length > 1 ? 's' : ''} scheduled this week ({allFutureTests.length} total across calendar).
+                </p>
+              </div>
+            )}
+
+            {/* Local-First Privacy Card */}
+            <div className="sfd-card-container" style={{ padding: '18px 20px', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--sfd-ink-primary)' }}>
+                <ShieldCheck size={16} style={{ color: 'var(--sfd-emerald)', flexShrink: 0 }} />
+                <span>100% Client-Side Privacy</span>
+              </div>
+              <p style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.4 }}>
+                All parsing, buffer calculations, and capacity analytics run locally in your browser. No student data ever touches external servers.
               </p>
             </div>
-          )}
-
-          {/* Local-First Privacy Card */}
-          <div className="sfd-card-container">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--sfd-ink-primary)' }}>
-              <ShieldCheck size={16} style={{ color: 'var(--sfd-emerald)' }} />
-              <span>100% Client-Side Privacy</span>
-            </div>
-            <p style={{ fontSize: '13px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.5 }}>
-              All parsing, buffer calculations, and capacity analytics run locally in your browser. No student data ever touches external servers.
-            </p>
           </div>
         </div>
       </main>

@@ -632,7 +632,7 @@
 
 @media (min-width: 1024px) {
   .sfd-cockpit-split {
-    grid-template-columns: minmax(0, 68fr) minmax(0, 32fr);
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
   }
 }
 
