@@ -126,7 +126,7 @@ function App() {
           </div>
           <div className="sfd-brand-text">
             <span className="sfd-brand-title">ADI stats</span>
-            <span className="sfd-brand-sub">Approved Driving Instructor Schedule Analytics</span>
+            <span className="sfd-brand-sub font-editorial">Approved Driving Instructor Schedule Analytics</span>
           </div>
         </div>
 

@@ -337,7 +337,7 @@ Analyze and return the JSON object.`;
               </span>
             </div>
             <div className="sfd-kpi-value">{lessonsOnly.length}</div>
-            <span className="sfd-kpi-sub">
+            <span className="sfd-kpi-sub font-editorial">
               {lessonsOnly.length} paid • {nonPayingLessons.length} free
             </span>
           </div>
@@ -350,7 +350,7 @@ Analyze and return the JSON object.`;
               </span>
             </div>
             <div className="sfd-kpi-value">{totalTeachHours}<span style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>h</span></div>
-            <span className="sfd-kpi-sub">
+            <span className="sfd-kpi-sub font-editorial">
               {totalTeachHours}h paid • {nonPayingTeachHours}h free
             </span>
           </div>
@@ -363,8 +363,8 @@ Analyze and return the JSON object.`;
               </span>
             </div>
             <div className="sfd-kpi-value">{testBookings.length}</div>
-            <span className="sfd-kpi-sub">
-              Mock exams & official tests
+            <span className="sfd-kpi-sub font-editorial">
+              mock exams & official tests
             </span>
           </div>
 
@@ -376,7 +376,7 @@ Analyze and return the JSON object.`;
               </span>
             </div>
             <div className="sfd-kpi-value">£{weeklyEarnings.toLocaleString()}</div>
-            <span className="sfd-kpi-sub">
+            <span className="sfd-kpi-sub font-editorial">
               {totalTeachHours}h teaching @ £{hourlyRate}/hr
             </span>
           </div>

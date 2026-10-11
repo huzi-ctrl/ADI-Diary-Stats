@@ -54,6 +54,12 @@ typography:
     fontWeight: 500
     lineHeight: 1.35
     letterSpacing: "0.01em"
+  editorial:
+    fontFamily: "'Newsreader', Georgia, 'Times New Roman', serif"
+    fontStyle: "italic"
+    fontSize: "0.875rem"
+    lineHeight: 1.4
+    letterSpacing: "-0.01em"
 rounded:
   xs: "6px"
   sm: "12px"
