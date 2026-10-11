@@ -9,12 +9,11 @@ import { LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, RefreshCw, Tr
 import { useUserSettings } from './hooks/useUserSettings';
 import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
-import { DesignSystemMockup } from './components/mockup/DesignSystemMockup';
 import { MagneticPill } from './components/ui/MagneticPill';
 
 import './components/mockup/design-system-mockup.css';
 
-type ViewMode = 'dashboard' | 'cockpit' | 'yearly' | 'events' | 'ai' | 'settings';
+type ViewMode = 'dashboard' | 'yearly' | 'events' | 'ai' | 'settings';
 
 function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('dashboard');
@@ -178,19 +177,6 @@ function App() {
                 <LayoutDashboard size={14} />
                 <span className="sfd-char-wave">
                   {'Weekly'.split('').map((c, i) => (
-                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
-                  ))}
-                </span>
-              </MagneticPill>
-              <MagneticPill
-                ref={(el) => { tabRefs.current['cockpit'] = el; }}
-                type="button"
-                className={`sfd-strip-btn sfd-char-hover ${viewMode === 'cockpit' ? 'active' : ''}`}
-                onClick={() => setViewMode('cockpit')}
-              >
-                <Sparkles size={14} />
-                <span className="sfd-char-wave">
-                  {'Cockpit'.split('').map((c, i) => (
                     <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
                   ))}
                 </span>
@@ -455,20 +441,6 @@ function App() {
                 aiProvider={aiProvider}
                 aiModel={aiModel}
                 aiApiKey={aiApiKey}
-              />
-            ) : viewMode === 'cockpit' ? (
-              <DesignSystemMockup 
-                isEmbeddedView 
-                onDismissMockup={() => setViewMode('dashboard')} 
-                instructorEvents={weekInstructorEvents} 
-                filteredOutEvents={weekFilteredOutEvents} 
-                allInstructorEvents={instructorEvents} 
-                weekStart={currentWeekStart} 
-                weekEnd={weekEnd} 
-                hourlyRate={hourlyRate} 
-                nonPayingList={nonPayingList} 
-                capacityMode={capacityMode} 
-                customIdealHours={customIdealHours} 
               />
             ) : viewMode === 'yearly' ? (
               <YearlyStats 
@@ -803,61 +775,6 @@ function App() {
           </div>
         )}
       </main>
-
-      {/* Floating Bottom Navigation Dock (Apple Liquid Glass Pill) */}
-      {onboardingComplete && (
-        <div className="sfd-dock-container">
-          <nav className="sfd-dock" aria-label="Quick Switcher">
-            <MagneticPill
-              type="button"
-              className={`sfd-dock-btn ${viewMode === 'dashboard' ? 'active' : ''}`}
-              onClick={() => setViewMode('dashboard')}
-              title="Weekly Dashboard"
-            >
-              <LayoutDashboard size={16} />
-              <span>Weekly</span>
-            </MagneticPill>
-            <MagneticPill
-              type="button"
-              className={`sfd-dock-btn ${viewMode === 'yearly' ? 'active' : ''}`}
-              onClick={() => setViewMode('yearly')}
-              title="Yearly Stats"
-            >
-              <TrendingUp size={16} />
-              <span>Yearly</span>
-            </MagneticPill>
-            <MagneticPill
-              type="button"
-              className={`sfd-dock-btn ${viewMode === 'events' ? 'active' : ''}`}
-              onClick={() => setViewMode('events')}
-              title="Explorer"
-            >
-              <List size={16} />
-              <span>Explorer</span>
-            </MagneticPill>
-            {enableAiInsights && (
-              <MagneticPill
-                type="button"
-                className={`sfd-dock-btn ${viewMode === 'ai' ? 'active' : ''}`}
-                onClick={() => setViewMode('ai')}
-                title="AI Insights"
-              >
-                <Sparkles size={16} />
-                <span>AI</span>
-              </MagneticPill>
-            )}
-            <MagneticPill
-              type="button"
-              className={`sfd-dock-btn ${viewMode === 'settings' ? 'active' : ''}`}
-              onClick={() => setViewMode('settings')}
-              title="Settings"
-            >
-              <Settings size={16} />
-              <span>Settings</span>
-            </MagneticPill>
-          </nav>
-        </div>
-      )}
 
       {/* Page Footer */}
       <footer style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: '1.5rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
