@@ -59,7 +59,9 @@ rounded:
   sm: "12px"
   md: "16px"
   lg: "20px"
-  xl: "26px"
+  xl: "22px"
+  2xl: "24px"
+  3xl: "26px"
   full: "9999px"
 spacing:
   xs: "4px"

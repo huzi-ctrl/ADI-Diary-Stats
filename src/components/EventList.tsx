@@ -135,56 +135,30 @@ export const EventList: React.FC<EventListProps> = ({
   return (
     <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       
-      {/* Tab Switcher */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', borderBottom: '1px solid var(--border-light)', gap: '1.5rem', paddingBottom: '0.25rem' }}>
+      {/* Tab Switcher - Kota Liquid Glass Strip */}
+      <div className="sfd-liquid-glass-strip" style={{ alignSelf: 'flex-start' }}>
         <button
           type="button"
           onClick={() => handleTabChange('lessons')}
-          style={{
-            background: 'none',
-            border: 'none',
-            paddingBottom: '0.75rem',
-            borderBottom: activeTab === 'lessons' ? '2px solid var(--accent-indigo)' : '2px solid transparent',
-            color: activeTab === 'lessons' ? 'var(--text-main)' : 'var(--text-muted)',
-            fontWeight: 600,
-            fontSize: '0.95rem',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            transition: 'var(--transition-smooth)'
-          }}
+          className={`sfd-strip-btn ${activeTab === 'lessons' ? 'active' : ''}`}
         >
-          <CheckCircle2 size={16} style={{ color: activeTab === 'lessons' ? 'var(--accent-emerald)' : 'var(--text-dim)' }} />
-          Driving Schedule ({activeTab === 'lessons' ? activeEventsSource.length : (showAllWeeks ? instructorEvents.length : weekInstructorEvents.length)})
+          <CheckCircle2 size={15} />
+          <span>Driving Schedule ({activeTab === 'lessons' ? activeEventsSource.length : (showAllWeeks ? instructorEvents.length : weekInstructorEvents.length)})</span>
         </button>
 
         <button
           type="button"
           onClick={() => handleTabChange('personal')}
-          style={{
-            background: 'none',
-            border: 'none',
-            paddingBottom: '0.75rem',
-            borderBottom: activeTab === 'personal' ? '2px solid var(--accent-pink)' : '2px solid transparent',
-            color: activeTab === 'personal' ? 'var(--text-main)' : 'var(--text-muted)',
-            fontWeight: 600,
-            fontSize: '0.95rem',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            transition: 'var(--transition-smooth)'
-          }}
+          className={`sfd-strip-btn ${activeTab === 'personal' ? 'active' : ''}`}
         >
-          <ShieldAlert size={16} style={{ color: activeTab === 'personal' ? 'var(--accent-pink)' : 'var(--text-dim)' }} />
-          Filtered Out Personal ({activeTab === 'personal' ? activeEventsSource.length : (showAllWeeks ? filteredOutEvents.length : weekFilteredOutEvents.length)})
+          <ShieldAlert size={15} />
+          <span>Personal & Rests ({activeTab === 'personal' ? activeEventsSource.length : (showAllWeeks ? filteredOutEvents.length : weekFilteredOutEvents.length)})</span>
         </button>
       </div>
 
       {/* Week Navigator Scope / Switcher */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', background: 'rgba(255, 255, 255, 0.015)', padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid var(--border-light)' }}>
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--text-main)', cursor: 'pointer', fontWeight: 500 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', background: 'var(--sfd-surface-nested)', padding: '0.65rem 1.1rem', borderRadius: '9999px', border: '1px solid var(--sfd-border-hairline)' }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--sfd-ink-primary)', cursor: 'pointer', fontWeight: 500 }}>
           <input 
             type="checkbox" 
             checked={showAllWeeks} 
@@ -194,17 +168,17 @@ export const EventList: React.FC<EventListProps> = ({
               setSearchTerm('');
               setSelectedCategory('ALL');
             }} 
-            style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--accent-indigo)' }}
+            style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--sfd-primary)' }}
           />
           Show full calendar history (ignore week selection)
         </label>
         
         {!showAllWeeks ? (
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Showing week of: <strong>{formatWeekDate(weekStart)} &ndash; {formatWeekDate(weekEnd)}</strong>
+          <span style={{ fontSize: '0.8rem', color: 'var(--sfd-ink-muted)' }}>
+            Showing week of: <strong style={{ color: 'var(--sfd-ink-primary)' }}>{formatWeekDate(weekStart)} &ndash; {formatWeekDate(weekEnd)}</strong>
           </span>
         ) : (
-          <span style={{ fontSize: '0.8rem', color: 'var(--accent-indigo)', fontWeight: 600 }}>
+          <span style={{ fontSize: '0.8rem', color: 'var(--sfd-primary)', fontWeight: 600 }}>
             Showing full history
           </span>
         )}

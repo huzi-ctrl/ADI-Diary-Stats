@@ -11,8 +11,10 @@ import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
 import { DesignSystemMockup } from './components/mockup/DesignSystemMockup';
 
+import './components/mockup/design-system-mockup.css';
+
 function App() {
-  const [showMockup, setShowMockup] = useState<boolean>(true);
+  const [showMockup, setShowMockup] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'dashboard' | 'yearly' | 'events' | 'ai' | 'settings'>('dashboard');
   const [legalModal, setLegalModal] = useState<'privacy' | 'tos' | null>(() => {
     const params = new URLSearchParams(window.location.search);
@@ -115,71 +117,167 @@ function App() {
   }
 
   return (
-    <div className="app-container">
-      {/* App Header */}
-      <header className="app-header">
-        <div className="brand-section">
-          <div className="brand-icon" style={{ background: 'transparent', padding: 0 }}>
-            <img src="/favicon.png" alt="ADI stats logo" style={{ height: '36px', width: '36px', objectFit: 'contain' }} />
+    <div className="sfd-mockup-root">
+      {/* Master Fluid Header */}
+      <header className="sfd-header">
+        <div className="sfd-brand">
+          <div className="sfd-brand-symbol">
+            <img src="/favicon.png" alt="ADI stats logo" style={{ height: '30px', width: '30px', objectFit: 'contain' }} />
           </div>
-          <div>
-            <h1 className="gradient-text" style={{ fontSize: '1.5rem', fontWeight: 700, lineHeight: 1.2 }}>
-              ADI stats
-            </h1>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              Approved Driving Instructor Schedule Analytics
-            </p>
+          <div className="sfd-brand-text">
+            <span className="sfd-brand-title">ADI stats</span>
+            <span className="sfd-brand-sub">Approved Driving Instructor Schedule Analytics</span>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }} className="header-actions">
-          {/* Switch to New Mockup button */}
-          <button 
-            type="button" 
-            className="btn btn-primary" 
-            style={{ 
-              padding: '0.5rem 0.85rem', 
-              borderRadius: '10px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.4rem', 
-              fontSize: '0.8rem', 
-              fontWeight: 600,
-              background: '#1a56db',
-              borderColor: '#1a56db'
-            }} 
-            onClick={() => setShowMockup(true)}
-            title="Inspect the new Swiss Flight Deck mockup"
-          >
-            <Sparkles size={14} />
-            <span>View New Mockup</span>
-          </button>
+        <div className="sfd-header-controls">
+          {/* Kota Studio 4-Layer Liquid Glass Navigation Strip */}
+          {onboardingComplete && (
+            <nav className="sfd-liquid-glass-strip" aria-label="Main Navigation">
+              <button
+                type="button"
+                className={`sfd-strip-btn ${viewMode === 'dashboard' ? 'active' : ''}`}
+                onClick={() => setViewMode('dashboard')}
+              >
+                <LayoutDashboard size={14} />
+                <span>Weekly</span>
+              </button>
+              <button
+                type="button"
+                className={`sfd-strip-btn ${viewMode === 'yearly' ? 'active' : ''}`}
+                onClick={() => setViewMode('yearly')}
+              >
+                <TrendingUp size={14} />
+                <span>Yearly</span>
+              </button>
+              <button
+                type="button"
+                className={`sfd-strip-btn ${viewMode === 'events' ? 'active' : ''}`}
+                onClick={() => setViewMode('events')}
+              >
+                <List size={14} />
+                <span>Explorer</span>
+              </button>
+              {enableAiInsights && (
+                <button
+                  type="button"
+                  className={`sfd-strip-btn ${viewMode === 'ai' ? 'active' : ''}`}
+                  onClick={() => setViewMode('ai')}
+                >
+                  <Sparkles size={14} />
+                  <span>AI</span>
+                </button>
+              )}
+              <button
+                type="button"
+                className={`sfd-strip-btn ${viewMode === 'settings' ? 'active' : ''}`}
+                onClick={() => setViewMode('settings')}
+              >
+                <Settings size={14} />
+                <span>Settings</span>
+              </button>
+            </nav>
+          )}
 
-          {/* Theme Switcher Toggle */}
-          <button 
-            type="button" 
-            className="btn btn-secondary" 
-            style={{ padding: '0.5rem', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border-light)' }} 
-            onClick={toggleTheme}
-            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-          >
-            {theme === 'dark' ? <Sun size={15} style={{ color: 'var(--accent-amber)' }} /> : <Moon size={15} style={{ color: 'var(--accent-indigo)' }} />}
-          </button>
+          {/* Week Selector Chip in Header (when on weekly view) */}
+          {onboardingComplete && viewMode === 'dashboard' && (
+            <div className="sfd-week-chip">
+              <button 
+                type="button" 
+                className="sfd-chip-btn" 
+                onClick={handlePrevWeek}
+                title="Previous Week"
+                aria-label="Previous Week"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span className="sfd-week-label">
+                {weekRangeLabel}
+              </span>
+              <button 
+                type="button" 
+                className="sfd-chip-btn" 
+                onClick={handleNextWeek}
+                title="Next Week"
+                aria-label="Next Week"
+              >
+                <ChevronRight size={16} />
+              </button>
+              <button 
+                type="button" 
+                className="sfd-chip-btn" 
+                onClick={handleCurrentWeek}
+                title="Current Week"
+                aria-label="Current Week"
+              >
+                <RefreshCw size={13} />
+              </button>
+            </div>
+          )}
 
-          {/* Global AI toggle */}
+          {/* Year Selector Chip in Header (when on yearly view) */}
+          {onboardingComplete && viewMode === 'yearly' && (
+            <div className="sfd-week-chip">
+              <button 
+                type="button" 
+                className="sfd-chip-btn" 
+                disabled={selectedYear === null || availableYears.indexOf(selectedYear) === availableYears.length - 1}
+                onClick={() => {
+                  if (selectedYear !== null) {
+                    const idx = availableYears.indexOf(selectedYear);
+                    if (idx < availableYears.length - 1) {
+                      setSelectedYear(availableYears[idx + 1]);
+                    }
+                  }
+                }}
+                title="Older Year"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <select
+                value={selectedYear || 'all'}
+                onChange={(e) => setSelectedYear(e.target.value === 'all' ? null : parseInt(e.target.value, 10))}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  color: 'var(--text-main)',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  padding: '0 4px'
+                }}
+              >
+                <option value="all">All Time</option>
+                {availableYears.map(year => (
+                  <option key={year} value={year}>{year} Stats</option>
+                ))}
+              </select>
+              <button 
+                type="button" 
+                className="sfd-chip-btn" 
+                disabled={selectedYear === null}
+                onClick={() => {
+                  if (selectedYear !== null) {
+                    const idx = availableYears.indexOf(selectedYear);
+                    if (idx > 0) {
+                      setSelectedYear(availableYears[idx - 1]);
+                    } else {
+                      setSelectedYear(null);
+                    }
+                  }
+                }}
+                title="Newer Year"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+
+          {/* AI Copilot Toggle Pill */}
           <button 
             type="button" 
-            className="btn btn-secondary" 
-            style={{ 
-              padding: '0.5rem 0.75rem', 
-              borderRadius: '10px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.4rem', 
-              border: enableAiInsights ? '1px solid var(--accent-cyan)' : '1px solid var(--border-light)',
-              background: enableAiInsights ? 'rgba(6,182,212,0.1)' : 'transparent',
-              color: enableAiInsights ? 'var(--accent-cyan)' : 'var(--text-muted)'
-            }} 
+            className={`sfd-ai-toggle ${enableAiInsights ? 'active' : ''}`}
             onClick={() => {
               const val = !enableAiInsights;
               setEnableAiInsights(val);
@@ -189,39 +287,62 @@ function App() {
             }}
             title={enableAiInsights ? "Disable AI Features globally" : "Enable AI Features globally"}
           >
-            <Sparkles size={15} style={{ color: enableAiInsights ? 'var(--accent-cyan)' : 'var(--text-dim)' }} />
-            <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>AI: {enableAiInsights ? 'ON' : 'OFF'}</span>
+            <Sparkles size={14} />
+            <span>AI Copilot: {enableAiInsights ? 'On' : 'Off'}</span>
           </button>
 
+          {/* Theme Switcher */}
+          <button 
+            type="button" 
+            className="sfd-chip-btn" 
+            style={{ width: '36px', height: '36px', border: '1px solid var(--border-light)' }}
+            onClick={toggleTheme}
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? <Sun size={15} style={{ color: 'var(--accent-amber)' }} /> : <Moon size={15} style={{ color: 'var(--accent-indigo)' }} />}
+          </button>
+
+          {/* Connected file / sync / clear buttons when onboarding complete */}
           {onboardingComplete && (
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-light)', padding: '0.4rem 0.8rem', borderRadius: '10px', display: 'inline-block', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={fileName || ''}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--bg-nested)', border: '1px solid var(--border-light)', padding: '6px 12px', borderRadius: '9999px', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={fileName || ''}>
                 {fileName}
               </span>
               {calendarUrl && (
                 <button
                   type="button"
-                  className="btn btn-secondary hover-glow"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.4rem 0.8rem', borderRadius: '10px', fontSize: '0.85rem', width: 'auto', borderColor: 'var(--accent-cyan)' }}
+                  className="sfd-btn-primary"
+                  style={{ padding: '6px 14px', fontSize: '13px' }}
                   onClick={() => handleSyncLiveCalendar()}
                   disabled={isSyncing}
                   title="Sync Live Calendar Feed"
                 >
-                  <RefreshCw size={14} className={isSyncing ? 'spin-animation' : ''} />
-                  {isSyncing ? 'Syncing...' : 'Sync Live'}
+                  <RefreshCw size={13} className={isSyncing ? 'spin-animation' : ''} />
+                  <span>{isSyncing ? 'Syncing...' : 'Sync Live'}</span>
                 </button>
               )}
               <button 
                 type="button" 
                 className="btn btn-danger" 
-                style={{ padding: '0.4rem 0.8rem', borderRadius: '10px', fontSize: '0.85rem', width: 'auto' }} 
+                style={{ padding: '6px 14px', fontSize: '13px' }} 
                 onClick={handleClear}
               >
-                <LogOut size={14} />
-                Clear
+                <LogOut size={13} />
+                <span>Clear</span>
               </button>
             </div>
           )}
+
+          {/* Showcase Pill */}
+          <button 
+            type="button" 
+            className="sfd-prototype-btn-return"
+            onClick={() => setShowMockup(true)}
+            title="Inspect isolated Design System Showcase"
+          >
+            <Sparkles size={12} style={{ display: 'inline', marginRight: '4px' }} />
+            Showcase
+          </button>
         </div>
       </header>
 
@@ -256,208 +377,6 @@ function App() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             
-            {/* Control Strip: Week Switcher + View Toggles */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', background: 'var(--bg-card)', padding: '0.75rem 1rem', borderRadius: '16px', border: '1px solid var(--border-light)' }}>
-              
-              {/* Conditional Selector: Week Navigator or Year Selector */}
-              {viewMode === 'yearly' ? (
-                /* Year Selector */
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <button 
-                    type="button" 
-                    className="btn btn-secondary" 
-                    style={{ padding: '0.4rem 0.6rem', borderRadius: '8px' }} 
-                    disabled={selectedYear === null || availableYears.indexOf(selectedYear) === availableYears.length - 1}
-                    onClick={() => {
-                      if (selectedYear !== null) {
-                        const idx = availableYears.indexOf(selectedYear);
-                        if (idx < availableYears.length - 1) {
-                          setSelectedYear(availableYears[idx + 1]);
-                        }
-                      }
-                    }}
-                    title="Older Year"
-                  >
-                    <ChevronLeft size={16} />
-                  </button>
-
-                  <select
-                    value={selectedYear || 'all'}
-                    onChange={(e) => setSelectedYear(e.target.value === 'all' ? null : parseInt(e.target.value, 10))}
-                    style={{
-                      padding: '0.4rem 1rem',
-                      borderRadius: '8px',
-                      fontSize: '0.9rem',
-                      fontWeight: 600,
-                      border: '1px solid var(--border-light)',
-                      background: 'var(--bg-main)',
-                      color: 'var(--text-main)',
-                      outline: 'none',
-                      cursor: 'pointer',
-                      textAlign: 'center',
-                      minWidth: '160px'
-                    }}
-                  >
-                    <option value="all">All Time</option>
-                    {availableYears.map(year => (
-                      <option key={year} value={year}>{year} Stats</option>
-                    ))}
-                  </select>
-
-                  <button 
-                    type="button" 
-                    className="btn btn-secondary" 
-                    style={{ padding: '0.4rem 0.6rem', borderRadius: '8px' }} 
-                    disabled={selectedYear === null}
-                    onClick={() => {
-                      if (selectedYear !== null) {
-                        const idx = availableYears.indexOf(selectedYear);
-                        if (idx > 0) {
-                          setSelectedYear(availableYears[idx - 1]);
-                        } else {
-                          setSelectedYear(null);
-                        }
-                      }
-                    }}
-                    title="Newer Year"
-                  >
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              ) : (
-                /* Week Navigator or Spacer */
-                viewMode !== 'settings' ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                    <button 
-                      type="button" 
-                      className="btn btn-secondary" 
-                      style={{ padding: '0.4rem 0.6rem', borderRadius: '8px' }} 
-                      onClick={handlePrevWeek}
-                      title="Previous Week"
-                    >
-                      <ChevronLeft size={16} />
-                    </button>
-                    
-                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)', flex: '1 1 auto', minWidth: '150px', textAlign: 'center' }}>
-                      {weekRangeLabel}
-                    </span>
-
-                    <button 
-                      type="button" 
-                      className="btn btn-secondary" 
-                      style={{ padding: '0.4rem 0.6rem', borderRadius: '8px' }} 
-                      onClick={handleNextWeek}
-                      title="Next Week"
-                    >
-                      <ChevronRight size={16} />
-                    </button>
-
-                    <button 
-                      type="button" 
-                      className="btn btn-secondary" 
-                      style={{ padding: '0.4rem 0.6rem', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
-                      onClick={handleCurrentWeek}
-                      title="Current Week"
-                    >
-                      <RefreshCw size={16} />
-                    </button>
-                  </div>
-                ) : (
-                  <div style={{ flex: 1 }} />
-                )
-              )}
-
-              {/* View Switcher Tabs */}
-              <div className="nav-tab-strip">
-                <button
-                  type="button"
-                  className="btn"
-                  style={{ 
-                    background: viewMode === 'dashboard' ? 'linear-gradient(135deg, var(--accent-indigo), var(--accent-purple))' : 'transparent',
-                    color: viewMode === 'dashboard' ? '#fff' : 'var(--text-muted)',
-                    padding: '0.4rem 1rem',
-                    fontSize: '0.8rem',
-                    borderRadius: '8px',
-                    boxShadow: viewMode === 'dashboard' ? '0 2px 8px rgba(99, 102, 241, 0.2)' : 'none'
-                  }}
-                  onClick={() => setViewMode('dashboard')}
-                >
-                  <LayoutDashboard size={13} />
-                  Weekly Dashboard
-                </button>
-
-                <button
-                  type="button"
-                  className="btn"
-                  style={{ 
-                    background: viewMode === 'yearly' ? 'linear-gradient(135deg, var(--accent-indigo), var(--accent-purple))' : 'transparent',
-                    color: viewMode === 'yearly' ? '#fff' : 'var(--text-muted)',
-                    padding: '0.4rem 1rem',
-                    fontSize: '0.8rem',
-                    borderRadius: '8px',
-                    boxShadow: viewMode === 'yearly' ? '0 2px 8px rgba(99, 102, 241, 0.2)' : 'none'
-                  }}
-                  onClick={() => setViewMode('yearly')}
-                >
-                  <TrendingUp size={13} />
-                  Yearly Stats
-                </button>
-                
-                <button
-                  type="button"
-                  className="btn"
-                  style={{ 
-                    background: viewMode === 'events' ? 'linear-gradient(135deg, var(--accent-indigo), var(--accent-purple))' : 'transparent',
-                    color: viewMode === 'events' ? '#fff' : 'var(--text-muted)',
-                    padding: '0.4rem 1rem',
-                    fontSize: '0.8rem',
-                    borderRadius: '8px',
-                    boxShadow: viewMode === 'events' ? '0 2px 8px rgba(99, 102, 241, 0.2)' : 'none'
-                  }}
-                  onClick={() => setViewMode('events')}
-                >
-                  <List size={13} />
-                  Explorer
-                </button>
-
-                {enableAiInsights && (
-                  <button
-                    type="button"
-                    className="btn animate-pulse-glow"
-                    style={{ 
-                      background: viewMode === 'ai' ? 'linear-gradient(135deg, var(--accent-cyan), var(--accent-purple))' : 'transparent',
-                      color: viewMode === 'ai' ? '#fff' : 'var(--text-muted)',
-                      padding: '0.4rem 1rem',
-                      fontSize: '0.8rem',
-                      borderRadius: '8px',
-                      boxShadow: viewMode === 'ai' ? '0 2px 8px rgba(6, 182, 212, 0.2)' : 'none'
-                    }}
-                    onClick={() => setViewMode('ai')}
-                  >
-                    <Sparkles size={13} style={{ color: 'var(--accent-cyan)' }} />
-                    AI Insights
-                  </button>
-                )}
-
-                <button
-                  type="button"
-                  className="btn"
-                  style={{ 
-                    background: viewMode === 'settings' ? 'linear-gradient(135deg, var(--accent-indigo), var(--accent-purple))' : 'transparent',
-                    color: viewMode === 'settings' ? '#fff' : 'var(--text-muted)',
-                    padding: '0.4rem 1rem',
-                    fontSize: '0.8rem',
-                    borderRadius: '8px',
-                    boxShadow: viewMode === 'settings' ? '0 2px 8px rgba(99, 102, 241, 0.2)' : 'none'
-                  }}
-                  onClick={() => setViewMode('settings')}
-                >
-                  <Settings size={13} />
-                  Settings
-                </button>
-              </div>
-            </div>
-
             {/* Display active view */}
             {viewMode === 'dashboard' ? (
               <StatsDashboard 
@@ -808,6 +727,61 @@ function App() {
           </div>
         )}
       </main>
+
+      {/* Floating Bottom Navigation Dock (Kota Liquid Glass Pill) */}
+      {onboardingComplete && (
+        <div className="sfd-floating-dock">
+          <nav className="sfd-dock-glass" aria-label="Quick Switcher">
+            <button
+              type="button"
+              className={`sfd-dock-item ${viewMode === 'dashboard' ? 'active' : ''}`}
+              onClick={() => setViewMode('dashboard')}
+              title="Weekly Dashboard"
+            >
+              <LayoutDashboard size={16} />
+              <span>Weekly</span>
+            </button>
+            <button
+              type="button"
+              className={`sfd-dock-item ${viewMode === 'yearly' ? 'active' : ''}`}
+              onClick={() => setViewMode('yearly')}
+              title="Yearly Stats"
+            >
+              <TrendingUp size={16} />
+              <span>Yearly</span>
+            </button>
+            <button
+              type="button"
+              className={`sfd-dock-item ${viewMode === 'events' ? 'active' : ''}`}
+              onClick={() => setViewMode('events')}
+              title="Explorer"
+            >
+              <List size={16} />
+              <span>Explorer</span>
+            </button>
+            {enableAiInsights && (
+              <button
+                type="button"
+                className={`sfd-dock-item ${viewMode === 'ai' ? 'active' : ''}`}
+                onClick={() => setViewMode('ai')}
+                title="AI Insights"
+              >
+                <Sparkles size={16} />
+                <span>AI</span>
+              </button>
+            )}
+            <button
+              type="button"
+              className={`sfd-dock-item ${viewMode === 'settings' ? 'active' : ''}`}
+              onClick={() => setViewMode('settings')}
+              title="Settings"
+            >
+              <Settings size={16} />
+              <span>Settings</span>
+            </button>
+          </nav>
+        </div>
+      )}
 
       {/* Page Footer */}
       <footer style={{ marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: '1.5rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-dim)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>

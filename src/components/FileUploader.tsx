@@ -100,8 +100,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
               {/* Google Button */}
               <button 
                 type="button"
-                className="glass-card hover-glow" 
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--border-light)', background: 'var(--bg-card)', color: 'var(--text-main)', transition: 'all 0.2s', borderRadius: '12px' }}
+                className="sfd-section-card" 
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--sfd-border-hairline)', background: 'var(--sfd-surface-card)', color: 'var(--sfd-ink-primary)', transition: 'all 0.2s', borderRadius: '22px' }}
                 onClick={handleConnectGoogle}
               >
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width={32} height={32} alt="Google" />
@@ -111,8 +111,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
               {/* Outlook Button */}
               <button 
                 type="button"
-                className="glass-card hover-glow" 
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--border-light)', background: 'var(--bg-card)', color: 'var(--text-main)', transition: 'all 0.2s', borderRadius: '12px' }}
+                className="sfd-section-card" 
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--sfd-border-hairline)', background: 'var(--sfd-surface-card)', color: 'var(--sfd-ink-primary)', transition: 'all 0.2s', borderRadius: '22px' }}
                 onClick={handleConnectOutlook}
               >
                 <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" width={32} height={32} alt="Microsoft" />
@@ -122,12 +122,12 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
               {/* iCal Link Button */}
               <button 
                 type="button"
-                className="glass-card hover-glow" 
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--border-light)', background: 'var(--bg-card)', color: 'var(--text-main)', transition: 'all 0.2s', borderRadius: '12px' }}
+                className="sfd-section-card" 
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--sfd-border-hairline)', background: 'var(--sfd-surface-card)', color: 'var(--sfd-ink-primary)', transition: 'all 0.2s', borderRadius: '22px' }}
                 onClick={() => setActiveTab('webcal')}
               >
-                <div style={{ background: 'rgba(34, 211, 238, 0.1)', color: 'var(--accent-cyan)', padding: '0.4rem', borderRadius: '50%', display: 'flex' }}>
-                  <Link size={24} />
+                <div style={{ background: 'var(--sfd-primary-soft)', color: 'var(--sfd-primary)', padding: '0.5rem', borderRadius: '50%', display: 'flex' }}>
+                  <Link size={22} />
                 </div>
                 <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>iCal URL Feed</span>
               </button>
@@ -141,8 +141,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
             </span>
             
             <div 
-              className={`glass-card ${dragActive ? 'drag-active' : ''}`}
-              style={{ padding: '1.25rem', textAlign: 'center', borderStyle: 'dashed', cursor: 'pointer', transition: 'all 0.2s ease', borderColor: dragActive ? 'var(--accent-indigo)' : 'var(--border-light)' }}
+              className={`sfd-section-card ${dragActive ? 'drag-active' : ''}`}
+              style={{ padding: '1.5rem', textAlign: 'center', borderStyle: 'dashed', cursor: 'pointer', transition: 'all 0.2s ease', borderColor: dragActive ? 'var(--sfd-primary)' : 'var(--sfd-border-hairline)', borderRadius: '22px', background: dragActive ? 'var(--sfd-primary-soft)' : 'var(--sfd-surface-card)' }}
               onDragEnter={handleDrag}
               onDragOver={handleDrag}
               onDragLeave={handleDrag}
@@ -157,21 +157,21 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                 onChange={handleFileChange}
               />
               
-              <Upload size={18} style={{ color: 'var(--text-muted)', margin: '0 auto 0.4rem auto' }} />
-              <h4 style={{ margin: '0 0 0.15rem 0', fontSize: '0.85rem', color: 'var(--text-main)' }}>Upload local iCalendar file (.ics)</h4>
-              <span style={{ fontSize: '0.725rem', color: 'var(--text-dim)', display: 'block', marginBottom: '0.75rem' }}>Drag & drop or click to browse</span>
+              <Upload size={22} style={{ color: 'var(--sfd-primary)', margin: '0 auto 0.5rem auto' }} />
+              <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '0.95rem', color: 'var(--sfd-ink-primary)', fontWeight: 600 }}>Upload local iCalendar file (.ics)</h4>
+              <span style={{ fontSize: '0.75rem', color: 'var(--sfd-ink-muted)', display: 'block', marginBottom: '1rem' }}>Drag & drop or click to browse files</span>
 
               {/* Privacy Disclaimer */}
-              <div style={{ display: 'flex', gap: '0.4rem', background: 'rgba(52, 211, 153, 0.04)', border: '1px solid rgba(52, 211, 153, 0.15)', padding: '0.5rem 0.75rem', borderRadius: '8px', textAlign: 'left', alignItems: 'flex-start' }}>
-                <ShieldCheck size={14} style={{ color: 'var(--accent-emerald)', flexShrink: 0, marginTop: '0.05rem' }} />
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', lineHeight: 1.35 }}>
-                  <strong>Local Privacy Notice:</strong> Your file is processed strictly inside your browser. We never save, upload, or transmit your private calendar data to any external server.
+              <div style={{ display: 'flex', gap: '0.5rem', background: 'var(--sfd-emerald-soft)', border: '1px solid var(--sfd-emerald-border)', padding: '0.65rem 0.9rem', borderRadius: '16px', textAlign: 'left', alignItems: 'flex-start' }}>
+                <ShieldCheck size={16} style={{ color: 'var(--sfd-emerald)', flexShrink: 0, marginTop: '0.1rem' }} />
+                <span style={{ fontSize: '0.725rem', color: 'var(--sfd-ink-secondary)', lineHeight: 1.4 }}>
+                  <strong>Local Privacy Guarantee:</strong> Your calendar file is parsed entirely client-side inside your browser. No schedule data or student records are ever transmitted to any remote server.
                 </span>
               </div>
 
               {error && (
-                <div style={{ color: '#f87171', fontSize: '0.75rem', marginTop: '0.5rem', display: 'flex', gap: '0.3rem', alignItems: 'center', justifyContent: 'center' }}>
-                  <AlertTriangle size={12} />
+                <div style={{ color: 'var(--sfd-coral)', fontSize: '0.75rem', marginTop: '0.6rem', display: 'flex', gap: '0.3rem', alignItems: 'center', justifyContent: 'center' }}>
+                  <AlertTriangle size={13} />
                   {error}
                 </div>
               )}

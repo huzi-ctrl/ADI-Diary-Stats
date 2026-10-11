@@ -301,14 +301,14 @@ Analyze and return the JSON object.`;
       <div className="dashboard-main-column">
         {/* Date display & Filter banner */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--border-light)', padding: '0.5rem 1rem', borderRadius: '20px', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)' }}>
-            <Calendar size={14} className="gradient-text" style={{ filter: 'brightness(1.2)' }} />
+          <div style={{ background: 'var(--sfd-surface-card)', border: '1px solid var(--sfd-border-hairline)', boxShadow: 'var(--sfd-shadow-soft)', padding: '0.45rem 1rem', borderRadius: '9999px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--sfd-ink-secondary)' }}>
+            <Calendar size={14} style={{ color: 'var(--sfd-primary)' }} />
             <span>Active Week:</span>
-            <strong>{formatDateShort(weekStart)} &mdash; {formatDateShort(weekEnd)}</strong>
+            <strong style={{ color: 'var(--sfd-ink-primary)' }}>{formatDateShort(weekStart)} &mdash; {formatDateShort(weekEnd)}</strong>
           </div>
 
           {filteredOutEvents.length > 0 && (
-            <div style={{ background: 'rgba(99, 102, 241, 0.08)', border: '1px solid rgba(99, 102, 241, 0.2)', padding: '0.5rem 1rem', borderRadius: '20px', fontSize: '0.825rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-indigo)' }}>
+            <div style={{ background: 'var(--sfd-primary-soft)', border: '1px solid rgba(29, 78, 216, 0.15)', padding: '0.45rem 1rem', borderRadius: '9999px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--sfd-primary)' }}>
               <ShieldAlert size={14} />
               <span>Hidden <strong>{filteredOutEvents.length}</strong> personal events/rests this week.</span>
             </div>
@@ -316,60 +316,84 @@ Analyze and return the JSON object.`;
         </div>
 
         {enableAiInsights && !aiApiKey && (
-          <div className="glass-card animate-slide-up" style={{ padding: '1rem', border: '1px solid rgba(6, 182, 212, 0.2)', background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.04), rgba(129, 140, 248, 0.01))', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+          <div className="sfd-section-card animate-slide-up" style={{ padding: '1.25rem', border: '1px solid rgba(29, 78, 216, 0.2)', background: 'linear-gradient(135deg, rgba(29, 78, 216, 0.04), rgba(2, 132, 199, 0.02))', borderRadius: '22px', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Sparkles size={14} className="gradient-text" style={{ color: 'var(--accent-cyan)' }} />
-              <h3 style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>AI Weekly Coaching Overview</h3>
+              <Sparkles size={14} style={{ color: 'var(--sfd-primary)' }} />
+              <h3 style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>AI Weekly Coaching Overview</h3>
             </div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
+            <p style={{ fontSize: '0.75rem', color: 'var(--sfd-ink-muted)', margin: 0 }}>
               AI Coaching is active. Please input a Gemini or OpenAI API Key in the <strong>Settings</strong> tab to power up the dynamic weekly analyst.
             </p>
           </div>
         )}
 
-        {/* KPI Cards Grid */}
-        <div className="kpi-grid">
-          <div className="glass-card kpi-card">
-            <span className="kpi-title">Weekly Lessons</span>
-            <div className="kpi-value gradient-text">{lessonsOnly.length}</div>
-            <span className="kpi-footer">
-              {lessonsOnly.length} paid / {nonPayingLessons.length} free
+        {/* Sculpted Organic KPI Cards */}
+        <div className="sfd-kpi-grid">
+          <div className="sfd-kpi-card">
+            <div className="sfd-kpi-top">
+              <span className="sfd-kpi-label">Weekly Lessons</span>
+              <span className="sfd-kpi-badge emerald">
+                {lessonsOnly.length > 0 ? `${lessonsOnly.length} booked` : '0 booked'}
+              </span>
+            </div>
+            <div className="sfd-kpi-value">{lessonsOnly.length}</div>
+            <span className="sfd-kpi-sub">
+              {lessonsOnly.length} paid • {nonPayingLessons.length} free
             </span>
           </div>
           
-          <div className="glass-card kpi-card">
-            <span className="kpi-title">Weekly Teaching Hours</span>
-            <div className="kpi-value">{totalTeachHours} <span style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--text-muted)' }}>hrs</span></div>
-            <span className="kpi-footer">
-              {totalTeachHours}h paid / {nonPayingTeachHours}h free
+          <div className="sfd-kpi-card">
+            <div className="sfd-kpi-top">
+              <span className="sfd-kpi-label">Teaching Hours</span>
+              <span className="sfd-kpi-badge neutral">
+                {totalTeachHours} hrs
+              </span>
+            </div>
+            <div className="sfd-kpi-value">{totalTeachHours}<span style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>h</span></div>
+            <span className="sfd-kpi-sub">
+              {totalTeachHours}h paid • {nonPayingTeachHours}h free
             </span>
           </div>
 
-          <div className="glass-card kpi-card">
-            <span className="kpi-title">Weekly Tests</span>
-            <div className="kpi-value" style={{ color: 'var(--accent-cyan)' }}>{testBookings.length}</div>
-            <span className="kpi-footer">Mock exams & official tests</span>
+          <div className="sfd-kpi-card">
+            <div className="sfd-kpi-top">
+              <span className="sfd-kpi-label">Weekly Tests</span>
+              <span className="sfd-kpi-badge amber">
+                {testBookings.length} tests
+              </span>
+            </div>
+            <div className="sfd-kpi-value">{testBookings.length}</div>
+            <span className="sfd-kpi-sub">
+              Mock exams & official tests
+            </span>
           </div>
 
-          <div className="glass-card kpi-card">
-            <span className="kpi-title">Estimated Earnings</span>
-            <div className="kpi-value" style={{ color: 'var(--accent-emerald)' }}>£{weeklyEarnings.toLocaleString()}</div>
-            <span className="kpi-footer">
-              {totalTeachHours}h paid @ £{hourlyRate}/hr
+          <div className="sfd-kpi-card">
+            <div className="sfd-kpi-top">
+              <span className="sfd-kpi-label">Estimated Revenue</span>
+              <span className="sfd-kpi-badge emerald">
+                £{hourlyRate}/hr
+              </span>
+            </div>
+            <div className="sfd-kpi-value">£{weeklyEarnings.toLocaleString()}</div>
+            <span className="sfd-kpi-sub">
+              {totalTeachHours}h teaching @ £{hourlyRate}/hr
             </span>
           </div>
         </div>
 
         {/* Drives Tracker & Upcoming Bookings */}
-        <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-            <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Activity size={18} className="gradient-text" style={{ filter: 'brightness(1.2)' }} />
-              Drives Tracker & Upcoming Bookings
-            </h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
-              Real-time status relative to today: <strong>{now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</strong>
-            </span>
+        <div className="sfd-section-card">
+          <div className="sfd-section-header">
+            <div>
+              <h3 className="sfd-section-title">
+                <Activity size={18} style={{ color: 'var(--sfd-primary)' }} />
+                <span>Drives Tracker & Upcoming Bookings</span>
+              </h3>
+              <span className="sfd-section-sub">
+                Real-time status relative to today: <strong>{now.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</strong>
+              </span>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'center' }}>
@@ -377,47 +401,47 @@ Analyze and return the JSON object.`;
             {/* Progress Bar for This Week's Lessons */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-                <span style={{ color: 'var(--text-muted)' }}>This Week's Lessons Progress</span>
-                <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>This Week's Lessons Progress</span>
+                <span style={{ fontWeight: 600, color: 'var(--sfd-ink-primary)' }}>
                   {completedWeeklyLessons} / {lessonsOnly.length} Completed ({weeklyLessonsCompletionPct}%)
                 </span>
               </div>
               
-              {/* The Bar */}
-              <div style={{ height: '12px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '6px', overflow: 'hidden', display: 'flex', border: '1px solid var(--border-light)' }}>
+              {/* Fluid Pill Progress Bar */}
+              <div style={{ height: '14px', background: 'var(--sfd-surface-nested)', borderRadius: '9999px', overflow: 'hidden', display: 'flex', border: '1px solid var(--sfd-border-hairline)', padding: '2px' }}>
                 <div style={{ 
                   width: `${weeklyLessonsCompletionPct}%`, 
-                  background: 'linear-gradient(90deg, var(--accent-emerald), var(--accent-indigo))', 
-                  borderRadius: '6px 0 0 6px',
-                  transition: 'width 0.8s ease-out'
+                  background: 'linear-gradient(90deg, #059669, #1d4ed8)', 
+                  borderRadius: '9999px',
+                  transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
                 }} />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--sfd-ink-faint)' }}>
                 <span>Completed: {completedWeeklyLessons}</span>
                 <span>Upcoming: {upcomingWeeklyLessons}</span>
               </div>
             </div>
 
             {/* All-Time Future Schedule stats */}
-            <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'space-around', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', padding: '0.5rem 0.75rem', borderRadius: '10px', textAlign: 'center' }}>
-                  <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-indigo)', display: 'block' }}>
+                <div style={{ background: 'var(--sfd-primary-soft)', border: '1px solid rgba(29, 78, 216, 0.15)', padding: '0.6rem 1rem', borderRadius: '16px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--sfd-primary)', display: 'block', lineHeight: 1.2 }}>
                     {allFutureLessons.length}
                   </span>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--sfd-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
                     Future Lessons
                   </span>
                 </div>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ background: 'rgba(34, 211, 238, 0.1)', border: '1px solid rgba(34, 211, 238, 0.2)', padding: '0.5rem 0.75rem', borderRadius: '10px', textAlign: 'center' }}>
-                  <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-cyan)', display: 'block' }}>
+                <div style={{ background: 'var(--sfd-emerald-soft)', border: '1px solid var(--sfd-emerald-border)', padding: '0.6rem 1rem', borderRadius: '16px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--sfd-emerald)', display: 'block', lineHeight: 1.2 }}>
                     {allFutureTests.length}
                   </span>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--sfd-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
                     Future Tests
                   </span>
                 </div>
@@ -425,22 +449,22 @@ Analyze and return the JSON object.`;
             </div>
 
             {/* Upcoming Capacity Fill Percentages */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', background: 'rgba(255, 255, 255, 0.01)', border: '1px solid var(--border-light)', padding: '0.85rem 1.1rem', borderRadius: '12px' }}>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, borderBottom: '1px solid var(--border-light)', paddingBottom: '0.25rem', marginBottom: '0.25rem' }}>Upcoming Capacity</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-hairline)', padding: '0.85rem 1.1rem', borderRadius: '18px' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--sfd-ink-secondary)', fontWeight: 600, borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '0.25rem', marginBottom: '0.25rem' }}>Upcoming Capacity</span>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {/* This Week */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }} title={formatRemainingThisWeek()}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--sfd-ink-muted)' }} title={formatRemainingThisWeek()}>
                       This Week ({formatRemainingThisWeek()})
                     </span>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-main)' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--sfd-ink-primary)' }}>
                       {thisWeekStats.fillPct}% filled &bull; {thisWeekStats.freePct}% free ({thisWeekStats.freeHours.toFixed(1)}h free)
                     </span>
                   </div>
-                  <div style={{ width: '100%', background: 'rgba(255,255,255,0.05)', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ width: `${Math.min(thisWeekStats.freePct, 100)}%`, height: '100%', background: 'var(--accent-emerald)', borderRadius: '3px' }} />
+                  <div style={{ width: '100%', background: 'rgba(15, 23, 42, 0.06)', height: '6px', borderRadius: '9999px', overflow: 'hidden' }}>
+                    <div style={{ width: `${Math.min(thisWeekStats.freePct, 100)}%`, height: '100%', background: 'var(--sfd-emerald)', borderRadius: '9999px' }} />
                   </div>
                 </div>
 
@@ -454,8 +478,8 @@ Analyze and return the JSON object.`;
                       {nextWeekStats.fillPct}% filled &bull; {nextWeekStats.freePct}% free ({nextWeekStats.freeHours.toFixed(1)}h free)
                     </span>
                   </div>
-                  <div style={{ width: '100%', background: 'rgba(255,255,255,0.05)', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ width: `${Math.min(nextWeekStats.freePct, 100)}%`, height: '100%', background: 'var(--accent-indigo)', borderRadius: '3px' }} />
+                  <div style={{ width: '100%', background: 'rgba(15, 23, 42, 0.06)', height: '6px', borderRadius: '9999px', overflow: 'hidden' }}>
+                    <div style={{ width: `${Math.min(nextWeekStats.freePct, 100)}%`, height: '100%', background: 'var(--sfd-primary)', borderRadius: '9999px' }} />
                   </div>
                 </div>
 
@@ -469,8 +493,8 @@ Analyze and return the JSON object.`;
                       {twoWeeksOutStats.fillPct}% filled &bull; {twoWeeksOutStats.freePct}% free ({twoWeeksOutStats.freeHours.toFixed(1)}h free)
                     </span>
                   </div>
-                  <div style={{ width: '100%', background: 'rgba(255,255,255,0.05)', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
-                    <div style={{ width: `${Math.min(twoWeeksOutStats.freePct, 100)}%`, height: '100%', background: 'var(--accent-cyan)', borderRadius: '3px' }} />
+                  <div style={{ width: '100%', background: 'rgba(15, 23, 42, 0.06)', height: '6px', borderRadius: '9999px', overflow: 'hidden' }}>
+                    <div style={{ width: `${Math.min(twoWeeksOutStats.freePct, 100)}%`, height: '100%', background: '#0284c7', borderRadius: '9999px' }} />
                   </div>
                 </div>
               </div>
@@ -480,88 +504,92 @@ Analyze and return the JSON object.`;
         </div>
 
         {/* Workload Chart (Full Width) */}
-        <div className="glass-card" style={{ width: '100%' }}>
-          <div className="chart-header">
-            <h3 className="chart-title">
-              <BarChart3 size={18} className="gradient-text" style={{ filter: 'brightness(1.2)' }} />
-              Weekly Teaching Workload (Monday &ndash; Sunday)
-            </h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Active Driving Lesson Hours</span>
+        <div className="sfd-section-card" style={{ width: '100%' }}>
+          <div className="sfd-section-header">
+            <div>
+              <h3 className="sfd-section-title">
+                <BarChart3 size={18} style={{ color: 'var(--sfd-primary)' }} />
+                <span>Weekly Teaching Workload (Monday &ndash; Sunday)</span>
+              </h3>
+              <span className="sfd-section-sub">Active Driving Lesson Hours</span>
+            </div>
           </div>
 
           <div className="chart-scroll-container">
-          <div style={{ height: '260px', minWidth: '500px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '1.5rem 1rem 0.5rem 1rem', position: 'relative' }}>
-            {dayIndices.map((dayIdx, i) => {
-              const hours = dayOfWeekHours[dayIdx];
-              const heightPct = (hours / maxDayHours) * 100;
-              return (
-                <div key={dayIdx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, gap: '0.5rem' }}>
-                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: hours > 0 ? 'var(--text-main)' : 'var(--text-dim)', height: '18px' }}>
-                    {hours > 0 ? `${hours.toFixed(1)}h` : ''}
-                  </span>
-                  
-                  <div style={{ height: '180px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', width: '100%' }}>
-                    <div style={{ 
-                      height: `${heightPct}%`, 
-                      width: '50%', 
-                      minHeight: hours > 0 ? '4px' : '0px',
-                      background: hours > 0 
-                        ? 'linear-gradient(180deg, var(--accent-purple) 0%, var(--accent-indigo) 100%)' 
-                        : 'rgba(255,255,255,0.02)',
-                      border: hours > 0 ? 'none' : '1px dashed var(--border-light)',
-                      borderRadius: '8px 8px 4px 4px',
-                      boxShadow: hours > 0 ? '0 4px 12px rgba(129,140,248,0.2)' : 'none',
-                      transition: 'height 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                      cursor: 'pointer'
-                    }}
-                    className="bar-hover"
-                    title={`${dayOfWeekNames[i]}: ${hours.toFixed(1)} lesson hours`}
-                    />
+            <div style={{ height: '240px', minWidth: '500px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '1.5rem 1rem 0.5rem 1rem', position: 'relative' }}>
+              {dayIndices.map((dayIdx, i) => {
+                const hours = dayOfWeekHours[dayIdx];
+                const heightPct = (hours / maxDayHours) * 100;
+                return (
+                  <div key={dayIdx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: hours > 0 ? 'var(--sfd-ink-primary)' : 'var(--sfd-ink-faint)', height: '18px' }}>
+                      {hours > 0 ? `${hours.toFixed(1)}h` : ''}
+                    </span>
+                    
+                    <div style={{ height: '170px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', width: '100%' }}>
+                      <div style={{ 
+                        height: `${heightPct}%`, 
+                        width: '42px', 
+                        minHeight: hours > 0 ? '8px' : '0px',
+                        background: hours > 0 
+                          ? 'linear-gradient(180deg, #1d4ed8 0%, #2563eb 100%)' 
+                          : 'var(--sfd-surface-nested)',
+                        border: hours > 0 ? 'none' : '1px dashed var(--sfd-border-subtle)',
+                        borderRadius: '9999px 9999px 8px 8px',
+                        boxShadow: hours > 0 ? '0 6px 16px -2px rgba(29, 78, 216, 0.25)' : 'none',
+                        transition: 'height 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                        cursor: 'pointer'
+                      }}
+                      className="bar-hover"
+                      title={`${dayOfWeekNames[i]}: ${hours.toFixed(1)} lesson hours`}
+                      />
+                    </div>
+                    
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--sfd-ink-secondary)' }}>
+                      {dayOfWeekNames[i]}
+                    </span>
                   </div>
-                  
-                  <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-muted)' }}>
-                    {dayOfWeekNames[i]}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         {/* Daily Time of Day Distribution */}
-        <div className="glass-card">
-          <div className="chart-header" style={{ marginBottom: '1.25rem' }}>
-            <h3 className="chart-title">
-              <Activity size={18} className="gradient-text" style={{ filter: 'brightness(1.2)' }} />
-              Lesson Time-of-Day Slots
-            </h3>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Weekly Lesson Blocks Distribution</span>
+        <div className="sfd-section-card">
+          <div className="sfd-section-header" style={{ marginBottom: '1.25rem' }}>
+            <div>
+              <h3 className="sfd-section-title">
+                <Activity size={18} style={{ color: 'var(--sfd-primary)' }} />
+                <span>Lesson Time-of-Day Slots</span>
+              </h3>
+              <span className="sfd-section-sub">Weekly Lesson Blocks Distribution</span>
+            </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
-            <div style={{ background: 'rgba(255, 255, 255, 0.015)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>Morning (6am - 12pm)</span>
-              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>{morningPct}%</span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>{morningCount} slots</span>
+            <div style={{ background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-hairline)', borderRadius: '18px', padding: '1.1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--sfd-ink-muted)', fontWeight: 500 }}>Morning (6am - 12pm)</span>
+              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--sfd-primary)' }}>{morningPct}%</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--sfd-ink-faint)' }}>{morningCount} slots</span>
             </div>
 
-            <div style={{ background: 'rgba(255, 255, 255, 0.015)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>Afternoon (12pm - 6pm)</span>
-              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-indigo)' }}>{afternoonPct}%</span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>{afternoonCount} slots</span>
+            <div style={{ background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-hairline)', borderRadius: '18px', padding: '1.1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--sfd-ink-muted)', fontWeight: 500 }}>Afternoon (12pm - 6pm)</span>
+              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: '#2563eb' }}>{afternoonPct}%</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--sfd-ink-faint)' }}>{afternoonCount} slots</span>
             </div>
 
-            <div style={{ background: 'rgba(255, 255, 255, 0.015)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>Evening (6pm - 12am)</span>
-              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-purple)' }}>{eveningPct}%</span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>{eveningCount} slots</span>
+            <div style={{ background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-hairline)', borderRadius: '18px', padding: '1.1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--sfd-ink-muted)', fontWeight: 500 }}>Evening (6pm - 12am)</span>
+              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--sfd-emerald)' }}>{eveningPct}%</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--sfd-ink-faint)' }}>{eveningCount} slots</span>
             </div>
 
-            <div style={{ background: 'rgba(255, 255, 255, 0.015)', border: '1px solid var(--border-light)', borderRadius: '12px', padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>Night (12am - 6am)</span>
-              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-amber)' }}>{nightPct}%</span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>{nightCount} slots</span>
+            <div style={{ background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-hairline)', borderRadius: '18px', padding: '1.1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--sfd-ink-muted)', fontWeight: 500 }}>Night (12am - 6am)</span>
+              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--sfd-amber)' }}>{nightPct}%</span>
+              <span style={{ fontSize: '0.7rem', color: 'var(--sfd-ink-faint)' }}>{nightCount} slots</span>
             </div>
           </div>
         </div>
@@ -570,19 +598,18 @@ Analyze and return the JSON object.`;
       {/* AI Sidebar Column */}
       {showAiPanel && (
         <div className="dashboard-sidebar-column">
-          <div className="glass-card animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', height: 'fit-content' }}>
+          <div className="sfd-section-card animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', height: 'fit-content' }}>
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <Sparkles size={16} className="gradient-text" style={{ color: 'var(--accent-cyan)' }} />
-                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)' }}>AI Weekly Copilot</h3>
+                <Sparkles size={16} style={{ color: 'var(--sfd-primary)' }} />
+                <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>AI Weekly Copilot</h3>
               </div>
               <button
                 type="button"
                 onClick={() => fetchWeeklyAiReport(true)}
                 disabled={weeklyAiLoading}
-                style={{ background: 'transparent', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.2rem' }}
-                className="hover-glow"
+                style={{ background: 'transparent', border: 'none', color: 'var(--sfd-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.2rem' }}
                 title="Regenerate Weekly Insights"
               >
                 <RefreshCw size={12} className={weeklyAiLoading ? 'spin-animation' : ''} />
@@ -590,12 +617,12 @@ Analyze and return the JSON object.`;
             </div>
 
             {weeklyAiLoading ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--accent-cyan)', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 1rem', color: 'var(--sfd-primary)', gap: '1rem' }}>
                 <RefreshCw size={24} className="spin-animation" />
                 <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>Analyzing weekly pacing...</span>
               </div>
             ) : weeklyAiError ? (
-              <div style={{ background: 'rgba(239,68,68,0.1)', color: '#f87171', padding: '1rem', borderRadius: '8px', fontSize: '0.75rem', display: 'flex', gap: '0.4rem' }}>
+              <div style={{ background: 'var(--sfd-coral-soft)', color: 'var(--sfd-coral)', border: '1px solid var(--sfd-coral-border)', padding: '1rem', borderRadius: '14px', fontSize: '0.75rem', display: 'flex', gap: '0.4rem' }}>
                 <AlertCircle size={14} style={{ flexShrink: 0 }} />
                 <span>Error generating insights: {weeklyAiError}</span>
               </div>
@@ -603,18 +630,18 @@ Analyze and return the JSON object.`;
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 
                 {/* Score & Gauge */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', padding: '1rem', borderRadius: '12px', textAlign: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Scheduling Score</span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-hairline)', padding: '1rem', borderRadius: '18px', textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--sfd-ink-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Scheduling Score</span>
                   
                   {/* Gauge SVG */}
                   <svg width="100" height="100" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border-light)" strokeWidth="6"/>
+                    <circle cx="50" cy="50" r="42" fill="none" stroke="var(--sfd-border-hairline)" strokeWidth="6"/>
                     <circle 
                       cx="50" 
                       cy="50" 
                       r="42" 
                       fill="none" 
-                      stroke={weeklyAiReport.score >= 80 ? 'var(--accent-emerald)' : weeklyAiReport.score >= 60 ? 'var(--accent-indigo)' : '#ef4444'} 
+                      stroke={weeklyAiReport.score >= 80 ? 'var(--sfd-emerald)' : weeklyAiReport.score >= 60 ? 'var(--sfd-primary)' : 'var(--sfd-coral)'} 
                       strokeWidth="6" 
                       strokeDasharray="264" 
                       strokeDashoffset={264 - (264 * weeklyAiReport.score) / 100} 
@@ -622,7 +649,7 @@ Analyze and return the JSON object.`;
                       transform="rotate(-90 50 50)"
                       style={{ transition: 'stroke-dashoffset 0.8s ease-out' }}
                     />
-                    <text x="50" y="56" textAnchor="middle" fill="var(--text-main)" fontSize="18" fontWeight="bold">{weeklyAiReport.score}%</text>
+                    <text x="50" y="56" textAnchor="middle" fill="var(--sfd-ink-primary)" fontSize="18" fontWeight="bold">{weeklyAiReport.score}%</text>
                   </svg>
 
                   <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)', lineHeight: 1.3, marginTop: '0.25rem' }}>

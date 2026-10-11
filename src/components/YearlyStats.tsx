@@ -215,23 +215,14 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
             </p>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.3rem', background: 'rgba(255,255,255,0.03)', padding: '2px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+          <div className="sfd-liquid-glass-strip" style={{ padding: '3px 4px' }}>
             {(['raw', 'smoothed', 'deseasonalized'] as const).map((mode) => (
               <button
                 key={mode}
+                type="button"
                 onClick={() => setTrendMode(mode)}
-                className="hover-glow"
-                style={{
-                  padding: '0.35rem 0.65rem',
-                  fontSize: '0.7rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  border: 'none',
-                  background: trendMode === mode ? 'rgba(6,182,212,0.15)' : 'transparent',
-                  color: trendMode === mode ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                  borderRadius: '6px',
-                  transition: 'all 0.2s',
-                }}
+                className={`sfd-strip-btn ${trendMode === mode ? 'active' : ''}`}
+                style={{ fontSize: '12px', padding: '4px 10px' }}
               >
                 {mode === 'raw' && 'Raw View'}
                 {mode === 'smoothed' && 'Smoothed (4w MA)'}
