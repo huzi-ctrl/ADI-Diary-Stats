@@ -240,7 +240,7 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
             <span className="sfd-card-tag">08:00 – 18:00 Span</span>
           </div>
 
-          <p style={{ fontSize: '14px', color: 'var(--sfd-ink-secondary)', margin: 0 }}>
+          <p className="sfd-card-description">
             Real-time visualization of booked appointments, injected 15-minute transit buffers, and unbookable calendar gaps.
           </p>
 
