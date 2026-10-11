@@ -1354,10 +1354,14 @@ function App() {
                           type="number"
                           step="0.001"
                           min="0"
+                          placeholder="0"
                           className="select-input"
                           style={{ padding: '0.5rem 0.75rem', width: '100%', fontSize: '0.9rem', fontWeight: 600 }}
-                          value={fuelCostPerUnit}
-                          onChange={(e) => setFuelCostPerUnit(parseFloat(e.target.value) || 0)}
+                          value={fuelCostPerUnit === 0 ? '' : fuelCostPerUnit}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setFuelCostPerUnit(val === '' ? 0 : parseFloat(val) || 0);
+                          }}
                         />
                         <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
                           {vehicleFuelType === 'electric' 
@@ -1375,10 +1379,14 @@ function App() {
                           type="number"
                           step="0.5"
                           min="1"
+                          placeholder="40"
                           className="select-input"
                           style={{ padding: '0.5rem 0.75rem', width: '100%', fontSize: '0.9rem', fontWeight: 600 }}
-                          value={fuelEfficiency}
-                          onChange={(e) => setFuelEfficiency(parseFloat(e.target.value) || 0)}
+                          value={fuelEfficiency === 0 ? '' : fuelEfficiency}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setFuelEfficiency(val === '' ? 0 : parseFloat(val) || 0);
+                          }}
                         />
                         <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
                           {vehicleFuelType === 'electric'
@@ -1396,10 +1404,14 @@ function App() {
                           type="number"
                           step="1"
                           min="1"
+                          placeholder="25"
                           className="select-input"
                           style={{ padding: '0.5rem 0.75rem', width: '100%', fontSize: '0.9rem', fontWeight: 600 }}
-                          value={milesPerHour}
-                          onChange={(e) => setMilesPerHour(parseFloat(e.target.value) || 0)}
+                          value={milesPerHour === 0 ? '' : milesPerHour}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setMilesPerHour(val === '' ? 0 : parseFloat(val) || 0);
+                          }}
                         />
                         <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
                           Distance driven per teaching hour (UK avg: 25 mph)
@@ -1424,11 +1436,15 @@ function App() {
                           type="number"
                           step="0.01"
                           min="0"
+                          placeholder="0.12"
                           disabled={!enableDepreciation}
                           className="select-input"
                           style={{ padding: '0.5rem 0.75rem', width: '100%', fontSize: '0.9rem', fontWeight: 600, opacity: enableDepreciation ? 1 : 0.5 }}
-                          value={depreciationPerMile}
-                          onChange={(e) => setDepreciationPerMile(parseFloat(e.target.value) || 0)}
+                          value={depreciationPerMile === 0 ? '' : depreciationPerMile}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setDepreciationPerMile(val === '' ? 0 : parseFloat(val) || 0);
+                          }}
                         />
                         <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
                           Tyres, clutch, brakes, dual controls &amp; depreciation (~£0.12/mi)
