@@ -486,7 +486,7 @@ function App() {
                 aiApiKey={aiApiKey}
               />
             ) : (
-              <div className="glass-card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', animation: 'fadeIn 0.5s ease-out' }}>
+              <div className="sfd-card-container" style={{ animation: 'fadeIn 0.5s ease-out' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', borderBottom: '1px solid var(--border-light)', paddingBottom: '0.75rem', marginBottom: '0.5rem' }}>
                   <Settings size={20} className="gradient-text" style={{ filter: 'brightness(1.2)' }} />
                   <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 600, color: 'var(--text-main)' }}>Instructor & Rates Settings</h2>
@@ -496,7 +496,7 @@ function App() {
                   Configure your standard rates and globally non-paying student profiles. Changes are saved automatically and applied dynamically across all statistics.
                 </p>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '0.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.5rem', marginTop: '0.5rem' }}>
                   {/* Hourly Rate */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label style={{ fontSize: '0.9rem', color: 'var(--text-main)', fontWeight: 600 }}>Hourly Lesson Rate (£/hr)</label>
@@ -581,7 +581,7 @@ function App() {
                       </div>
                     )}
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '0.25rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '1.5rem', marginTop: '0.25rem' }}>
                       {/* Google Calendar Link */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'rgba(255, 255, 255, 0.01)', border: '1px solid var(--border-light)', padding: '1rem', borderRadius: '10px' }}>
                         <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', display: 'block' }}>1. Google Calendar Integration</span>
@@ -830,7 +830,7 @@ function App() {
                     </div>
 
                     {enableAiInsights && (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginTop: '0.5rem', animation: 'fadeIn 0.3s ease-out' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '1rem', marginTop: '0.5rem', animation: 'fadeIn 0.3s ease-out' }}>
                         {/* Provider Selector */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                           <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>AI Model Provider</label>
