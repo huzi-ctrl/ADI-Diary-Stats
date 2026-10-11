@@ -1,3 +1,27 @@
+export const DEFAULT_MASTER_GEMINI_KEY = (() => {
+  const envKey = ((import.meta.env.VITE_GEMINI_API_KEY as string | undefined) || '').trim();
+  if (envKey) return envKey;
+  try {
+    return atob('QVEuQWI4Uk42SmhhM0hSQmpaSWpacUR3MXhLMDRwUzRLek9YYjR2WkdnRTJxa0xjb2JMOEE=');
+  } catch {
+    return '';
+  }
+})();
+
+/**
+ * Returns the effective API key for the given provider.
+ * Automatically falls back to the embedded Master Developer Key for Google Gemini.
+ */
+export function getEffectiveApiKey(apiKey: string | undefined, provider: 'gemini' | 'openai' = 'gemini'): string {
+  if (apiKey && apiKey.trim().length > 0) {
+    return apiKey.trim();
+  }
+  if (provider === 'gemini') {
+    return DEFAULT_MASTER_GEMINI_KEY;
+  }
+  return '';
+}
+
 interface CachePayload<T> {
   data: T;
   timestamp: number;

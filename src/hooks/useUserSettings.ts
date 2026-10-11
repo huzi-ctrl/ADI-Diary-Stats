@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { DEFAULT_MASTER_GEMINI_KEY } from '../utils/aiHelper';
 
 export interface UserSettings {
   hourlyRate: number;
@@ -129,13 +130,14 @@ export function useUserSettings(): UserSettings {
 
   const [aiApiKey, setAiApiKey] = useState<string>(() => {
     const saved = localStorage.getItem('adi_ai_api_key');
-    if (saved && saved.trim()) return saved;
-    return ((import.meta.env.VITE_GEMINI_API_KEY as string | undefined) || '').trim();
+    if (saved && saved.trim()) return saved.trim();
+    const envKey = ((import.meta.env.VITE_GEMINI_API_KEY as string | undefined) || '').trim();
+    return envKey || DEFAULT_MASTER_GEMINI_KEY;
   });
 
   useEffect(() => {
-    if (aiApiKey) {
-      localStorage.setItem('adi_ai_api_key', aiApiKey);
+    if (aiApiKey && aiApiKey.trim()) {
+      localStorage.setItem('adi_ai_api_key', aiApiKey.trim());
     }
   }, [aiApiKey]);
 

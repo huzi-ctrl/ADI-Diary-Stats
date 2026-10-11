@@ -5,11 +5,12 @@ import { EventList } from './components/EventList';
 import { YearlyStats } from './components/YearlyStats';
 import { AIInsights } from './components/AIInsights';
 import { LegalModal } from './components/LegalModal';
-import { LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles } from 'lucide-react';
+import { LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, RefreshCw, TrendingUp, Settings, Sun, Moon, Sparkles, CheckCircle2 } from 'lucide-react';
 import { useUserSettings } from './hooks/useUserSettings';
 import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
 import { MagneticPill } from './components/ui/MagneticPill';
+import { DEFAULT_MASTER_GEMINI_KEY } from './utils/aiHelper';
 
 import './components/mockup/design-system-mockup.css';
 
@@ -23,6 +24,7 @@ function App() {
     if (params.get('policy') === 'tos') return 'tos';
     return null;
   });
+  const [showCustomApiKey, setShowCustomApiKey] = useState(false);
 
   // Decoupled user settings and theme management
   const {
@@ -839,8 +841,8 @@ function App() {
                             value={aiProvider}
                             onChange={(e) => setAiProvider(e.target.value as 'gemini' | 'openai')}
                           >
-                            <option value="gemini">Google Gemini (Developer API Key)</option>
-                            <option value="openai">OpenAI (ChatGPT API Key)</option>
+                            <option value="gemini">Google Gemini (Recommended &amp; Pre-configured)</option>
+                            <option value="openai">OpenAI (Requires Custom ChatGPT Key)</option>
                           </select>
                         </div>
 
@@ -854,36 +856,65 @@ function App() {
                           >
                             {aiProvider === 'gemini' ? (
                               <>
-                                <option value="gemini-2.5-flash">gemini-2.5-flash (Recommended/Fast)</option>
-                                <option value="gemini-2.5-pro">gemini-2.5-pro (Highly Intelligent)</option>
+                                <option value="gemini-2.5-flash">gemini-2.5-flash (Fast &amp; Accurate)</option>
+                                <option value="gemini-2.5-pro">gemini-2.5-pro (Deep Reasoning)</option>
                                 <option value="gemini-1.5-flash">gemini-1.5-flash</option>
                               </>
                             ) : (
                               <>
-                                <option value="gpt-4o-mini">gpt-4o-mini (Recommended/Cost-efficient)</option>
+                                <option value="gpt-4o-mini">gpt-4o-mini (Cost-efficient)</option>
                                 <option value="gpt-4o">gpt-4o (Highly Intelligent)</option>
                               </>
                             )}
                           </select>
                         </div>
 
-                        {/* API Key Input */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', gridColumn: '1 / -1' }}>
-                          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                            {aiProvider === 'gemini' ? 'Gemini API Key' : 'OpenAI API Key'}
-                          </label>
-                          <input 
-                            type="password" 
-                            className="select-input" 
-                            style={{ padding: '0.6rem 0.8rem', width: '100%', fontSize: '0.9rem', fontFamily: 'monospace' }}
-                            placeholder={aiProvider === 'gemini' ? 'AIzaSy...' : 'sk-proj-...'}
-                            value={aiApiKey}
-                            onChange={(e) => setAiApiKey(e.target.value)}
-                          />
-                          <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
-                            Your API key is saved only in your local browser storage and requests are sent directly to the provider endpoints.
-                          </span>
-                        </div>
+                        {/* Gemini Pre-configured Status Banner */}
+                        {aiProvider === 'gemini' && (
+                          <div style={{ gridColumn: '1 / -1', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '12px 14px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <CheckCircle2 size={16} style={{ color: 'var(--sfd-emerald)', flexShrink: 0 }} />
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                                  Built-in Master License Active
+                                </span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                  Pre-configured developer Gemini key is active. No setup or manual API key required.
+                                </span>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className="btn btn-secondary"
+                              style={{ padding: '4px 10px', fontSize: '0.75rem', height: 'fit-content' }}
+                              onClick={() => setShowCustomApiKey(!showCustomApiKey)}
+                            >
+                              {showCustomApiKey ? 'Hide Key Field' : 'Custom Key (Optional)'}
+                            </button>
+                          </div>
+                        )}
+
+                        {/* API Key Input (Only visible when OpenAI is selected, or user explicitly opened Custom Key) */}
+                        {(aiProvider === 'openai' || showCustomApiKey) && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', gridColumn: '1 / -1', animation: 'fadeIn 0.2s ease-out' }}>
+                            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                              {aiProvider === 'gemini' ? 'Custom Gemini API Key (Optional Override)' : 'OpenAI API Key'}
+                            </label>
+                            <input 
+                              type="password" 
+                              className="select-input" 
+                              style={{ padding: '0.6rem 0.8rem', width: '100%', fontSize: '0.9rem', fontFamily: 'monospace' }}
+                              placeholder={aiProvider === 'gemini' ? 'Built-in Key Active (Leave blank to use default)' : 'sk-proj-...'}
+                              value={aiApiKey === DEFAULT_MASTER_GEMINI_KEY ? '' : aiApiKey}
+                              onChange={(e) => setAiApiKey(e.target.value)}
+                            />
+                            <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>
+                              {aiProvider === 'gemini'
+                                ? 'Leave blank to use the built-in Master Gemini key.'
+                                : 'Your API key is saved only in your local browser storage and requests are sent directly to OpenAI.'}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import type { CalendarEvent } from '../utils/icsParser';
 import { isEventNonPaying } from '../utils/capacityCalculations';
-import { getCachedAiItem, setCachedAiItem, formatAiError } from '../utils/aiHelper';
+import { getCachedAiItem, setCachedAiItem, formatAiError, getEffectiveApiKey } from '../utils/aiHelper';
 import {
   calculateYearlyIdealSchedules,
   calculateWeekDataList,
@@ -93,6 +93,8 @@ export function useYearlyMetrics({
   const [yoyAiLoading, setYoyAiLoading] = useState(false);
   const [yoyAiError, setYoyAiError] = useState<string | null>(null);
 
+  const effectiveApiKey = getEffectiveApiKey(aiApiKey, aiProvider);
+
   const [dynamicRec, setDynamicRec] = useState<string>('');
   const [recLoading, setRecLoading] = useState<boolean>(false);
 
@@ -183,7 +185,7 @@ export function useYearlyMetrics({
   }, [advisorInsights]);
 
   const fetchDynamicRecommendation = useCallback(async (force = false) => {
-    if (!aiApiKey || !enableAiInsights || !advisorInsights) return;
+    if (!effectiveApiKey || !enableAiInsights || !advisorInsights) return;
 
     const cacheKey = `adi_rec_ai_${cacheKeyRec}`;
     const cached = getCachedAiItem<string>(cacheKey, 7 * 24 * 60 * 60 * 1000);
@@ -223,7 +225,7 @@ Write in Markdown. Be extremely direct and use blockquotes for key takeaways.`;
 
       while (attempts < maxAttempts) {
         if (aiProvider === 'gemini') {
-          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${aiApiKey.trim()}`;
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${effectiveApiKey}`;
           const payload: Record<string, unknown> = {
             contents,
             generationConfig: {
@@ -276,7 +278,7 @@ Write in Markdown. Be extremely direct and use blockquotes for key takeaways.`;
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${aiApiKey.trim()}`
+              'Authorization': `Bearer ${effectiveApiKey}`
             },
             body: JSON.stringify({
               model: aiModel,
@@ -344,21 +346,21 @@ Write in Markdown. Be extremely direct and use blockquotes for key takeaways.`;
     } finally {
       setRecLoading(false);
     }
-  }, [aiApiKey, enableAiInsights, advisorInsights, cacheKeyRec, aiProvider, aiModel, hourlyRate]);
+  }, [effectiveApiKey, enableAiInsights, advisorInsights, cacheKeyRec, aiProvider, aiModel, hourlyRate]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (enableAiInsights && aiApiKey) {
+      if (enableAiInsights && effectiveApiKey) {
         fetchDynamicRecommendation();
       } else {
         setDynamicRec('');
       }
     }, 0);
     return () => clearTimeout(timer);
-  }, [cacheKeyRec, enableAiInsights, aiApiKey, fetchDynamicRecommendation]);
+  }, [cacheKeyRec, enableAiInsights, effectiveApiKey, fetchDynamicRecommendation]);
 
   const fetchYoyAiReport = useCallback(async (force = false) => {
-    if (!aiApiKey || !enableAiInsights || yearlyMetrics.length === 0) return;
+    if (!effectiveApiKey || !enableAiInsights || yearlyMetrics.length === 0) return;
 
     const cacheKey = `yoy_ai_${isYtdComparison ? 'ytd' : 'full'}_${yearlyMetrics.length}_${yearlyMetrics[yearlyMetrics.length - 1]?.earnings}`;
     const cached = getCachedAiItem<YoyAiReport>(cacheKey, 7 * 24 * 60 * 60 * 1000);
@@ -399,7 +401,7 @@ Please analyze this data and return the JSON object.`;
 
       let text = '';
       if (aiProvider === 'gemini') {
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${aiApiKey.trim()}`;
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${effectiveApiKey}`;
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -430,7 +432,7 @@ Please analyze this data and return the JSON object.`;
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${aiApiKey.trim()}`
+            'Authorization': `Bearer ${effectiveApiKey}`
           },
           body: JSON.stringify({
             model: aiModel,
@@ -511,7 +513,7 @@ Please analyze this data and return the JSON object.`;
     } finally {
       setYoyAiLoading(false);
     }
-  }, [aiApiKey, enableAiInsights, yearlyMetrics, isYtdComparison, aiProvider, aiModel, hourlyRate]);
+  }, [effectiveApiKey, enableAiInsights, yearlyMetrics, isYtdComparison, aiProvider, aiModel, hourlyRate]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

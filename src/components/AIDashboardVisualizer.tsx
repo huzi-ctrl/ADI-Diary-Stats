@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { RefreshCw, AlertCircle, Play } from 'lucide-react';
-import { getCachedAiItem, setCachedAiItem, formatAiError } from '../utils/aiHelper';
+import { getCachedAiItem, setCachedAiItem, formatAiError, getEffectiveApiKey } from '../utils/aiHelper';
 
 interface AIDashboardVisualizerProps {
   contextData: unknown;
@@ -21,6 +21,7 @@ export const AIDashboardVisualizer: React.FC<AIDashboardVisualizerProps> = ({
   const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasRunOnce, setHasRunOnce] = useState(false);
+  const effectiveApiKey = getEffectiveApiKey(aiApiKey, aiProvider);
 
   const cacheKey = useMemo(() => {
     const dataStr = contextData ? JSON.stringify(contextData) : '';
@@ -53,7 +54,7 @@ export const AIDashboardVisualizer: React.FC<AIDashboardVisualizerProps> = ({
   }, [contextData]);
 
   const generateAndExecute = useCallback(async (force = false) => {
-    if (!aiApiKey) {
+    if (!effectiveApiKey) {
       setError('API Key is missing.');
       return;
     }
@@ -88,7 +89,7 @@ render(container, data);`;
       
       let jsCode = '';
       if (aiProvider === 'gemini') {
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${aiApiKey.trim()}`;
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${effectiveApiKey}`;
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -114,7 +115,7 @@ render(container, data);`;
         const endpoint = 'https://api.openai.com/v1/chat/completions';
         const response = await fetch(endpoint, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${aiApiKey.trim()}` },
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${effectiveApiKey}` },
           body: JSON.stringify({
             model: aiModel,
             messages: [
@@ -147,17 +148,17 @@ render(container, data);`;
     } finally {
       setLoading(false);
     }
-  }, [aiApiKey, aiModel, aiProvider, contextData, promptGoal, cacheKey, runWidgetCode]);
+  }, [effectiveApiKey, aiModel, aiProvider, contextData, promptGoal, cacheKey, runWidgetCode]);
 
   useEffect(() => {
     // Only auto-run if we have an API key, haven't run yet, and aren't currently loading
-    if (aiApiKey && !hasRunOnce && !loading) {
+    if (effectiveApiKey && !hasRunOnce && !loading) {
         const timer = setTimeout(() => {
           generateAndExecute();
         }, 0);
         return () => clearTimeout(timer);
     }
-  }, [aiApiKey, hasRunOnce, loading, generateAndExecute]);
+  }, [effectiveApiKey, hasRunOnce, loading, generateAndExecute]);
 
   return (
     <div className="glass-card" style={{ padding: '1rem', position: 'relative', overflow: 'hidden', minHeight: '250px' }}>

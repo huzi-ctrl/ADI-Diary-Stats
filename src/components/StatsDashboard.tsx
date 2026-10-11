@@ -13,7 +13,7 @@ import {
   CheckCircle2,
   ShieldCheck
 } from 'lucide-react';
-import { getCachedAiItem, setCachedAiItem, formatAiError } from '../utils/aiHelper';
+import { getCachedAiItem, setCachedAiItem, formatAiError, getEffectiveApiKey } from '../utils/aiHelper';
 import { useWeeklyCapacity } from '../hooks/useWeeklyCapacity';
 
 const dayIndices = [1, 2, 3, 4, 5, 6, 0];
@@ -59,6 +59,8 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
   } | null>(null);
   const [weeklyAiLoading, setWeeklyAiLoading] = useState(false);
   const [weeklyAiError, setWeeklyAiError] = useState<string | null>(null);
+
+  const effectiveApiKey = getEffectiveApiKey(aiApiKey, aiProvider);
 
   // Decoupled capacity and scheduling analytics
   const {
@@ -110,7 +112,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
   }, [lessonsOnly]);
 
   const fetchWeeklyAiReport = useCallback(async (force = false) => {
-    if (!aiApiKey || !enableAiInsights) return;
+    if (!effectiveApiKey || !enableAiInsights) return;
 
     const cacheKey = `weekly_ai_v6_${weekStart.toISOString()}_${aiProvider}_${aiModel}_${hourlyRate}_${lessonsSig}`;
     const nowTime = new Date();
@@ -174,7 +176,7 @@ Analyze and return the JSON object.`;
 
       while (attempts < maxAttempts) {
         if (aiProvider === 'gemini') {
-          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${aiApiKey.trim()}`;
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${effectiveApiKey}`;
           
           const payload: Record<string, unknown> = {
             contents,
@@ -215,7 +217,7 @@ Analyze and return the JSON object.`;
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${aiApiKey.trim()}`
+              'Authorization': `Bearer ${effectiveApiKey}`
             },
             body: JSON.stringify({
               model: aiModel,
@@ -294,7 +296,7 @@ Analyze and return the JSON object.`;
     } finally {
       setWeeklyAiLoading(false);
     }
-  }, [aiApiKey, enableAiInsights, weekStart, weekEnd, lessonsOnly, totalTeachHours, weeklyEarnings, hourlyRate, weekdayStatsString, thisWeekStats.freeHours, thisWeekStats.fillPct, morningPct, afternoonPct, eveningPct, nightPct, aiProvider, aiModel, lessonsSig]);
+  }, [effectiveApiKey, enableAiInsights, weekStart, weekEnd, lessonsOnly, totalTeachHours, weeklyEarnings, hourlyRate, weekdayStatsString, thisWeekStats.freeHours, thisWeekStats.fillPct, morningPct, afternoonPct, eveningPct, nightPct, aiProvider, aiModel, lessonsSig]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -630,7 +632,7 @@ Analyze and return the JSON object.`;
                   </div>
                   <h3 className="sfd-card-heading">AI Weekly Copilot</h3>
                 </div>
-                {aiApiKey && (
+                {effectiveApiKey && (
                   <button
                     type="button"
                     onClick={() => fetchWeeklyAiReport(true)}
@@ -643,7 +645,7 @@ Analyze and return the JSON object.`;
                 )}
               </div>
 
-              {!aiApiKey ? (
+              {!effectiveApiKey ? (
                 <p style={{ fontSize: '13px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.5 }}>
                   AI Coaching is active. Add a Gemini or OpenAI API Key in <strong>Settings</strong> to receive automated weekly schedule analysis.
                 </p>

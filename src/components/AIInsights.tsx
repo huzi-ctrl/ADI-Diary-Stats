@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { Sparkles, RefreshCw, TrendingUp, MessageSquare, Send, Key, AlertCircle, Calendar } from 'lucide-react';
 import { type CalendarEvent } from '../utils/icsParser';
-import { getCachedAiItem, setCachedAiItem, formatAiError } from '../utils/aiHelper';
+import { getCachedAiItem, setCachedAiItem, formatAiError, getEffectiveApiKey } from '../utils/aiHelper';
 
 interface AIInsightsProps {
   allEvents: CalendarEvent[];
@@ -33,8 +33,9 @@ export const AIInsights: React.FC<AIInsightsProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const effectiveApiKey = getEffectiveApiKey(aiApiKey, aiProvider);
   // Check if API key is provided
-  const hasApiKey = aiApiKey && aiApiKey.trim().length > 0;
+  const hasApiKey = effectiveApiKey.length > 0;
 
   const lastEventTime = useMemo(() => {
     return allEvents.length > 0 ? allEvents[allEvents.length - 1].start.getTime() : 0;
@@ -178,7 +179,7 @@ ${monthlyBreakdownStr || '- No monthly data available.\n'}
     }
 
     if (aiProvider === 'gemini') {
-      const cleanKey = aiApiKey.trim();
+      const cleanKey = effectiveApiKey;
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent?key=${cleanKey}`;
       
       let contents = [
@@ -298,7 +299,7 @@ ${monthlyBreakdownStr || '- No monthly data available.\n'}
       return accumulatedAnswer;
     } else {
       // OpenAI API
-      const cleanKey = aiApiKey.trim();
+      const cleanKey = effectiveApiKey;
       const endpoint = 'https://api.openai.com/v1/chat/completions';
 
       let messages = [
@@ -387,7 +388,7 @@ ${monthlyBreakdownStr || '- No monthly data available.\n'}
 
       return accumulatedAnswer;
     }
-  }, [hasApiKey, aiProvider, aiModel, aiApiKey]);
+  }, [hasApiKey, aiProvider, aiModel, effectiveApiKey]);
 
   // Generate Quick Summary
   const handleGenerateSummary = useCallback(async (force = false) => {
