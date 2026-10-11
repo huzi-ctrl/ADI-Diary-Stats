@@ -10,7 +10,6 @@ import { useUserSettings } from './hooks/useUserSettings';
 import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
 import { DesignSystemMockup } from './components/mockup/DesignSystemMockup';
-import { LiquidGlassCard } from './components/ui/LiquidGlassCard';
 import { MagneticPill } from './components/ui/MagneticPill';
 
 import './components/mockup/design-system-mockup.css';
@@ -120,18 +119,14 @@ function App() {
 
   return (
     <div className="sfd-mockup-root">
-      {/* Ambient Caustic Glow Orbs (Unseen Scene) */}
-      <div className="sfd-ambient-orb-top" />
-      <div className="sfd-ambient-orb-bottom" />
-
       {/* Master Fluid Header */}
-      <LiquidGlassCard tilt={false} glare={true} className="sfd-header">
+      <header className="sfd-header">
         <div className="sfd-brand">
-          <div className="pearl-sphere">
-            <span style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(28, 25, 23, 0.75)' }}>01</span>
+          <div className="sfd-brand-symbol">
+            <img src="/favicon.png" alt="ADI stats logo" style={{ height: '26px', width: '26px', objectFit: 'contain' }} />
           </div>
           <div className="sfd-brand-text">
-            <span className="sfd-brand-title iridescent-text">ADI stats</span>
+            <span className="sfd-brand-title">ADI stats</span>
             <span className="sfd-brand-sub font-editorial">Approved Driving Instructor Schedule Analytics</span>
           </div>
         </div>
@@ -350,7 +345,7 @@ function App() {
             Showcase
           </MagneticPill>
         </div>
-      </LiquidGlassCard>
+      </header>
 
       {/* Main Content Area */}
       <main>

@@ -1,31 +1,28 @@
 ---
 name: DriveStats ADI
-description: Apple visionOS dynamic liquid glass & Unseen.co warm architectural travertine schedule analytics
+description: Cool, professional high-craft diary analytics inspired by Unseen Studio & Kota
 colors:
-  primary: "#1c1917"
-  primary-hover: "#292524"
-  primary-active: "#0c0a09"
-  surface-ground: "#FAF6F4"
-  surface-card: "rgba(255, 255, 255, 0.82)"
-  surface-nested: "#F1EDEB"
-  surface-inset: "#E7E1DA"
-  ink-primary: "#1c1917"
-  ink-secondary: "#44403c"
-  ink-muted: "#78716c"
-  ink-faint: "#a8a29e"
-  border-hairline: "rgba(28, 25, 23, 0.06)"
-  border-subtle: "rgba(28, 25, 23, 0.12)"
-  accent-rose: "#F6C8C3"
-  accent-rose-soft: "rgba(246, 200, 195, 0.35)"
-  accent-rose-border: "rgba(246, 200, 195, 0.6)"
+  primary: "#0f172a"
+  primary-hover: "#1e293b"
+  primary-active: "#020617"
+  surface-ground: "#f8fafc"
+  surface-card: "rgba(255, 255, 255, 0.90)"
+  surface-nested: "#f1f5f9"
+  surface-inset: "#e2e8f0"
+  ink-primary: "#0f172a"
+  ink-secondary: "#334155"
+  ink-muted: "#64748b"
+  ink-faint: "#94a3b8"
+  border-hairline: "rgba(15, 23, 42, 0.08)"
+  border-subtle: "rgba(15, 23, 42, 0.14)"
+  accent-blue: "#2563eb"
+  accent-blue-soft: "#eff6ff"
   accent-emerald: "#059669"
   accent-emerald-soft: "#ecfdf5"
   accent-amber: "#d97706"
   accent-amber-soft: "#fffbeb"
   accent-coral: "#e11d48"
   accent-coral-soft: "#fff1f2"
-  pearl-glow: "radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95), rgba(246, 200, 195, 0.6) 30%, rgba(200, 220, 255, 0.5) 60%, rgba(220, 200, 255, 0.7) 100%)"
-  iridescent-gradient: "linear-gradient(135deg, #1c1917 0%, #292524 40%, #7c3aed 65%, #2563eb 82%, #ec4899 100%)"
 typography:
   display:
     fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
@@ -69,8 +66,8 @@ rounded:
   md: "16px"
   lg: "20px"
   xl: "22px"
-  2xl: "26px"
-  3xl: "32px"
+  2xl: "24px"
+  3xl: "28px"
   full: "9999px"
 spacing:
   xs: "4px"
@@ -80,42 +77,24 @@ spacing:
   xl: "28px"
   2xl: "40px"
   3xl: "56px"
-physics:
-  appleLiquidGlass:
-    perspective: "1000px"
-    maxTilt: "5.5deg"
-    scaleOnHover: "1.012"
-    spotlightRadius: "360px"
-    specularGlareRadius: "280px"
-  hyperplexedMagnetic:
-    pullFactor: "0.28"
-    maxDistance: "16px"
 ---
 
 # DriveStats ADI Design Language System
 
-## 1. Aesthetic Foundations (Unseen.co & Apple visionOS)
-- **Architectural Sand & Travertine Ground (`#FAF6F4`)**: Replaces cold generic corporate SaaS white and grey with a warm, natural limestone surface.
-- **Deep Warm Carbon (`#1c1917`)**: High-contrast, elegant typography grounded in warm umber undertones instead of generic blue-black `#0f172a`.
-- **Soft Rose Gold & Flesh Accents (`#F6C8C3`)**: Gentle, human warmth for interactive highlights, badges, and rim accents.
-- **Iridescent Pearl Reflections**: Chromatic floating sphere badge and text sheen inspired by Unseen Studio's ethereal product experiences.
+## 1. Aesthetic Foundations (Clean, Cool & Professional Craft)
+- **Cool Pristine Ground (`#f8fafc`)**: Crisp, authoritative foundation replacing muddy or overly saturated backgrounds.
+- **Deep Slate Graphite (`#0f172a`)**: High-contrast, razor-sharp typography and active pill buttons with white ink.
+- **Layered Frosted Liquid Glass (`rgba(255, 255, 255, 0.90)`)**: Clean translucent glass surfaces with subtle 1px top highlight (`inset 0 1px 0 0 rgba(255, 255, 255, 0.95)`), smooth continuous squircle corners, and soft ambient drop shadows.
+- **Contextual Metric Accents**:
+  - Emerald (`#059669` / `#ecfdf5`) for revenue, booked appointments, and positive pacing.
+  - Amber (`#d97706` / `#fffbeb`) for student test bookings and travel buffers.
+  - Coral (`#e11d48` / `#fff1f2`) for unbookable scheduling gaps.
 
-## 2. Dynamic Liquid Glass Specifications
-Each interactive surface utilizes a multi-layered composite:
-1. **Background Material Layer**: `rgba(255, 255, 255, 0.82)` with `backdrop-filter: blur(24px) saturate(190%)`.
-2. **Radial Spotlight Border (`::before`)**: Live cursor tracking gradient `radial-gradient(360px circle at var(--mouse-x) var(--mouse-y), rgba(246, 200, 195, 0.75), rgba(190, 215, 255, 0.35) 35%, ...)`.
-3. **Internal Specular Glare (`::after`)**: Dynamic reflection following the cursor: `radial-gradient(280px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.65), transparent 65%)`.
-4. **visionOS Rim Highlights**: `0 1px 0 0 rgba(255, 255, 255, 0.9) inset`, `0 -1px 0 0 rgba(0, 0, 0, 0.05) inset`.
-5. **3D Parallax Tilt**: Dynamic calculation tilting up to ±5.5° based on cursor offset from card center:
-   `transform: perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.012, 1.012, 1.012)`.
+## 2. Interaction Principles
+- **No Disruptive 3D Tilting**: Content remains crisp, stable, and readable on all screens without text blurring.
+- **Stable Pill Navigation**: Active navigation items stay anchored with crisp contrasts; buttons transition smoothly with gentle scaling and elevation.
+- **Subtle Specular Spotlight**: Cards reveal a delicate cursor spotlight border glow on hover without overwhelming the data.
 
-## 3. Hyperplexed Magnetic Button Physics
-Interactive pills and buttons implement spring cursor attraction:
-- Tracks distance from cursor to element center.
-- Attracts the button toward the cursor with a `0.28` pull factor (clamped to max `16px`).
-- Damped spring return to `(0, 0)` upon `mouseleave`.
-- Tactile scale down to `0.95` on `:active`.
-
-## 4. Typography Pairing
-- **Primary & Display UI**: `Plus Jakarta Sans` — precise geometric grotesk with modern organic curves.
-- **Editorial Sub-narratives**: `Newsreader` (italic) — high-end editorial warmth for capacity debriefs and scheduling notes.
+## 3. Typography Pairing
+- **Primary UI & Display**: `Plus Jakarta Sans` — ultra-clean, modern geometric grotesk.
+- **Editorial Sub-narratives**: `Newsreader` (italic) — subtle editorial polish for capacity debriefs and schedule notes.

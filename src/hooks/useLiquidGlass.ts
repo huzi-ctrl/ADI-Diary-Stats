@@ -8,17 +8,17 @@ export interface LiquidGlassOptions {
 }
 
 /**
- * Hook to apply Apple visionOS-inspired 3D parallax tilt & Hyperplexed mouse-following
- * specular reflection / caustic spotlight CSS variables (--mouse-x, --mouse-y, --glare-opacity).
+ * Hook to apply subtle cursor-following spotlight and specular highlights.
+ * Disables disruptive 3D rotations by default to preserve text sharpness and layout stability.
  */
 export function useLiquidGlass<T extends HTMLElement = HTMLDivElement>(
   options: LiquidGlassOptions = {}
 ) {
   const ref = useRef<T | null>(null);
   const {
-    tilt = true,
-    maxTilt = 5,
-    scale = 1.012,
+    tilt = false,
+    maxTilt = 2,
+    scale = 1.008,
     glare = true
   } = options;
 
@@ -26,7 +26,6 @@ export function useLiquidGlass<T extends HTMLElement = HTMLDivElement>(
     const el = ref.current;
     if (!el) return;
 
-    // Check for reduced motion preference
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
@@ -38,9 +37,6 @@ export function useLiquidGlass<T extends HTMLElement = HTMLDivElement>(
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
       // Update CSS variables for radial spotlight and specular glare
       el.style.setProperty('--mouse-x', `${x}px`);
       el.style.setProperty('--mouse-y', `${y}px`);
@@ -51,7 +47,8 @@ export function useLiquidGlass<T extends HTMLElement = HTMLDivElement>(
       }
 
       if (tilt) {
-        // Safe normalized tilt computation
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
         const rotateX = ((y - centerY) / centerY) * -maxTilt;
         const rotateY = ((x - centerX) / centerX) * maxTilt;
         el.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(${scale}, ${scale}, ${scale})`;
@@ -61,7 +58,7 @@ export function useLiquidGlass<T extends HTMLElement = HTMLDivElement>(
     const handleMouseLeave = () => {
       isHovered = false;
       if (tilt) {
-        el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        el.style.transform = '';
       }
       if (glare) {
         el.style.setProperty('--glare-opacity', '0');

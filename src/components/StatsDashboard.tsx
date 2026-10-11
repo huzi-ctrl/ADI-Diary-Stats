@@ -328,9 +328,9 @@ Analyze and return the JSON object.`;
           </div>
         )}
 
-        {/* Sculpted Liquid Glass KPI Cards with 3D Parallax Tilt */}
+        {/* Clean Frosted KPI Cards */}
         <div className="sfd-kpi-grid">
-          <LiquidGlassCard className="sfd-kpi-card" maxTilt={5.5}>
+          <LiquidGlassCard className="sfd-kpi-card">
             <div className="sfd-kpi-top">
               <span className="sfd-kpi-label">Weekly Lessons</span>
               <span className="sfd-kpi-badge emerald">
@@ -343,7 +343,7 @@ Analyze and return the JSON object.`;
             </span>
           </LiquidGlassCard>
           
-          <LiquidGlassCard className="sfd-kpi-card" maxTilt={5.5}>
+          <LiquidGlassCard className="sfd-kpi-card">
             <div className="sfd-kpi-top">
               <span className="sfd-kpi-label">Teaching Hours</span>
               <span className="sfd-kpi-badge neutral">
@@ -356,7 +356,7 @@ Analyze and return the JSON object.`;
             </span>
           </LiquidGlassCard>
 
-          <LiquidGlassCard className="sfd-kpi-card" maxTilt={5.5}>
+          <LiquidGlassCard className="sfd-kpi-card">
             <div className="sfd-kpi-top">
               <span className="sfd-kpi-label">Weekly Tests</span>
               <span className="sfd-kpi-badge amber">
@@ -369,7 +369,7 @@ Analyze and return the JSON object.`;
             </span>
           </LiquidGlassCard>
 
-          <LiquidGlassCard className="sfd-kpi-card" maxTilt={5.5}>
+          <LiquidGlassCard className="sfd-kpi-card">
             <div className="sfd-kpi-top">
               <span className="sfd-kpi-label">Estimated Revenue</span>
               <span className="sfd-kpi-badge emerald">
@@ -384,7 +384,7 @@ Analyze and return the JSON object.`;
         </div>
 
         {/* Drives Tracker & Upcoming Bookings */}
-        <LiquidGlassCard className="sfd-section-card" maxTilt={2.5}>
+        <LiquidGlassCard className="sfd-section-card">
           <div className="sfd-section-header">
             <div>
               <h3 className="sfd-section-title">
@@ -412,7 +412,7 @@ Analyze and return the JSON object.`;
               <div style={{ height: '14px', background: 'var(--sfd-surface-nested)', borderRadius: '9999px', overflow: 'hidden', display: 'flex', border: '1px solid var(--sfd-border-hairline)', padding: '2px' }}>
                 <div style={{ 
                   width: `${weeklyLessonsCompletionPct}%`, 
-                  background: 'linear-gradient(90deg, #059669 0%, #1c1917 50%, #F6C8C3 100%)', 
+                  background: 'linear-gradient(90deg, #059669 0%, #2563eb 100%)', 
                   borderRadius: '9999px',
                   transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
                 }} />
@@ -427,7 +427,7 @@ Analyze and return the JSON object.`;
             {/* All-Time Future Schedule stats */}
             <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'space-around', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ background: 'var(--sfd-primary-soft)', border: '1px solid var(--sfd-rose-border)', padding: '0.6rem 1rem', borderRadius: '16px', textAlign: 'center' }}>
+                <div style={{ background: 'var(--sfd-surface-nested)', border: '1px solid var(--sfd-border-subtle)', padding: '0.6rem 1rem', borderRadius: '16px', textAlign: 'center' }}>
                   <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--sfd-primary)', display: 'block', lineHeight: 1.2 }}>
                     {allFutureLessons.length}
                   </span>
@@ -494,8 +494,8 @@ Analyze and return the JSON object.`;
                       {twoWeeksOutStats.fillPct}% filled &bull; {twoWeeksOutStats.freePct}% free ({twoWeeksOutStats.freeHours.toFixed(1)}h free)
                     </span>
                   </div>
-                  <div style={{ width: '100%', background: 'rgba(28, 25, 23, 0.06)', height: '6px', borderRadius: '9999px', overflow: 'hidden' }}>
-                    <div style={{ width: `${Math.min(twoWeeksOutStats.freePct, 100)}%`, height: '100%', background: 'var(--sfd-rose)', borderRadius: '9999px' }} />
+                  <div style={{ width: '100%', background: 'rgba(15, 23, 42, 0.06)', height: '6px', borderRadius: '9999px', overflow: 'hidden' }}>
+                    <div style={{ width: `${Math.min(twoWeeksOutStats.freePct, 100)}%`, height: '100%', background: '#6366f1', borderRadius: '9999px' }} />
                   </div>
                 </div>
               </div>
@@ -505,7 +505,7 @@ Analyze and return the JSON object.`;
         </LiquidGlassCard>
 
         {/* Workload Chart (Full Width) */}
-        <LiquidGlassCard className="sfd-section-card" maxTilt={2.5} style={{ width: '100%' }}>
+        <LiquidGlassCard className="sfd-section-card" style={{ width: '100%' }}>
           <div className="sfd-section-header">
             <div>
               <h3 className="sfd-section-title">
@@ -533,11 +533,11 @@ Analyze and return the JSON object.`;
                         width: '42px', 
                         minHeight: hours > 0 ? '8px' : '0px',
                         background: hours > 0 
-                          ? 'linear-gradient(180deg, #1c1917 0%, #292524 60%, #F6C8C3 100%)' 
+                          ? 'linear-gradient(180deg, #0f172a 0%, #1e293b 70%, #334155 100%)' 
                           : 'var(--sfd-surface-nested)',
                         border: hours > 0 ? 'none' : '1px dashed var(--sfd-border-subtle)',
                         borderRadius: '9999px 9999px 8px 8px',
-                        boxShadow: hours > 0 ? '0 8px 18px -2px rgba(28, 25, 23, 0.2)' : 'none',
+                        boxShadow: hours > 0 ? '0 4px 14px rgba(15, 23, 42, 0.15)' : 'none',
                         transition: 'height 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
                         cursor: 'pointer'
                       }}

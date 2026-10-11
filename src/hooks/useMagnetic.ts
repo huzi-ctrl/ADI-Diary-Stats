@@ -1,23 +1,24 @@
 import { useEffect, useRef } from 'react';
 
 export interface MagneticOptions {
+  enabled?: boolean;
   pullFactor?: number;
   maxDistance?: number;
 }
 
 /**
- * Hook to apply Hyperplexed-style magnetic cursor attraction physics to buttons & pills.
- * Gently pulls the element toward the cursor on hover and springs back smoothly on leave.
+ * Hook for subtle magnetic feel.
+ * Default enabled is false or ultra-micro distance so small buttons do not jump out of place.
  */
 export function useMagnetic<T extends HTMLElement = HTMLElement>(
   options: MagneticOptions = {}
 ) {
   const ref = useRef<T | null>(null);
-  const { pullFactor = 0.28, maxDistance = 16 } = options;
+  const { enabled = false, pullFactor = 0.12, maxDistance = 4 } = options;
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !enabled) return;
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
@@ -31,7 +32,6 @@ export function useMagnetic<T extends HTMLElement = HTMLElement>(
       let deltaX = (e.clientX - centerX) * pullFactor;
       let deltaY = (e.clientY - centerY) * pullFactor;
 
-      // Clamp distance
       const distance = Math.hypot(deltaX, deltaY);
       if (distance > maxDistance) {
         const ratio = maxDistance / distance;
@@ -39,11 +39,11 @@ export function useMagnetic<T extends HTMLElement = HTMLElement>(
         deltaY *= ratio;
       }
 
-      el.style.transform = `translate(${deltaX.toFixed(2)}px, ${deltaY.toFixed(2)}px)`;
+      el.style.transform = `translate(${deltaX.toFixed(1)}px, ${deltaY.toFixed(1)}px)`;
     };
 
     const handleMouseLeave = () => {
-      el.style.transform = 'translate(0px, 0px)';
+      el.style.transform = '';
     };
 
     el.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -54,7 +54,7 @@ export function useMagnetic<T extends HTMLElement = HTMLElement>(
       el.removeEventListener('mouseleave', handleMouseLeave);
       el.style.transform = '';
     };
-  }, [pullFactor, maxDistance]);
+  }, [enabled, pullFactor, maxDistance]);
 
   return ref;
 }
