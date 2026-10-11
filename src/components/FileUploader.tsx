@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Calendar, Link, AlertTriangle, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { Upload, Link, AlertTriangle, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 interface FileUploaderProps {
   onFileParsed: (text: string, fileName: string) => void;
@@ -72,73 +72,48 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '1rem auto', width: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem' }} className="mobile-uploader-wizard">
-      
-      {/* Brand Intro Card */}
-      <div className="glass-card" style={{ padding: '1.5rem 1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center' }}>
-        <div style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(34, 211, 238, 0.15))', padding: '0.75rem', borderRadius: '50%', color: 'var(--accent-indigo)', display: 'flex' }}>
-          <Calendar size={32} />
-        </div>
-        <div>
-          <h2 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-main)', margin: 0 }}>DriveStats Schedule Analyzer</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.35rem', maxWidth: '480px', lineHeight: 1.4 }}>
-            Unlock AI-powered scheduling feedback, Year-over-Year utilization reviews, and revenue diagnostics. Connect your diary securely.
-          </p>
-        </div>
-      </div>
-
+    <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {activeTab === null ? (
         /* SERVICE SELECTION LANDING */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', paddingLeft: '0.25rem' }}>
-              Select Live Connection Service
-            </span>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
               {/* Google Button */}
               <button 
                 type="button"
-                className="sfd-section-card" 
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--sfd-border-hairline)', background: 'var(--sfd-surface-card)', color: 'var(--sfd-ink-primary)', transition: 'all 0.2s', borderRadius: '22px' }}
+                className="glass-card hover-glow" 
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', padding: '1rem', cursor: 'pointer', border: '1px solid var(--border-light)', background: 'var(--bg-card)', color: 'var(--text-main)', transition: 'all 0.2s', borderRadius: '16px' }}
                 onClick={handleConnectGoogle}
               >
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width={32} height={32} alt="Google" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width={22} height={22} alt="Google" />
                 <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Google Calendar</span>
               </button>
 
               {/* Outlook Button */}
               <button 
                 type="button"
-                className="sfd-section-card" 
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--sfd-border-hairline)', background: 'var(--sfd-surface-card)', color: 'var(--sfd-ink-primary)', transition: 'all 0.2s', borderRadius: '22px' }}
+                className="glass-card hover-glow" 
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', padding: '1rem', cursor: 'pointer', border: '1px solid var(--border-light)', background: 'var(--bg-card)', color: 'var(--text-main)', transition: 'all 0.2s', borderRadius: '16px' }}
                 onClick={handleConnectOutlook}
               >
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" width={32} height={32} alt="Microsoft" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" width={22} height={22} alt="Microsoft" />
                 <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Outlook Calendar</span>
-              </button>
-
-              {/* iCal Link Button */}
-              <button 
-                type="button"
-                className="sfd-section-card" 
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', padding: '1.5rem 1rem', cursor: 'pointer', border: '1px solid var(--sfd-border-hairline)', background: 'var(--sfd-surface-card)', color: 'var(--sfd-ink-primary)', transition: 'all 0.2s', borderRadius: '22px' }}
-                onClick={() => setActiveTab('webcal')}
-              >
-                <div style={{ background: 'var(--sfd-primary-soft)', color: 'var(--sfd-primary)', padding: '0.5rem', borderRadius: '50%', display: 'flex' }}>
-                  <Link size={22} />
-                </div>
-                <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>iCal URL Feed</span>
               </button>
             </div>
           </div>
 
-          {/* Offline File Upload Card (Smaller Option 2) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', paddingLeft: '0.25rem' }}>
-              Alternatively: Upload Offline File
+          {/* Divider */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '0.25rem 0' }}>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              or import diary file
             </span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border-light)' }} />
+          </div>
+
+          {/* Offline File Upload Card */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             
             <div 
               className={`sfd-section-card ${dragActive ? 'drag-active' : ''}`}
@@ -175,6 +150,16 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                   {error}
                 </div>
               )}
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: '0.25rem' }}>
+              <button
+                type="button"
+                onClick={() => setActiveTab('webcal')}
+                style={{ background: 'transparent', border: 'none', color: 'var(--accent-blue)', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline', padding: '0.25rem' }}
+              >
+                Or connect via private iCalendar (.ics) Webcal URL
+              </button>
             </div>
           </div>
 
