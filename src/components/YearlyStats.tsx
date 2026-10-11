@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import type { CalendarEvent } from '../utils/icsParser';
-import { Clock, Percent, Activity, CalendarDays, Award, TrendingUp, Download, Sparkles, RefreshCw, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
+import { Clock, Percent, Activity, CalendarDays, Award, TrendingUp, Download, Sparkles, RefreshCw, ChevronDown, ChevronUp, AlertCircle, Car } from 'lucide-react';
 import { useYearlyMetrics } from '../hooks/useYearlyMetrics';
 import { formatMinsToTime, getMondayOfDate } from '../utils/yearlyCalculations';
 import { InfoPlacard } from './ui/InfoPlacard';
+import { DEFAULT_VEHICLE_SETTINGS, type VehicleCostSettings } from '../utils/costEstimator';
 
 interface YearlyStatsProps {
   instructorEvents: CalendarEvent[];
@@ -17,6 +18,7 @@ interface YearlyStatsProps {
   aiModel?: string;
   aiApiKey?: string;
   excludedYears?: number[];
+  vehicleCostSettings?: VehicleCostSettings;
 }
 
 export const YearlyStats: React.FC<YearlyStatsProps> = ({ 
@@ -30,7 +32,8 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
   aiProvider = 'gemini',
   aiModel = 'gemini-2.5-flash',
   aiApiKey = '',
-  excludedYears = []
+  excludedYears = [],
+  vehicleCostSettings = DEFAULT_VEHICLE_SETTINGS
 }) => {
   // Decoupled multi-year analytics and calculations
   const {
@@ -69,6 +72,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
     aiModel,
     aiApiKey,
     excludedYears,
+    vehicleCostSettings,
   });
 
   // Collapsible state for long AI Scheduling Strategy report (minimized by default)
@@ -668,7 +672,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <div style={{ width: '12px', height: '12px', background: 'linear-gradient(135deg, var(--accent-purple), var(--accent-indigo))', borderRadius: '3px' }} />
-              <span style={{ color: 'var(--text-muted)' }}>Estimated Earnings</span>
+              <span style={{ color: 'var(--text-muted)' }}>Revenue (Gross &amp; Net)</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <div style={{ width: '12px', height: '2px', background: 'var(--accent-emerald)' }} />
@@ -787,19 +791,29 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                       className="bar-hover"
                       style={{ transition: 'opacity 0.2s', cursor: 'pointer' }}
                     >
-                      <title>{`${mData.label}:\nEarnings: £${mData.earnings.toLocaleString()}\nLessons: ${mData.lessonCount}\nTests: ${mData.testCount}`}</title>
+                      <title>{`${mData.label}:\nGross: £${mData.earnings.toLocaleString()}\nNet Take-Home: £${mData.netRevenue.toLocaleString()} (${mData.profitMargin.toFixed(0)}% margin)\nLessons: ${mData.lessonCount}\nTests: ${mData.testCount}`}</title>
                     </rect>
 
-                    {/* Earnings label above bar */}
+                    {/* Net & Gross labels above bar */}
                     <text
                       x={x}
-                      y={y - 6}
-                      fill="var(--text-main)"
-                      fontSize="9"
+                      y={y - 14}
+                      fill="var(--accent-emerald)"
+                      fontSize="8"
                       fontWeight="700"
                       textAnchor="middle"
                     >
-                      £{mData.earnings.toLocaleString()}
+                      Net £{mData.netRevenue.toLocaleString()}
+                    </text>
+                    <text
+                      x={x}
+                      y={y - 4}
+                      fill="var(--text-dim)"
+                      fontSize="8"
+                      fontWeight="600"
+                      textAnchor="middle"
+                    >
+                      (£{mData.earnings.toLocaleString()})
                     </text>
 
                     {/* X-axis label (Year) */}
@@ -933,7 +947,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                 <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Scheduling Efficiency</th>
                 <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Earnings / Workday</th>
                 <th style={{ padding: '0.85rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Active Days</th>
-                <th style={{ padding: '0.85rem 1rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Annual Revenue</th>
+                <th style={{ padding: '0.85rem 1rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Annual Revenue (Gross &amp; Net)</th>
               </tr>
             </thead>
             <tbody>
@@ -959,18 +973,22 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                         )}
                       </div>
                     </td>
-                    <td style={{ padding: '0.85rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                      £{m.earningsPerActiveDay.toFixed(0)}/day
+                    <td style={{ padding: '0.85rem 0.5rem', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>£{m.earningsPerActiveDay.toFixed(0)}</span>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--accent-emerald)', fontWeight: 600 }}>Net £{m.netEarningsPerActiveDay.toFixed(0)}/day</span>
+                      </div>
                     </td>
                     <td style={{ padding: '0.85rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
                       {m.activeDaysCount} days
                     </td>
-                    <td style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-cyan)' }}>
+                    <td style={{ padding: '0.85rem 1rem', textAlign: 'right', fontWeight: 600 }}>
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                        <span>£{m.earnings.toLocaleString()}</span>
+                        <span style={{ color: 'var(--text-main)' }}>£{m.earnings.toLocaleString()} <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 400 }}>gross</span></span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--accent-emerald)', fontWeight: 700 }}>Net £{m.netRevenue.toLocaleString()} ({m.profitMargin.toFixed(0)}%)</span>
                         {m.projectedEarnings && (
-                          <div style={{ fontSize: '0.65rem', color: 'var(--text-dim)', marginTop: '2px' }}>
-                            Proj. EoY: £{m.projectedEarnings.toLocaleString()}
+                          <div style={{ fontSize: '0.68rem', color: 'var(--accent-cyan)', marginTop: '2px' }}>
+                            Proj. EoY Net: £{m.projectedNetEarnings?.toLocaleString()}
                           </div>
                         )}
                         {idx > 0 && (
@@ -1219,6 +1237,121 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
     );
   };
 
+  // 4.65. Annual Vehicle Operating Expenses & Net Take-Home Card
+  const renderAnnualVehicleCostsCard = () => {
+    return (
+      <div className="glass-card animate-slide-up" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'rgba(16, 185, 129, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-emerald)' }}>
+              <Car size={18} />
+            </div>
+            <div>
+              <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                Annual Vehicle Operating Expenses &amp; Net Take-Home
+              </h3>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.2rem 0 0 0' }}>
+                Full-year fuel consumption, mileage wear, and real net profit across all recorded teaching drives.
+              </p>
+            </div>
+            <InfoPlacard
+              title="Annual Vehicle Costs & Net Revenue"
+              badge="Vehicle Cost Engine"
+              description="Evaluates total miles driven, fuel/energy burned during tuition, and vehicle depreciation to derive true net take-home earnings."
+              calculation={`Annual Miles = ${globalSummary.totalHours.toFixed(1)}h × ${vehicleCostSettings.milesPerHour} mph = ~${Math.round(globalSummary.estimatedMiles).toLocaleString()} mi. Net Take-Home = £${globalSummary.totalEarnings.toLocaleString()} Gross − £${globalSummary.totalExpenses.toLocaleString()} Expenses.`}
+              tip="Accurate fuel and depreciation tracking streamlines self-assessment tax preparation and vehicle budgeting."
+            />
+          </div>
+
+          <span style={{ 
+            fontSize: '0.75rem', 
+            fontWeight: 700, 
+            padding: '0.25rem 0.65rem', 
+            borderRadius: '9999px', 
+            background: 'rgba(255, 255, 255, 0.05)', 
+            border: '1px solid var(--border-light)',
+            color: 'var(--text-main)',
+            textTransform: 'capitalize' 
+          }}>
+            {vehicleCostSettings.fuelType === 'electric' ? '⚡ EV' : vehicleCostSettings.fuelType === 'diesel' ? '🛢️ Diesel' : '⛽ Petrol'} ({vehicleCostSettings.efficiency} {vehicleCostSettings.fuelType === 'electric' ? 'mi/kWh' : 'MPG'} • {vehicleCostSettings.milesPerHour} mph)
+          </span>
+        </div>
+
+        <div className="responsive-split-grid" style={{ gap: '1rem', marginTop: '0.25rem' }}>
+          {/* Breakdown items */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+              <span style={{ color: 'var(--text-muted)' }}>Estimated Cumulative Mileage</span>
+              <strong style={{ color: 'var(--text-main)' }}>~{Math.round(globalSummary.estimatedMiles).toLocaleString()} miles</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+              <span style={{ color: 'var(--text-muted)' }}>Fuel / Electricity Consumption</span>
+              <strong style={{ color: 'var(--text-main)' }}>
+                £{Math.round(globalSummary.totalExpenses * (vehicleCostSettings.enableDepreciation ? 0.65 : 1)).toLocaleString()} 
+                <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-dim)', marginLeft: '4px' }}>
+                  ({vehicleCostSettings.fuelType === 'electric' ? `£${vehicleCostSettings.fuelCostPerUnit}/kWh` : `${(vehicleCostSettings.fuelCostPerUnit * 100).toFixed(1)}p/L`})
+                </span>
+              </strong>
+            </div>
+            {vehicleCostSettings.enableDepreciation && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Wear, Tyres &amp; Dual Controls</span>
+                <strong style={{ color: 'var(--text-main)' }}>
+                  £{Math.round(globalSummary.estimatedMiles * vehicleCostSettings.depreciationPerMile).toLocaleString()}
+                  <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-dim)', marginLeft: '4px' }}>
+                    ({(vehicleCostSettings.depreciationPerMile * 100).toFixed(0)}p/mi)
+                  </span>
+                </strong>
+              </div>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
+              <span style={{ color: 'var(--text-muted)' }}>Total Cumulative Expenses</span>
+              <strong style={{ color: '#ef4444' }}>-£{globalSummary.totalExpenses.toLocaleString()}</strong>
+            </div>
+          </div>
+
+          {/* Net Take-Home Highlight Banner */}
+          <div style={{ 
+            background: 'rgba(16, 185, 129, 0.06)', 
+            border: '1px solid rgba(16, 185, 129, 0.2)', 
+            padding: '1.25rem', 
+            borderRadius: '16px', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            justifyContent: 'space-between', 
+            gap: '0.85rem' 
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)' }}>Net Take-Home Income</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: 800, padding: '0.2rem 0.65rem', borderRadius: '9999px', background: 'rgba(16, 185, 129, 0.18)', color: 'var(--accent-emerald)' }}>
+                {globalSummary.profitMargin.toFixed(0)}% Margin
+              </span>
+            </div>
+
+            <div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--accent-emerald)', letterSpacing: '-0.02em' }}>
+                £{globalSummary.netRevenue.toLocaleString()}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                from £{globalSummary.totalEarnings.toLocaleString()} gross tuition revenue
+              </div>
+            </div>
+
+            <div>
+              <div style={{ width: '100%', height: '8px', background: 'rgba(239, 68, 68, 0.2)', borderRadius: '9999px', overflow: 'hidden' }}>
+                <div style={{ width: `${globalSummary.profitMargin}%`, height: '100%', background: 'var(--accent-emerald)', borderRadius: '9999px', transition: 'width 0.8s ease' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-dim)', marginTop: '4px' }}>
+                <span>Profit: {globalSummary.profitMargin.toFixed(0)}%</span>
+                <span>Expenses: {(100 - globalSummary.profitMargin).toFixed(0)}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // 4.7. CSV Exporter Utility
   const exportToCSV = (type: 'weekly' | 'monthly') => {
     let headers: string[];
@@ -1237,7 +1370,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       ]);
     } else {
       filename = 'monthly_stats.csv';
-      headers = ['Month', 'Teaching Hours', 'Ideal Target Hours', 'Fill Percentage', 'Lessons Count', 'Tests Count', 'Estimated Earnings'];
+      headers = ['Month', 'Teaching Hours', 'Ideal Target Hours', 'Fill Percentage', 'Lessons Count', 'Tests Count', 'Gross Revenue (£)', 'Vehicle Expenses (£)', 'Net Take-Home (£)', 'Profit Margin (%)'];
       rows = monthDataList.map(m => [
         m.label,
         m.actualHours.toFixed(2),
@@ -1246,6 +1379,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         m.lessonCount.toString(),
         m.testCount.toString(),
         m.earnings.toString(),
+        m.totalExpenses.toString(),
+        m.netRevenue.toString(),
+        m.profitMargin.toString(),
       ]);
     }
 
@@ -1595,21 +1731,33 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         <div className="glass-card kpi-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="kpi-title">Estimated Total Earnings</span>
+              <span className="kpi-title">Estimated Total Revenue</span>
               <InfoPlacard
-                title="Estimated Total Earnings"
-                badge="Annual Gross"
-                description="Projected gross tuition earnings from driving lessons and practical driving test bookings over the calendar year."
-                calculation={`(Total Lessons × Hourly Rate) + (Driving Tests × Test Fee). Calculated from £${hourlyRate}/hr.`}
-                tip="Tracking annual earnings helps prepare accurate tax self-assessments and fuel expense budgeting."
+                title="Annual Gross & Net Revenue"
+                badge="Net Take-Home"
+                description="Projected gross tuition earnings from driving lessons and practical driving tests alongside net take-home earnings after deducting annual vehicle operating costs."
+                calculation={`Gross = (£${hourlyRate} × ${globalSummary.totalHours.toFixed(1)}h)${globalSummary.totalTests > 0 ? ` + tests` : ''}. Net = Gross − Estimated Vehicle Expenses (£${globalSummary.totalExpenses.toLocaleString()} fuel & depreciation at ${vehicleCostSettings.milesPerHour} mph).`}
+                tip="Net revenue accounts for real business running costs including fuel and vehicle depreciation."
               />
             </div>
-            <Award size={16} className="gradient-text" />
+            <span 
+              style={{
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                color: 'var(--accent-emerald)',
+                background: 'rgba(16, 185, 129, 0.12)',
+                padding: '0.15rem 0.5rem',
+                borderRadius: '9999px'
+              }}
+              title={`Net take-home profit: £${globalSummary.netRevenue.toLocaleString()} (${globalSummary.profitMargin.toFixed(0)}% margin after £${globalSummary.totalExpenses.toLocaleString()} vehicle expenses)`}
+            >
+              Net £{globalSummary.netRevenue.toLocaleString()}
+            </span>
           </div>
           <div className="kpi-value" style={{ color: 'var(--accent-cyan)' }}>
             £{globalSummary.totalEarnings.toLocaleString()}
           </div>
-          <span className="kpi-footer">From {globalSummary.totalLessons} drives ({globalSummary.totalTests} tests)</span>
+          <span className="kpi-footer">{globalSummary.profitMargin.toFixed(0)}% margin • -£{globalSummary.totalExpenses.toLocaleString()} vehicle costs (~{Math.round(globalSummary.estimatedMiles).toLocaleString()} mi)</span>
         </div>
 
       </div>
@@ -1619,6 +1767,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
 
       {/* Smart Scheduling Advisor */}
       {renderAdvisorCard()}
+
+      {/* Annual Vehicle Expenses & Net Take-Home Card */}
+      {renderAnnualVehicleCostsCard()}
 
       {/* YoY Business & Scheduling Efficiency metrics */}
       {renderYearlyBusinessInsights()}
@@ -1736,7 +1887,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                 <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Hours Taught</th>
                 <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Ideal Span Hours</th>
                 <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'center' }}>Fill Percentage</th>
-                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Est. Earnings</th>
+                <th style={{ padding: '0.75rem 0.5rem', color: 'var(--text-muted)', fontWeight: 600, textAlign: 'right' }}>Revenue (Gross &amp; Net)</th>
               </tr>
             </thead>
             <tbody>
@@ -1752,7 +1903,12 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                   <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', fontWeight: 600, color: 'var(--text-main)' }}>{mData.actualHours.toFixed(1)} hrs</td>
                   <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>{mData.idealHours.toFixed(1)} hrs</td>
                   <td style={{ padding: '0.75rem 0.5rem', textAlign: 'center', fontWeight: 600, color: 'var(--accent-emerald)' }}>{mData.fillPct.toFixed(0)}%</td>
-                  <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right', fontWeight: 600, color: 'var(--accent-cyan)' }}>£{mData.earnings.toLocaleString()}</td>
+                  <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right', fontWeight: 600 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                      <span style={{ color: 'var(--text-main)', fontSize: '0.85rem' }}>£{mData.earnings.toLocaleString()} <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)', fontWeight: 400 }}>gross</span></span>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--accent-emerald)', fontWeight: 700 }}>Net £{mData.netRevenue.toLocaleString()} ({mData.profitMargin.toFixed(0)}%)</span>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

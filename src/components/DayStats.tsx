@@ -1074,6 +1074,84 @@ export const DayStats: React.FC<DayStatsProps> = ({
             </div>
           </div>
 
+          {/* Card: Daily Vehicle Running Costs & Net Take-Home */}
+          <div className="sfd-card-container">
+            <div className="sfd-card-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-emerald-soft, rgba(16, 185, 129, 0.12))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-emerald)' }}>
+                  <Car size={18} />
+                </div>
+                <h3 className="sfd-card-heading">Daily Vehicle Costs &amp; Net Take-Home</h3>
+                <InfoPlacard
+                  title="Daily Vehicle Costs & Net Profit"
+                  badge="Cost Engine"
+                  description="Estimated fuel consumption and vehicle wear incurred delivering today's scheduled lessons."
+                  calculation={`Estimated Miles = ${simulatedTeachingHours.toFixed(1)}h × ${vehicleCostSettings?.milesPerHour || 25} mph = ${Math.round(dayVehicleCosts.estimatedMiles)} mi. Fuel Spend = £${dayVehicleCosts.fuelCost.toFixed(2)}. Net Take-Home = £${simulatedEarnings.toFixed(2)} Gross − £${dayVehicleCosts.totalCost.toFixed(2)} Expenses.`}
+                  tip="Learner tuition involves high stop-start idling and low gears, reducing real MPG compared to cruising."
+                />
+              </div>
+              <span className="sfd-card-tag" style={{ textTransform: 'capitalize' }}>
+                {vehicleCostSettings?.fuelType === 'electric' ? '⚡ EV' : vehicleCostSettings?.fuelType === 'diesel' ? '🛢️ Diesel' : '⛽ Petrol'} ({vehicleCostSettings?.efficiency || 40} {vehicleCostSettings?.fuelType === 'electric' ? 'mi/kWh' : 'MPG'})
+              </span>
+            </div>
+
+            <p className="sfd-card-description" style={{ marginBottom: '12px' }}>
+              Operating expenditure based on active teaching hours, learner city driving, and wear.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Estimated Mileage</span>
+                <strong style={{ color: 'var(--sfd-ink-primary)' }}>~{Math.round(dayVehicleCosts.estimatedMiles)} miles <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({vehicleCostSettings?.milesPerHour || 25} mph avg)</span></strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Fuel / Energy Cost</span>
+                <strong style={{ color: 'var(--sfd-ink-primary)' }}>£{dayVehicleCosts.fuelCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({vehicleCostSettings?.fuelType === 'electric' ? `£${vehicleCostSettings.fuelCostPerUnit}/kWh` : `${((vehicleCostSettings?.fuelCostPerUnit || 1.725) * 100).toFixed(1)}p/L`})</span></strong>
+              </div>
+              {vehicleCostSettings?.enableDepreciation && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                  <span style={{ color: 'var(--sfd-ink-muted)' }}>Wear &amp; Depreciation</span>
+                  <strong style={{ color: 'var(--sfd-ink-primary)' }}>£{dayVehicleCosts.depreciationCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({((vehicleCostSettings?.depreciationPerMile || 0.12) * 100).toFixed(0)}p/mi)</span></strong>
+                </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                <span style={{ color: 'var(--sfd-ink-muted)' }}>Total Daily Running Expenses</span>
+                <strong style={{ color: '#ef4444' }}>-£{dayVehicleCosts.totalCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}> (£{dayVehicleCosts.costPerHour.toFixed(2)}/hr)</span></strong>
+              </div>
+
+              {/* Net Take-Home Highlight Box */}
+              <div style={{ background: 'var(--sfd-surface-nested)', padding: '12px 14px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px', border: '1px solid var(--sfd-border-hairline)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--sfd-ink-muted)' }}>Net Take-Home Profit</span>
+                  <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '9999px', background: 'rgba(16, 185, 129, 0.12)', color: 'var(--sfd-emerald)' }}>
+                    {dayVehicleCosts.profitMargin.toFixed(0)}% Margin
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--sfd-emerald)' }}>
+                    £{dayVehicleCosts.netRevenue.toFixed(2)}
+                  </span>
+                  <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>
+                    from £{simulatedEarnings.toFixed(2)} gross
+                  </span>
+                </div>
+
+                {/* Profit Margin bar */}
+                <div style={{ width: '100%', height: '6px', background: 'rgba(239, 68, 68, 0.25)', borderRadius: '9999px', overflow: 'hidden' }}>
+                  <div 
+                    style={{ 
+                      width: `${dayVehicleCosts.profitMargin}%`, 
+                      height: '100%', 
+                      background: 'var(--sfd-emerald)',
+                      borderRadius: '9999px',
+                      transition: 'width 0.4s ease-out'
+                    }} 
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         {/* Right Column: Daily Agenda & Appointments List */}

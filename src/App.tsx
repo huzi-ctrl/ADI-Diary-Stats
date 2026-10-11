@@ -1054,6 +1054,7 @@ function App() {
                 aiModel={aiModel}
                 aiApiKey={aiApiKey}
                 excludedYears={excludedYears}
+                vehicleCostSettings={vehicleCostSettings}
               />
             ) : viewMode === 'events' ? (
               <EventList 
@@ -1072,6 +1073,7 @@ function App() {
                 aiProvider={aiProvider}
                 aiModel={aiModel}
                 aiApiKey={aiApiKey}
+                vehicleCostSettings={vehicleCostSettings}
               />
             ) : (
               <div className="sfd-card-container" style={{ animation: 'fadeIn 0.5s ease-out' }}>

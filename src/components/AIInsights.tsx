@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { Sparkles, RefreshCw, TrendingUp, MessageSquare, Send, Key, AlertCircle, Calendar } from 'lucide-react';
 import { type CalendarEvent } from '../utils/icsParser';
 import { getCachedAiItem, setCachedAiItem, formatAiError, getEffectiveApiKey } from '../utils/aiHelper';
+import { calculateVehicleCosts, DEFAULT_VEHICLE_SETTINGS, type VehicleCostSettings } from '../utils/costEstimator';
 
 interface AIInsightsProps {
   allEvents: CalendarEvent[];
@@ -10,6 +11,7 @@ interface AIInsightsProps {
   aiProvider: 'gemini' | 'openai';
   aiModel: string;
   aiApiKey: string;
+  vehicleCostSettings?: VehicleCostSettings;
 }
 
 interface ChatMessage {
@@ -23,7 +25,8 @@ export const AIInsights: React.FC<AIInsightsProps> = ({
   nonPayingList,
   aiProvider,
   aiModel,
-  aiApiKey
+  aiApiKey,
+  vehicleCostSettings = DEFAULT_VEHICLE_SETTINGS
 }) => {
   const [activeTab, setActiveTab] = useState<'summary' | 'trends' | 'chat'>('summary');
   
@@ -157,13 +160,18 @@ export const AIInsights: React.FC<AIInsightsProps> = ({
       monthlyBreakdownStr += `- ${monthLabel}: ${data.count} lessons, ${data.hours.toFixed(1)} hours, Est. Earnings: £${earnings.toLocaleString()}\n`;
     });
 
+    const vehicleCosts = calculateVehicleCosts(totalHours, totalEarnings, vehicleCostSettings);
+
     return `
 ### DRIVE STATS CALENDAR CONTEXT DATA:
 - Instructor Hourly Rate: £${hourlyRate}/hr
 - Total Lessons: ${lessonsOnly.length}
 - Total Mock/Official Tests: ${testsOnly.length}
 - Total Billing Lesson Hours: ${totalHours.toFixed(1)} hrs
-- Estimated Total Billing Revenue: £${totalEarnings.toLocaleString()}
+- Estimated Gross Revenue: £${totalEarnings.toLocaleString()}
+- Estimated Vehicle Running Costs: £${Math.round(vehicleCosts.totalCost).toLocaleString()} (${vehicleCostSettings.fuelType} @ ${vehicleCostSettings.efficiency} ${vehicleCostSettings.fuelType === 'electric' ? 'mi/kWh' : 'MPG'}, ${vehicleCostSettings.milesPerHour} mph)
+- Net Take-Home Revenue: £${Math.round(vehicleCosts.netRevenue).toLocaleString()} (${vehicleCosts.profitMargin.toFixed(0)}% profit margin)
+- Estimated Tuition Mileage: ~${Math.round(vehicleCosts.estimatedMiles).toLocaleString()} miles
 - Weekday Schedule Distribution:
   ${weekdaysStr}
 - Year-over-Year Performance Breakdown:
@@ -171,7 +179,7 @@ ${yoyEarnings}
 - Month-over-Month Performance Breakdown:
 ${monthlyBreakdownStr || '- No monthly data available.\n'}
     `.trim();
-  }, [lessonsOnly, testsOnly, hourlyRate, allEvents]);
+  }, [lessonsOnly, testsOnly, hourlyRate, allEvents, vehicleCostSettings]);
 
   const callAIProvider = useCallback(async (systemPrompt: string, userPrompt: string, activeTabForReport?: 'summary' | 'trends'): Promise<string> => {
     if (!hasApiKey) {

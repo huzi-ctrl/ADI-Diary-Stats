@@ -22,6 +22,7 @@ import {
   type YearlyAverage
 } from '../utils/yearlyCalculations';
 import type { IdealDaySchedule } from '../utils/capacityCalculations';
+import { DEFAULT_VEHICLE_SETTINGS, type VehicleCostSettings } from '../utils/costEstimator';
 
 export interface UseYearlyMetricsProps {
   instructorEvents: CalendarEvent[];
@@ -35,6 +36,7 @@ export interface UseYearlyMetricsProps {
   aiModel?: string;
   aiApiKey?: string;
   excludedYears?: number[];
+  vehicleCostSettings?: VehicleCostSettings;
 }
 
 export interface YoyAiReport {
@@ -84,7 +86,8 @@ export function useYearlyMetrics({
   aiProvider = 'gemini',
   aiModel = 'gemini-2.5-flash',
   aiApiKey = '',
-  excludedYears = []
+  excludedYears = [],
+  vehicleCostSettings = DEFAULT_VEHICLE_SETTINGS
 }: UseYearlyMetricsProps): YearlyMetricsResult {
   const [trendMode, setTrendMode] = useState<'raw' | 'smoothed' | 'deseasonalized'>('raw');
   const [isYtdComparison, setIsYtdComparison] = useState(true);
@@ -151,8 +154,8 @@ export function useYearlyMetrics({
 
   // 4. Monthly aggregates
   const monthDataList = useMemo<MonthData[]>(() => {
-    return calculateMonthDataList(lessonsOnly, testsOnly, idealSchedules, hourlyRate, testRate);
-  }, [lessonsOnly, testsOnly, idealSchedules, hourlyRate, testRate]);
+    return calculateMonthDataList(lessonsOnly, testsOnly, idealSchedules, hourlyRate, testRate, vehicleCostSettings);
+  }, [lessonsOnly, testsOnly, idealSchedules, hourlyRate, testRate, vehicleCostSettings]);
 
   // Specific Month YoY Trend data filter
   const specificMonthTrendData = useMemo(() => {
@@ -167,8 +170,8 @@ export function useYearlyMetrics({
 
   // 4.2. YoY Business & Scheduling Efficiency Metrics
   const yearlyMetrics = useMemo(() => {
-    return calculateYearlyMetrics(lessonsOnly, hourlyRate, isYtdComparison, idealSchedules, capacityMode, customIdealHours, testsOnly, testRate);
-  }, [lessonsOnly, hourlyRate, isYtdComparison, idealSchedules, capacityMode, customIdealHours, testsOnly, testRate]);
+    return calculateYearlyMetrics(lessonsOnly, hourlyRate, isYtdComparison, idealSchedules, capacityMode, customIdealHours, testsOnly, testRate, vehicleCostSettings);
+  }, [lessonsOnly, hourlyRate, isYtdComparison, idealSchedules, capacityMode, customIdealHours, testsOnly, testRate, vehicleCostSettings]);
 
   // 4.3. Smart Scheduling Advisor Diagnostics
   const advisorInsights = useMemo(() => {
@@ -177,8 +180,8 @@ export function useYearlyMetrics({
 
   // Global Statistics Summary
   const globalSummary = useMemo(() => {
-    return calculateGlobalSummary(weekDataList, lessonsOnly, testsOnly, hourlyRate, testRate);
-  }, [weekDataList, lessonsOnly, testsOnly, hourlyRate, testRate]);
+    return calculateGlobalSummary(weekDataList, lessonsOnly, testsOnly, hourlyRate, testRate, vehicleCostSettings);
+  }, [weekDataList, lessonsOnly, testsOnly, hourlyRate, testRate, vehicleCostSettings]);
 
   // Dynamic coaching recommendation cache key
   const cacheKeyRec = useMemo(() => {
@@ -391,13 +394,14 @@ The JSON must follow this exact structure:
 }`;
 
       const metricsContext = yearlyMetrics.map(m => {
-        const projStr = m.projectedEarnings ? `, Projected EoY: £${m.projectedEarnings.toLocaleString()}` : '';
-        return `Year ${m.year}: ${m.totalLessons} lessons, ${m.activeDaysCount} active days, Scheduling Efficiency: ${m.efficiencyRatio.toFixed(1)}%, Est. Earnings: £${m.earnings.toLocaleString()}${projStr} (Avg: £${m.earningsPerActiveDay.toFixed(0)}/day)`;
+        const projStr = m.projectedEarnings ? `, Projected EoY Gross: £${m.projectedEarnings.toLocaleString()} (Net: £${m.projectedNetEarnings?.toLocaleString()})` : '';
+        return `Year ${m.year}: ${m.totalLessons} lessons, ${m.activeDaysCount} active days, Scheduling Efficiency: ${m.efficiencyRatio.toFixed(1)}%, Gross: £${m.earnings.toLocaleString()}, Net Take-Home: £${m.netRevenue.toLocaleString()} (${m.profitMargin.toFixed(0)}% margin, £${m.netEarningsPerActiveDay}/day net)${projStr}`;
       }).join('\n');
 
       const userPrompt = `YoY Calendar Business Performance Metrics (Comparison Type: ${isYtdComparison ? 'Year-to-Date aligned' : 'Full Year'}):
 ${metricsContext}
 Instructor Hourly Rate: £${hourlyRate}/hr
+Vehicle Running Costs: ${vehicleCostSettings.fuelType} at ${vehicleCostSettings.efficiency} ${vehicleCostSettings.fuelType === 'electric' ? 'mi/kWh' : 'MPG'}, ${vehicleCostSettings.milesPerHour} mph lesson driving speed.
 
 Please analyze this data and return the JSON object.`;
 

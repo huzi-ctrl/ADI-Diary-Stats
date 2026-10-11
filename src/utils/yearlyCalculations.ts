@@ -1,5 +1,6 @@
 import type { CalendarEvent } from './icsParser';
 import type { IdealDaySchedule } from './capacityCalculations';
+import { calculateVehicleCosts, DEFAULT_VEHICLE_SETTINGS, type VehicleCostSettings } from './costEstimator';
 
 export interface WeekData {
   weekStart: Date;
@@ -19,6 +20,9 @@ export interface MonthData {
   lessonCount: number;
   testCount: number;
   earnings: number;
+  totalExpenses: number;
+  netRevenue: number;
+  profitMargin: number;
 }
 
 export interface YearlyMetric {
@@ -29,6 +33,13 @@ export interface YearlyMetric {
   totalLessons: number;
   earnings: number;
   projectedEarnings: number | null;
+  paidHours: number;
+  estimatedMiles: number;
+  totalExpenses: number;
+  netRevenue: number;
+  profitMargin: number;
+  netEarningsPerActiveDay: number;
+  projectedNetEarnings: number | null;
 }
 
 export interface AdvisorInsights {
@@ -47,6 +58,10 @@ export interface GlobalSummary {
   totalTests: number;
   totalEarnings: number;
   busiestWeekLabel: string;
+  estimatedMiles: number;
+  totalExpenses: number;
+  netRevenue: number;
+  profitMargin: number;
 }
 
 export interface SeasonalData {
@@ -372,7 +387,8 @@ export function calculateMonthDataList(
   testsOnly: CalendarEvent[],
   idealSchedules: Record<number, IdealDaySchedule>,
   hourlyRate: number,
-  testRate: number = 0
+  testRate: number = 0,
+  vehicleCostSettings: VehicleCostSettings = DEFAULT_VEHICLE_SETTINGS
 ): MonthData[] {
   const months: Record<string, { lessons: CalendarEvent[]; tests: CalendarEvent[]; dates: Set<string> }> = {};
   
@@ -426,6 +442,7 @@ export function calculateMonthDataList(
     const lessonEarnings = Math.round(actualHours * hourlyRate);
     const testEarnings = testRate > 0 ? data.tests.length * testRate : 0;
     const earnings = lessonEarnings + testEarnings;
+    const costs = calculateVehicleCosts(actualHours, earnings, vehicleCostSettings);
 
     list.push({
       monthKey: key,
@@ -435,7 +452,10 @@ export function calculateMonthDataList(
       fillPct,
       lessonCount: data.lessons.length,
       testCount: data.tests.length,
-      earnings
+      earnings,
+      totalExpenses: Math.round(costs.totalCost),
+      netRevenue: Math.round(costs.netRevenue),
+      profitMargin: costs.profitMargin
     });
   });
 
@@ -470,7 +490,8 @@ export function calculateYearlyMetrics(
   capacityMode: 'historical' | 'custom' = 'historical',
   customIdealHours?: Record<number, number>,
   testsOnly: CalendarEvent[] = [],
-  testRate: number = 0
+  testRate: number = 0,
+  vehicleCostSettings: VehicleCostSettings = DEFAULT_VEHICLE_SETTINGS
 ): YearlyMetric[] {
   const targetLessons = isYtdComparison
     ? lessonsOnly.filter(e => {
@@ -548,12 +569,20 @@ export function calculateYearlyMetrics(
     const efficiencyRatio = data.capacityUsedMins > 0 ? (data.paidMins / data.capacityUsedMins) * 100 : 0;
     const earningsPerActiveDay = data.activeDays.size > 0 ? data.earnings / data.activeDays.size : 0;
     
+    const paidHours = data.paidMins / 60;
+    const vehicleCosts = calculateVehicleCosts(paidHours, data.earnings, vehicleCostSettings);
+    const netEarningsPerActiveDay = data.activeDays.size > 0 ? vehicleCosts.netRevenue / data.activeDays.size : 0;
+
     let projectedEarnings: number | null = null;
+    let projectedNetEarnings: number | null = null;
     if (year === new Date().getFullYear()) {
       const today = new Date();
       const startOfYear = new Date(year, 0, 1);
       const daysElapsed = Math.max(1, Math.floor((today.getTime() - startOfYear.getTime()) / (1000 * 60 * 60 * 24)));
       projectedEarnings = Math.round((data.earnings / daysElapsed) * 365);
+      const projHours = (paidHours / daysElapsed) * 365;
+      const projCosts = calculateVehicleCosts(projHours, projectedEarnings, vehicleCostSettings);
+      projectedNetEarnings = Math.round(projCosts.netRevenue);
     }
     
     return {
@@ -563,7 +592,14 @@ export function calculateYearlyMetrics(
       activeDaysCount: data.activeDays.size,
       totalLessons: data.lessonsCount,
       earnings: data.earnings,
-      projectedEarnings
+      projectedEarnings,
+      paidHours,
+      estimatedMiles: vehicleCosts.estimatedMiles,
+      totalExpenses: Math.round(vehicleCosts.totalCost),
+      netRevenue: Math.round(vehicleCosts.netRevenue),
+      profitMargin: vehicleCosts.profitMargin,
+      netEarningsPerActiveDay: Math.round(netEarningsPerActiveDay),
+      projectedNetEarnings
     };
   }).filter(m => m.totalLessons >= 10 && m.year <= new Date().getFullYear()).sort((a, b) => a.year - b.year);
 }
@@ -654,7 +690,8 @@ export function calculateGlobalSummary(
   lessonsOnly: CalendarEvent[],
   testsOnly: CalendarEvent[],
   hourlyRate: number,
-  testRate: number = 0
+  testRate: number = 0,
+  vehicleCostSettings: VehicleCostSettings = DEFAULT_VEHICLE_SETTINGS
 ): GlobalSummary {
   const activeWeeks = weekDataList.filter(w => w.lessonCount > 0 || w.testCount > 0);
   const totalHours = lessonsOnly.reduce((acc, curr) => acc + curr.durationMinutes, 0) / 60;
@@ -675,6 +712,7 @@ export function calculateGlobalSummary(
   const lessonEarnings = Math.round(totalHours * hourlyRate);
   const testEarnings = testRate > 0 ? testsOnly.length * testRate : 0;
   const totalEarnings = lessonEarnings + testEarnings;
+  const costs = calculateVehicleCosts(totalHours, totalEarnings, vehicleCostSettings);
 
   return {
     totalHours,
@@ -683,6 +721,10 @@ export function calculateGlobalSummary(
     totalLessons: lessonsOnly.length,
     totalTests: testsOnly.length,
     totalEarnings,
-    busiestWeekLabel: busiestWeek ? `${busiestWeek.label} (${busiestWeek.actualHours.toFixed(1)}h)` : 'N/A'
+    busiestWeekLabel: busiestWeek ? `${busiestWeek.label} (${busiestWeek.actualHours.toFixed(1)}h)` : 'N/A',
+    estimatedMiles: costs.estimatedMiles,
+    totalExpenses: Math.round(costs.totalCost),
+    netRevenue: Math.round(costs.netRevenue),
+    profitMargin: costs.profitMargin
   };
 }

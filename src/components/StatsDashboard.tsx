@@ -510,7 +510,7 @@ Analyze and return the JSON object.`;
                     This Week ({formatRemainingThisWeek()})
                   </span>
                   <span style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--sfd-emerald)' }}>
-                    {thisWeekStats.fillPct}% filled &bull; {thisWeekStats.freeHours.toFixed(1)}h free
+                    {thisWeekStats.fillPct}% filled &bull; {thisWeekStats.freeHours.toFixed(1)}h free &bull; Net £{Math.round(vehicleCosts.netRevenue).toLocaleString()}
                   </span>
                 </div>
                 <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
@@ -525,7 +525,7 @@ Analyze and return the JSON object.`;
                     Next Week ({nextWeekStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })})
                   </span>
                   <span style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--sfd-primary)' }}>
-                    {nextWeekStats.fillPct}% filled &bull; {nextWeekStats.freeHours.toFixed(1)}h free
+                    {nextWeekStats.fillPct}% filled &bull; {nextWeekStats.freeHours.toFixed(1)}h free{nextWeekStats.usedHours > 0 ? ` • Net £${Math.round(calculateVehicleCosts(nextWeekStats.usedHours, nextWeekStats.usedHours * hourlyRate, vehicleCostSettings).netRevenue).toLocaleString()}` : ''}
                   </span>
                 </div>
                 <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
@@ -540,7 +540,7 @@ Analyze and return the JSON object.`;
                     Week after Next ({twoWeeksOutStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })})
                   </span>
                   <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#6366f1' }}>
-                    {twoWeeksOutStats.fillPct}% filled &bull; {twoWeeksOutStats.freeHours.toFixed(1)}h free
+                    {twoWeeksOutStats.fillPct}% filled &bull; {twoWeeksOutStats.freeHours.toFixed(1)}h free{twoWeeksOutStats.usedHours > 0 ? ` • Net £${Math.round(calculateVehicleCosts(twoWeeksOutStats.usedHours, twoWeeksOutStats.usedHours * hourlyRate, vehicleCostSettings).netRevenue).toLocaleString()}` : ''}
                   </span>
                 </div>
                 <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden', border: '1px solid var(--sfd-border-hairline)' }}>
