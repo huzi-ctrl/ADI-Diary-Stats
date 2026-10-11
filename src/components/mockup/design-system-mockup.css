@@ -176,15 +176,20 @@
 
 /* Kota Liquid Glass Navigation Strip (Header) */
 .sfd-liquid-glass-strip {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  position: relative;
+  background-color: rgba(239, 239, 239, 0.65);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   border-radius: 9999px;
   padding: 4px 6px;
   box-shadow: 
-    0 8px 24px -6px rgba(15, 23, 42, 0.08),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95);
+    0px 0px 0px 1px rgba(0, 0, 0, 0.08),
+    0px 8px 20px 0px rgba(0, 0, 0, 0.04),
+    inset 16px 0px 16px -24px rgba(0, 0, 0, 0.12),
+    inset -16px 0px 16px -24px rgba(0, 0, 0, 0.12),
+    inset 0px 1px 0px 0px rgba(255, 255, 255, 0.95),
+    inset 0px -1px 0px 0px rgba(255, 255, 255, 0.8),
+    inset 0px 24px 10px -24px rgba(255, 255, 255, 0.9);
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -216,9 +221,28 @@
   color: #ffffff;
   font-weight: 600;
   box-shadow: 
-    0 4px 12px -2px rgba(29, 78, 216, 0.35),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.3);
+    0 6px 18px -3px rgba(29, 78, 216, 0.45),
+    inset 0px 1px 1px 0px rgba(255, 255, 255, 0.4),
+    inset 0px -1px 1px 0px rgba(0, 0, 0, 0.2);
 }
+
+/* Kota Signature Character Blur Wave */
+@keyframes charBlurPulse {
+  0% { filter: blur(0px); }
+  50% { filter: blur(1.5px); }
+  100% { filter: blur(0px); }
+}
+.sfd-char-hover:hover .sfd-char {
+  animation: charBlurPulse 0.24s ease forwards;
+}
+.sfd-char:nth-child(1) { animation-delay: 0.00s; }
+.sfd-char:nth-child(2) { animation-delay: 0.03s; }
+.sfd-char:nth-child(3) { animation-delay: 0.06s; }
+.sfd-char:nth-child(4) { animation-delay: 0.09s; }
+.sfd-char:nth-child(5) { animation-delay: 0.12s; }
+.sfd-char:nth-child(6) { animation-delay: 0.15s; }
+.sfd-char:nth-child(7) { animation-delay: 0.18s; }
+.sfd-char:nth-child(8) { animation-delay: 0.21s; }
 
 /* Week Selector Pill */
 .sfd-week-chip {
