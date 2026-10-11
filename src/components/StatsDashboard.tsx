@@ -660,7 +660,12 @@ Analyze and return the JSON object.`;
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   {/* Score Gauge */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: 'var(--sfd-surface-nested)', padding: '12px 16px', borderRadius: '18px' }}>
-                    <svg width="60" height="60" viewBox="0 0 100 100">
+                    <svg 
+                      width="60" 
+                      height="60" 
+                      viewBox="0 0 100 100" 
+                      style={{ flexShrink: 0, width: '60px', height: '60px', minWidth: '60px', minHeight: '60px' }}
+                    >
                       <circle cx="50" cy="50" r="40" fill="none" stroke="var(--sfd-border-hairline)" strokeWidth="8"/>
                       <circle 
                         cx="50" 
@@ -677,7 +682,7 @@ Analyze and return the JSON object.`;
                       />
                       <text x="50" y="56" textAnchor="middle" fill="var(--sfd-ink-primary)" fontSize="20" fontWeight="bold">{weeklyAiReport.score}%</text>
                     </svg>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
                       <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>Efficiency Score</span>
                       <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', lineHeight: 1.3 }}>{weeklyAiReport.scoreReason}</span>
                     </div>

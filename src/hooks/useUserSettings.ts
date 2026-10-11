@@ -124,11 +124,15 @@ export function useUserSettings(): UserSettings {
   }, [aiModel]);
 
   const [aiApiKey, setAiApiKey] = useState<string>(() => {
-    return localStorage.getItem('adi_ai_api_key') || '';
+    const saved = localStorage.getItem('adi_ai_api_key');
+    if (saved && saved.trim()) return saved;
+    return ((import.meta.env.VITE_GEMINI_API_KEY as string | undefined) || '').trim();
   });
 
   useEffect(() => {
-    localStorage.setItem('adi_ai_api_key', aiApiKey);
+    if (aiApiKey) {
+      localStorage.setItem('adi_ai_api_key', aiApiKey);
+    }
   }, [aiApiKey]);
 
   // OAuth Client IDs

@@ -133,8 +133,12 @@ function App() {
   useLayoutEffect(() => {
     updateIndicator();
     const rafId = requestAnimationFrame(updateIndicator);
-    return () => cancelAnimationFrame(rafId);
-  }, [updateIndicator]);
+    const timer = setTimeout(updateIndicator, 60);
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timer);
+    };
+  }, [updateIndicator, onboardingComplete]);
 
   useEffect(() => {
     window.addEventListener('resize', updateIndicator);
@@ -158,7 +162,11 @@ function App() {
         <div className="sfd-header-controls">
           {/* Kota Liquid Glass Navigation Strip with Animated Toggle Slider */}
           {onboardingComplete && (
-            <nav ref={navStripRef} className="sfd-liquid-glass-strip" aria-label="Main Navigation">
+            <nav 
+              ref={navStripRef} 
+              className={`sfd-liquid-glass-strip ${indicatorPos.ready ? 'indicator-ready' : ''}`} 
+              aria-label="Main Navigation"
+            >
               <div 
                 className="sfd-nav-toggle-indicator"
                 style={{
