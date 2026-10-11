@@ -65,8 +65,10 @@ export interface YearlyAverage {
   averageFillPct: number;
   change: number;
   isFutureYear?: boolean;
+  isCurrentYear?: boolean;
   activeWeeks?: number;
   totalWeeks?: number;
+  holidayWeeks?: number;
 }
 
 export function getMondayOfDate(d: Date): Date {
@@ -286,31 +288,81 @@ export function calculateYearlyAverages(yoyData: YoyDataResult, excludedYears: n
   const { sortedYears, dataByYear } = yoyData;
   const filteredYears = sortedYears.filter(yr => !excludedYears.includes(yr));
   const currentYear = new Date().getFullYear();
+  const now = new Date();
+
+  // Determine current week index within current year
+  const firstMondayOfCurrentYear = getMondayOfDate(new Date(currentYear, 0, 1));
+  const currentWeekIdx = Math.max(0, Math.floor((now.getTime() - firstMondayOfCurrentYear.getTime()) / (7 * 24 * 60 * 60 * 1000)));
 
   return filteredYears.map((yr, idx) => {
-    const allVals = Object.values(dataByYear[yr] || {});
-    // Filter out 0% weeks (holidays, vacations, non-teaching weeks, and unbooked future weeks)
-    const activeVals = allVals.filter(v => v > 0);
-    const valsToAverage = activeVals.length > 0 ? activeVals : allVals;
-    const avg = valsToAverage.length > 0 ? valsToAverage.reduce((a, b) => a + b, 0) / valsToAverage.length : 0;
-    
+    const isCurrentYear = yr === currentYear;
+    const isFutureYear = yr > currentYear;
+
+    const allEntries = Object.entries(dataByYear[yr] || {}).map(([wIdxStr, val]) => ({
+      weekIdx: parseInt(wIdxStr, 10),
+      val
+    }));
+
+    // For the current year in progress, evaluate Year-to-Date (up to current week)
+    // so future unbooked weeks in late autumn/winter don't dilute the real booking rate
+    let relevantEntries = allEntries;
+    if (isCurrentYear) {
+      const ytdEntries = allEntries.filter(e => e.weekIdx <= currentWeekIdx);
+      relevantEntries = ytdEntries.length > 0 ? ytdEntries : allEntries;
+    }
+
+    // A week is considered active if it has meaningful lesson volume
+    // (threshold >= 10% capacity, filtering out complete holidays & incidental single-drive breaks)
+    const meaningfulWeeks = relevantEntries.filter(e => e.val >= 10);
+    // If the instructor has a very low general workload, fallback to any > 0
+    const activeEntries = meaningfulWeeks.length > 0 
+      ? meaningfulWeeks 
+      : relevantEntries.filter(e => e.val > 0);
+
+    const activeVals = activeEntries.map(e => e.val);
+    const avg = activeVals.length > 0 
+      ? activeVals.reduce((a, b) => a + b, 0) / activeVals.length 
+      : 0;
+
+    const totalPeriodWeeks = relevantEntries.length;
+    const holidayWeeks = Math.max(0, totalPeriodWeeks - activeEntries.length);
+
     let change = 0;
     if (idx > 0) {
       const prevYr = filteredYears[idx - 1];
-      const prevAllVals = Object.values(dataByYear[prevYr] || {});
-      const prevActiveVals = prevAllVals.filter(v => v > 0);
-      const prevValsToAverage = prevActiveVals.length > 0 ? prevActiveVals : prevAllVals;
-      const prevAvg = prevValsToAverage.length > 0 ? prevValsToAverage.reduce((a, b) => a + b, 0) / prevValsToAverage.length : 0;
+      const prevAllEntries = Object.entries(dataByYear[prevYr] || {}).map(([wIdxStr, val]) => ({
+        weekIdx: parseInt(wIdxStr, 10),
+        val
+      }));
+
+      // If comparing current year vs previous year, align Year-to-Date for fair comparison
+      let prevRelevant = prevAllEntries;
+      if (isCurrentYear) {
+        const prevYtd = prevAllEntries.filter(e => e.weekIdx <= currentWeekIdx);
+        if (prevYtd.length > 0) prevRelevant = prevYtd;
+      }
+
+      const prevMeaningful = prevRelevant.filter(e => e.val >= 10);
+      const prevActiveEntries = prevMeaningful.length > 0 
+        ? prevMeaningful 
+        : prevRelevant.filter(e => e.val > 0);
+      const prevActiveVals = prevActiveEntries.map(e => e.val);
+      const prevAvg = prevActiveVals.length > 0 
+        ? prevActiveVals.reduce((a, b) => a + b, 0) / prevActiveVals.length 
+        : 0;
+      
       change = avg - prevAvg;
     }
-    
+
     return {
       year: yr,
       averageFillPct: avg,
       change,
-      isFutureYear: yr > currentYear,
-      activeWeeks: activeVals.length,
-      totalWeeks: allVals.length
+      isFutureYear,
+      isCurrentYear,
+      activeWeeks: activeEntries.length,
+      totalWeeks: totalPeriodWeeks,
+      holidayWeeks
     };
   });
 }

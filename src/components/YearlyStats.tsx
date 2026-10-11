@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { CalendarEvent } from '../utils/icsParser';
-import { Clock, Percent, Activity, CalendarDays, Award, TrendingUp, Download, Sparkles, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { Clock, Percent, Activity, CalendarDays, Award, TrendingUp, Download, Sparkles, RefreshCw, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
 import { useYearlyMetrics } from '../hooks/useYearlyMetrics';
 import { formatMinsToTime, getMondayOfDate } from '../utils/yearlyCalculations';
 import { InfoPlacard } from './ui/InfoPlacard';
@@ -79,16 +79,32 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
     const lines = text.split('\n');
     return lines.map((line, idx) => {
       const trimmed = line.trim();
+      if (trimmed.startsWith('# ')) {
+        return <h3 key={idx} style={{ color: 'var(--text-main)', marginTop: '0.6rem', marginBottom: '0.3rem', fontSize: '0.9rem', fontWeight: 700 }}>{parseBold(trimmed.slice(2))}</h3>;
+      }
+      if (trimmed.startsWith('## ')) {
+        return <h4 key={idx} style={{ color: 'var(--text-main)', marginTop: '0.5rem', marginBottom: '0.25rem', fontSize: '0.85rem', fontWeight: 700 }}>{parseBold(trimmed.slice(3))}</h4>;
+      }
       if (trimmed.startsWith('### ')) {
-        return <h4 key={idx} style={{ color: 'var(--text-main)', marginTop: '0.5rem', marginBottom: '0.25rem' }}>{trimmed.slice(4)}</h4>;
+        return <h4 key={idx} style={{ color: 'var(--text-main)', marginTop: '0.45rem', marginBottom: '0.25rem', fontSize: '0.8rem', fontWeight: 600 }}>{parseBold(trimmed.slice(4))}</h4>;
+      }
+      if (trimmed.startsWith('> ')) {
+        return (
+          <div key={idx} style={{ borderLeft: '3px solid var(--accent-cyan)', paddingLeft: '0.65rem', margin: '0.4rem 0', color: 'var(--text-main)', fontStyle: 'italic', fontSize: '0.75rem', background: 'rgba(6,182,212,0.05)', padding: '0.4rem 0.65rem', borderRadius: '0 6px 6px 0' }}>
+            {parseBold(trimmed.slice(2))}
+          </div>
+        );
       }
       if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-        return <li key={idx} style={{ color: 'var(--text-muted)', marginLeft: '0.75rem', marginBottom: '0.15rem', fontSize: '0.8rem' }}>{parseBold(trimmed.slice(2))}</li>;
+        return <li key={idx} style={{ color: 'var(--text-muted)', marginLeft: '0.85rem', marginBottom: '0.2rem', fontSize: '0.75rem', lineHeight: '1.45' }}>{parseBold(trimmed.slice(2))}</li>;
+      }
+      if (/^\d+\.\s/.test(trimmed)) {
+        return <li key={idx} style={{ color: 'var(--text-muted)', marginLeft: '0.85rem', marginBottom: '0.2rem', fontSize: '0.75rem', lineHeight: '1.45' }}>{parseBold(trimmed.replace(/^\d+\.\s/, ''))}</li>;
       }
       if (trimmed === '') {
         return <div key={idx} style={{ height: '0.25rem' }} />;
       }
-      return <p key={idx} style={{ color: 'var(--text-muted)', fontSize: '0.8rem', margin: '0.2rem 0', lineHeight: '1.4' }}>{parseBold(trimmed)}</p>;
+      return <p key={idx} style={{ color: 'var(--text-muted)', fontSize: '0.75rem', margin: '0.25rem 0', lineHeight: '1.45' }}>{parseBold(trimmed)}</p>;
     });
   };
 
@@ -96,8 +112,6 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
     const parts = text.split(/\*\*([^*]+)\*\*/g);
     return parts.map((part, i) => (i % 2 === 1 ? <strong key={i} style={{ color: 'var(--text-main)', fontWeight: 700 }}>{part}</strong> : part));
   };
-
-
 
   const renderYearlyGlance = () => {
     if (yearlyAverages.length === 0) return null;
@@ -153,9 +167,14 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                         Advance Bookings
                       </span>
                     )}
+                    {item.isCurrentYear && (
+                      <span style={{ fontSize: '0.68rem', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.02em' }}>
+                        Year-to-Date
+                      </span>
+                    )}
                     {item.activeWeeks !== undefined && (
                       <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                        ({item.activeWeeks} active wks)
+                        ({item.activeWeeks} active wks{item.holidayWeeks !== undefined && item.holidayWeeks > 0 && !item.isFutureYear ? ` • ${item.holidayWeeks} wks off` : ''}{item.isCurrentYear ? ' YTD' : ''})
                       </span>
                     )}
                   </div>
@@ -174,11 +193,11 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                     </span>
                   ) : item.change >= 0 ? (
                     <span style={{ fontSize: '0.75rem', background: 'rgba(16,185,129,0.1)', color: 'var(--accent-emerald)', padding: '0.25rem 0.5rem', borderRadius: '6px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                      ▲ +{item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year}
+                      ▲ +{item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year} {item.isCurrentYear ? '(YTD)' : ''}
                     </span>
                   ) : (
                     <span style={{ fontSize: '0.75rem', background: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.25rem 0.5rem', borderRadius: '6px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                      ▼ {item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year}
+                      ▼ {item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year} {item.isCurrentYear ? '(YTD)' : ''}
                     </span>
                   )}
                 </div>
@@ -1131,10 +1150,67 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                   </div>
                 )
               ) : (
-                <>
-                  Your scheduling is least efficient on <strong>{advisorInsights.worstDayName}s</strong> due to travel buffers and dead time. 
-                  Try restricting booking slots for students in similar postcodes on {advisorInsights.worstDayName}s to reduce travel buffer and convert up to <strong>{advisorInsights.totalDeadHours.toFixed(0)} hours</strong> of dead time back to productive paid lessons.
-                </>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  {/* Executive Operational Diagnosis */}
+                  <div>
+                    <h4 style={{ color: 'var(--text-main)', margin: '0 0 0.35rem 0', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <AlertCircle size={14} style={{ color: '#f59e0b' }} />
+                      Executive Operational Diagnosis: {advisorInsights.worstDayName} Bottleneck
+                    </h4>
+                    <p style={{ margin: 0, color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                      Across your diary, your scheduling efficiency is lowest on <strong>{advisorInsights.worstDayName}s</strong> ({advisorInsights.worstDayEff}% paid efficiency). 
+                      A cumulative <strong>{advisorInsights.totalDeadHours.toFixed(0)} hours</strong> of unpaid dead gaps under 90 minutes and <strong>{advisorInsights.totalBufferHours.toFixed(0)} hours</strong> of travel buffers are actively eating into your teaching capacity. 
+                      These fragmentation gaps are too short to return home or take high-quality restorative breaks, yet prevent scheduling additional paid pupils.
+                    </p>
+                  </div>
+
+                  {/* Financial Recovery Impact */}
+                  <div style={{ background: 'rgba(6, 182, 212, 0.06)', borderLeft: '3px solid var(--accent-cyan)', padding: '0.65rem 0.85rem', borderRadius: '0 8px 8px 0' }}>
+                    <div style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.8rem', marginBottom: '0.2rem' }}>
+                      Financial Recovery Impact: Up to £{advisorInsights.lostEarnings.toLocaleString()} Annual Potential
+                    </div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', lineHeight: '1.45' }}>
+                      At your current hourly rate of <strong>£{hourlyRate}/hr</strong>, closing just 60% of these dead gaps through tighter clustering converts to approximately <strong>£{Math.round(advisorInsights.lostEarnings * 0.6).toLocaleString()}</strong> in recovered annual earnings without working extra days or extending your finishing hours.
+                    </div>
+                  </div>
+
+                  {/* 4-Pillar Action Plan */}
+                  <div>
+                    <h4 style={{ color: 'var(--text-main)', margin: '0 0 0.4rem 0', fontSize: '0.85rem' }}>
+                      Recommended Action Plan to Reclaim Efficiency:
+                    </h4>
+                    <ul style={{ paddingLeft: '1.1rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                      <li style={{ color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                        <strong style={{ color: 'var(--text-main)' }}>1. Strict Postcode Sector Clustering:</strong> Group {advisorInsights.worstDayName} lessons into designated geographic zones (e.g. North sector morning, South sector afternoon) with a strict maximum 15-minute travel tolerance between drop-off and next pickup.
+                      </li>
+                      <li style={{ color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                        <strong style={{ color: 'var(--text-main)' }}>2. Standardized 90-Min / 2-Hour Fixed Slots:</strong> Eliminate fragmented 1-hour slots on {advisorInsights.worstDayName}s. Use standardized daily lesson time anchors (e.g., 09:00, 11:15, 13:45, 16:00) to ensure zero unusable 30–45 minute gaps are left unbooked.
+                      </li>
+                      <li style={{ color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                        <strong style={{ color: 'var(--text-main)' }}>3. Active Standby Pupil Fill List:</strong> Maintain a priority shortlist of 2–3 pupils located along your standard transit corridor with flexible availability who can be slotted into last-minute schedule holes.
+                      </li>
+                      <li style={{ color: 'var(--text-muted)', lineHeight: '1.45' }}>
+                        <strong style={{ color: 'var(--text-main)' }}>4. Calendar Buffer Guardrail:</strong> When students request shifts on {advisorInsights.worstDayName}s, only offer slots that attach directly before or after an existing lesson rather than leaving a 45-minute isolated gap in the middle of your day.
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Strategic Target Callout */}
+                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '0.55rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
+                      💡 Target: Realign {advisorInsights.worstDayName}s to reach 85%+ scheduling efficiency over the next 4–6 weeks.
+                    </span>
+                    <span 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsAiTipExpanded(false);
+                      }}
+                      style={{ fontSize: '0.7rem', color: 'var(--accent-cyan)', cursor: 'pointer', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}
+                    >
+                      <ChevronUp size={11} /> Collapse tip
+                    </span>
+                  </div>
+                </div>
               )}
             </div>
           )}
