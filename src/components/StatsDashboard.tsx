@@ -392,28 +392,28 @@ Analyze and return the JSON object.`;
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
               <span className="sfd-kpi-label">Weekly Revenue</span>
               <InfoPlacard
-                title="Weekly Gross & Net Revenue"
+                title="Weekly Net & Gross Revenue"
                 badge="Net Take-Home"
-                description="Projected gross lesson revenue alongside your estimated net take-home profit after deducting vehicle operating expenses."
-                calculation={`Gross = (£${hourlyRate} × ${totalTeachHours}h)${weeklyTestEarnings > 0 ? ` + £${weeklyTestEarnings} tests` : ''}. Net = Gross − Estimated Vehicle Expenses (£${vehicleCosts.totalCost.toFixed(0)} fuel & wear at ${vehicleCostSettings.milesPerHour} mph).`}
-                tip="Fine-tune fuel price, fuel economy (MPG/EV), and speed in Settings to match your vehicle's real costs."
+                description="Projected net take-home earnings after deducting fuel & vehicle expenses alongside your gross bookings."
+                calculation={`Net = Gross (£${weeklyEarnings.toLocaleString()}${weeklyTestEarnings > 0 ? ` [£${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} tests]` : ''}) − Estimated Vehicle Expenses (£${vehicleCosts.totalCost.toFixed(0)} fuel & wear at ${vehicleCostSettings.milesPerHour} mph).`}
+                tip="Net take-home is your true bottom-line earnings after paying for pupil lesson mileage."
               />
             </div>
             <span 
-              className="sfd-kpi-badge emerald" 
-              title={`Net take-home profit: £${vehicleCosts.netRevenue.toFixed(0)} (${vehicleCosts.profitMargin.toFixed(0)}% margin after £${vehicleCosts.totalCost.toFixed(0)} vehicle expenses)`}
+              className="sfd-kpi-badge neutral" 
+              title={`Gross revenue before vehicle expenses: £${weeklyEarnings.toLocaleString()}`}
             >
-              Net £{Math.round(vehicleCosts.netRevenue).toLocaleString()}
+              Gross £{weeklyEarnings.toLocaleString()}
             </span>
           </div>
-          <div className="sfd-kpi-value">£{weeklyEarnings.toLocaleString()}</div>
+          <div className="sfd-kpi-value">£{Math.round(vehicleCosts.netRevenue).toLocaleString()}</div>
           <div className="sfd-kpi-meta">
             <ArrowUpRight size={13} style={{ color: 'var(--sfd-emerald)', flexShrink: 0 }} />
             <span 
               className="sfd-kpi-sub"
               title={testRate > 0 && testBookings.length > 0 
-                ? `£${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} tests • £${vehicleCosts.totalCost.toFixed(0)} expenses`
-                : `${totalTeachHours}h @ £${hourlyRate}/hr • £${vehicleCosts.totalCost.toFixed(0)} expenses`}
+                ? `Net take-home profit (${vehicleCosts.profitMargin.toFixed(0)}% margin) • Gross £${weeklyEarnings.toLocaleString()} (£${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} tests) − £${vehicleCosts.totalCost.toFixed(0)} expenses`
+                : `${vehicleCosts.profitMargin.toFixed(0)}% take-home margin after £${vehicleCosts.totalCost.toFixed(0)} vehicle expenses`}
             >
               {hoursNumber > 0 
                 ? `${vehicleCosts.profitMargin.toFixed(0)}% take-home margin`

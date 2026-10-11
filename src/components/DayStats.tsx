@@ -489,14 +489,14 @@ export const DayStats: React.FC<DayStatsProps> = ({
               />
             </div>
             <span 
-              className="sfd-kpi-badge emerald"
-              title={`Net take-home profit: £${dayVehicleCosts.netRevenue.toFixed(2)} (${dayVehicleCosts.profitMargin.toFixed(0)}% margin after £${dayVehicleCosts.totalCost.toFixed(2)} running expenses)`}
+              className="sfd-kpi-badge neutral"
+              title={`Gross revenue before running expenses: £${simulatedEarnings.toFixed(2)}`}
             >
-              Net £{Math.round(dayVehicleCosts.netRevenue)}
+              Gross £{Math.round(simulatedEarnings)}
             </span>
           </div>
           <div className="sfd-kpi-value">
-            £{simulatedEarnings.toFixed(2)}
+            £{dayVehicleCosts.netRevenue.toFixed(2)}
           </div>
           <div className="sfd-kpi-meta">
             <span 

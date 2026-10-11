@@ -1742,22 +1742,23 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
             </div>
             <span 
               style={{
-                fontSize: '0.68rem',
+                fontSize: '0.6875rem',
                 fontWeight: 700,
-                color: 'var(--accent-emerald)',
-                background: 'rgba(16, 185, 129, 0.12)',
+                color: 'var(--text-muted)',
+                background: 'var(--bg-nested)',
                 padding: '0.15rem 0.5rem',
-                borderRadius: '9999px'
+                borderRadius: '9999px',
+                border: '1px solid var(--border-light)'
               }}
-              title={`Net take-home profit: £${globalSummary.netRevenue.toLocaleString()} (${globalSummary.profitMargin.toFixed(0)}% margin after £${globalSummary.totalExpenses.toLocaleString()} vehicle expenses)`}
+              title={`Gross tuition revenue before expenses: £${globalSummary.totalEarnings.toLocaleString()}`}
             >
-              Net £{globalSummary.netRevenue.toLocaleString()}
+              Gross £{globalSummary.totalEarnings.toLocaleString()}
             </span>
           </div>
-          <div className="kpi-value" style={{ color: 'var(--accent-cyan)' }}>
-            £{globalSummary.totalEarnings.toLocaleString()}
+          <div className="kpi-value" style={{ color: 'var(--accent-emerald)' }}>
+            £{globalSummary.netRevenue.toLocaleString()}
           </div>
-          <span className="kpi-footer">{globalSummary.profitMargin.toFixed(0)}% margin • -£{globalSummary.totalExpenses.toLocaleString()} vehicle costs (~{Math.round(globalSummary.estimatedMiles).toLocaleString()} mi)</span>
+          <span className="kpi-footer">{globalSummary.profitMargin.toFixed(0)}% take-home margin • -£${globalSummary.totalExpenses.toLocaleString()} vehicle costs (~{Math.round(globalSummary.estimatedMiles).toLocaleString()} mi)</span>
         </div>
 
       </div>
