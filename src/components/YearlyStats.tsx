@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { CalendarEvent } from '../utils/icsParser';
-import { Clock, Percent, Activity, CalendarDays, Award, TrendingUp, Download, Sparkles, RefreshCw } from 'lucide-react';
+import { Clock, Percent, Activity, CalendarDays, Award, TrendingUp, Download, Sparkles, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { useYearlyMetrics } from '../hooks/useYearlyMetrics';
 import { formatMinsToTime, getMondayOfDate } from '../utils/yearlyCalculations';
 
@@ -66,6 +66,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
     aiApiKey,
     excludedYears,
   });
+
+  // Collapsible state for long AI Scheduling Strategy report (minimized by default)
+  const [isAiTipExpanded, setIsAiTipExpanded] = useState<boolean>(false);
 
   // Markdown parsing helpers
   const parseMarkdown = (text: string) => {
@@ -1039,54 +1042,97 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           </div>
         </div>
 
-        <div style={{ marginTop: '1.25rem', background: 'rgba(6,182,212,0.05)', padding: '0.85rem 1rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-cyan)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)' }}>
-              {enableAiInsights && aiApiKey ? 'AI Dynamic Scheduling Tip' : 'Actionable Recommendation'}
-            </span>
-            {enableAiInsights && aiApiKey && (
-              <button
-                type="button"
-                onClick={() => fetchDynamicRecommendation(true)}
-                disabled={recLoading}
-                style={{ background: 'transparent', border: 'none', color: 'var(--accent-cyan)', fontSize: '0.65rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.2rem' }}
-              >
-                <RefreshCw size={9} className={recLoading ? 'spin-animation' : ''} />
-                Regenerate
-              </button>
-            )}
+        <div style={{ marginTop: '1.25rem', background: 'rgba(6,182,212,0.05)', padding: '0.85rem 1rem', borderRadius: '10px', borderLeft: '3px solid var(--accent-cyan)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <div 
+              onClick={() => setIsAiTipExpanded(!isAiTipExpanded)}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer', userSelect: 'none' }}
+            >
+              <Sparkles size={14} style={{ color: 'var(--accent-cyan)' }} />
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                {enableAiInsights && aiApiKey ? 'AI Dynamic Scheduling Strategy' : 'Actionable Recommendation'}
+              </span>
+              <span style={{ 
+                fontSize: '0.68rem', 
+                background: 'rgba(6,182,212,0.12)', 
+                color: 'var(--accent-cyan)', 
+                padding: '0.15rem 0.5rem', 
+                borderRadius: '6px', 
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.2rem'
+              }}>
+                {isAiTipExpanded ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+                {isAiTipExpanded ? 'Minimize' : 'Click to expand report'}
+              </span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              {enableAiInsights && aiApiKey && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fetchDynamicRecommendation(true);
+                  }}
+                  disabled={recLoading}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--accent-cyan)', fontSize: '0.68rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600 }}
+                >
+                  <RefreshCw size={10} className={recLoading ? 'spin-animation' : ''} />
+                  Regenerate
+                </button>
+              )}
+            </div>
           </div>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-            {enableAiInsights && aiApiKey ? (
-              recLoading && !dynamicRec ? (
-                <span style={{ color: 'var(--text-dim)' }}>Drafting tailored scheduling hack...</span>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-                  <div>
-                    {parseMarkdown(dynamicRec || 'Click Regenerate to query AI coach.')}
-                  </div>
-                  {yoyAiReport?.coachingTips && yoyAiReport.coachingTips.length > 0 && (
-                    <div style={{ marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <Sparkles size={11} style={{ color: 'var(--accent-purple)' }} />
-                        Long-term Business Strategy:
-                      </span>
-                      <ul style={{ paddingLeft: '1rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                        {yoyAiReport.coachingTips.map((tip, tIdx) => (
-                          <li key={tIdx} style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{tip}</li>
-                        ))}
-                      </ul>
+
+          {/* Minimized preview snippet */}
+          {!isAiTipExpanded && (
+            <div 
+              onClick={() => setIsAiTipExpanded(true)}
+              style={{ marginTop: '0.45rem', fontSize: '0.75rem', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+            >
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '750px', opacity: 0.85 }}>
+                {dynamicRec ? dynamicRec.replace(/[#*`>]/g, '').slice(0, 140) + '...' : `Least efficient on ${advisorInsights.worstDayName}s due to travel buffers. Click to view tailored recommendations.`}
+              </span>
+              <span style={{ color: 'var(--accent-cyan)', fontWeight: 600, fontSize: '0.7rem', flexShrink: 0 }}>Read full report</span>
+            </div>
+          )}
+
+          {/* Expanded full body */}
+          {isAiTipExpanded && (
+            <div style={{ marginTop: '0.75rem', fontSize: '0.75rem', color: 'var(--text-muted)', lineHeight: '1.45', borderTop: '1px solid rgba(6,182,212,0.12)', paddingTop: '0.75rem' }}>
+              {enableAiInsights && aiApiKey ? (
+                recLoading && !dynamicRec ? (
+                  <span style={{ color: 'var(--text-dim)' }}>Drafting tailored scheduling hack...</span>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+                    <div>
+                      {parseMarkdown(dynamicRec || 'Click Regenerate to query AI coach.')}
                     </div>
-                  )}
-                </div>
-              )
-            ) : (
-              <>
-                Your scheduling is least efficient on <strong>{advisorInsights.worstDayName}s</strong> due to travel buffers and dead time. 
-                Try restricting booking slots for students in similar postcodes on {advisorInsights.worstDayName}s to reduce travel buffer and convert up to <strong>{advisorInsights.totalDeadHours.toFixed(0)} hours</strong> of dead time back to productive paid lessons.
-              </>
-            )}
-          </span>
+                    {yoyAiReport?.coachingTips && yoyAiReport.coachingTips.length > 0 && (
+                      <div style={{ marginTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                        <span style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <Sparkles size={11} style={{ color: 'var(--accent-purple)' }} />
+                          Long-term Business Strategy:
+                        </span>
+                        <ul style={{ paddingLeft: '1rem', margin: 0, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                          {yoyAiReport.coachingTips.map((tip, tIdx) => (
+                            <li key={tIdx} style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{tip}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )
+              ) : (
+                <>
+                  Your scheduling is least efficient on <strong>{advisorInsights.worstDayName}s</strong> due to travel buffers and dead time. 
+                  Try restricting booking slots for students in similar postcodes on {advisorInsights.worstDayName}s to reduce travel buffer and convert up to <strong>{advisorInsights.totalDeadHours.toFixed(0)} hours</strong> of dead time back to productive paid lessons.
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -1342,8 +1388,8 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
             {/* Gradient definitions */}
             <defs>
               <linearGradient id="indigoGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--accent-purple)" />
-                <stop offset="100%" stopColor="var(--accent-indigo)" />
+                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="#4338ca" />
               </linearGradient>
               <linearGradient id="futureGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#f59e0b" />
@@ -1523,7 +1569,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           {/* Legend */}
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <div style={{ width: '12px', height: '12px', background: 'var(--accent-purple)', borderRadius: '3px' }} />
+              <div style={{ width: '12px', height: '12px', background: 'linear-gradient(135deg, #6366f1, #4338ca)', borderRadius: '3px' }} />
               <span style={{ color: 'var(--text-muted)' }}>Teaching Hours (Past)</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
