@@ -1366,7 +1366,7 @@ function App() {
                         <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)' }}>
                           {vehicleFuelType === 'electric' 
                             ? `e.g. £0.275/kWh home standard tariff` 
-                            : `e.g. £1.425/L (142.5p per litre)`}
+                            : `e.g. £1.725/L (172.5p per litre)`}
                         </span>
                       </div>
 

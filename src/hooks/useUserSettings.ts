@@ -220,7 +220,12 @@ export function useUserSettings(): UserSettings {
 
   const [fuelCostPerUnit, setFuelCostPerUnit] = useState<number>(() => {
     const saved = localStorage.getItem('adi_fuel_cost_per_unit');
-    return saved !== null ? parseFloat(saved) : DEFAULT_UK_BENCHMARKS.petrol.costPerUnit;
+    if (saved !== null) {
+      const val = parseFloat(saved);
+      if (val === 1.425) return DEFAULT_UK_BENCHMARKS.petrol.costPerUnit; // Upgrade old default to 1.725
+      return val;
+    }
+    return DEFAULT_UK_BENCHMARKS.petrol.costPerUnit;
   });
 
   useEffect(() => {

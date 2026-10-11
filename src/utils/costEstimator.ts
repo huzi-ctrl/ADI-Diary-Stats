@@ -32,16 +32,16 @@ export interface CostBreakdown {
 // 1 UK Imperial Gallon = 4.54609 Litres
 export const LITRES_PER_UK_GALLON = 4.54609;
 
-// Verified UK national forecourt benchmarks (DESNZ / CMA averages)
+// Verified UK national forecourt benchmarks (RAC Fuel Watch / DESNZ averages)
 export const DEFAULT_UK_BENCHMARKS = {
   petrol: {
-    costPerUnit: 1.425, // £1.425 / litre (142.5p)
+    costPerUnit: 1.725, // £1.725 / litre (172.5p) current UK pump average
     defaultMpg: 40.0, // Learner stop-start town driving in a 1.0L-1.2L tuition car
     unitLabel: '£/L',
     efficiencyLabel: 'MPG',
   },
   diesel: {
-    costPerUnit: 1.489, // £1.489 / litre (148.9p)
+    costPerUnit: 1.989, // £1.989 / litre (198.9p) current UK pump average
     defaultMpg: 45.0, // Learner stop-start town driving in a diesel tuition car
     unitLabel: '£/L',
     efficiencyLabel: 'MPG',
