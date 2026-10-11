@@ -126,7 +126,7 @@ function App() {
             <img src="/favicon.png" alt="ADI stats logo" style={{ height: '26px', width: '26px', objectFit: 'contain' }} />
           </div>
           <div className="sfd-brand-text">
-            <span className="sfd-brand-title">ADI stats</span>
+            <span className="sfd-brand-title hover-serif-switch">ADI stats</span>
             <span className="sfd-brand-sub font-editorial">Approved Driving Instructor Schedule Analytics</span>
           </div>
         </div>
@@ -137,45 +137,65 @@ function App() {
             <nav className="sfd-liquid-glass-strip" aria-label="Main Navigation">
               <MagneticPill
                 type="button"
-                className={`sfd-strip-btn ${viewMode === 'dashboard' ? 'active' : ''}`}
+                className={`sfd-strip-btn sfd-char-hover ${viewMode === 'dashboard' ? 'active' : ''}`}
                 onClick={() => setViewMode('dashboard')}
               >
                 <LayoutDashboard size={14} />
-                <span>Weekly</span>
+                <span className="sfd-char-wave">
+                  {'Weekly'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
               </MagneticPill>
               <MagneticPill
                 type="button"
-                className={`sfd-strip-btn ${viewMode === 'yearly' ? 'active' : ''}`}
+                className={`sfd-strip-btn sfd-char-hover ${viewMode === 'yearly' ? 'active' : ''}`}
                 onClick={() => setViewMode('yearly')}
               >
                 <TrendingUp size={14} />
-                <span>Yearly</span>
+                <span className="sfd-char-wave">
+                  {'Yearly'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
               </MagneticPill>
               <MagneticPill
                 type="button"
-                className={`sfd-strip-btn ${viewMode === 'events' ? 'active' : ''}`}
+                className={`sfd-strip-btn sfd-char-hover ${viewMode === 'events' ? 'active' : ''}`}
                 onClick={() => setViewMode('events')}
               >
                 <List size={14} />
-                <span>Explorer</span>
+                <span className="sfd-char-wave">
+                  {'Explorer'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
               </MagneticPill>
               {enableAiInsights && (
                 <MagneticPill
                   type="button"
-                  className={`sfd-strip-btn ${viewMode === 'ai' ? 'active' : ''}`}
+                  className={`sfd-strip-btn sfd-char-hover ${viewMode === 'ai' ? 'active' : ''}`}
                   onClick={() => setViewMode('ai')}
                 >
                   <Sparkles size={14} />
-                  <span>AI</span>
+                  <span className="sfd-char-wave">
+                    {'AI'.split('').map((c, i) => (
+                      <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                    ))}
+                  </span>
                 </MagneticPill>
               )}
               <MagneticPill
                 type="button"
-                className={`sfd-strip-btn ${viewMode === 'settings' ? 'active' : ''}`}
+                className={`sfd-strip-btn sfd-char-hover ${viewMode === 'settings' ? 'active' : ''}`}
                 onClick={() => setViewMode('settings')}
               >
                 <Settings size={14} />
-                <span>Settings</span>
+                <span className="sfd-char-wave">
+                  {'Settings'.split('').map((c, i) => (
+                    <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                  ))}
+                </span>
               </MagneticPill>
             </nav>
           )}

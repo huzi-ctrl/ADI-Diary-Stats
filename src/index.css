@@ -51,6 +51,35 @@
   font-style: italic;
 }
 
+.hover-serif-switch {
+  transition: font-family 0.22s ease, letter-spacing 0.22s ease;
+}
+.hover-serif-switch:hover {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+
+.sfd-char-wave {
+  display: inline-flex;
+  align-items: center;
+}
+
+.sfd-char {
+  display: inline-block;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.2s ease;
+}
+
+@keyframes charWavePulse {
+  0% { transform: translateY(0); filter: blur(0px); }
+  40% { transform: translateY(-2px); filter: blur(0.8px); }
+  100% { transform: translateY(0); filter: blur(0px); }
+}
+
+.sfd-char-hover:hover .sfd-char {
+  animation: charWavePulse 0.3s ease forwards;
+}
+
 [data-theme="dark"] {
   --bg-dark: #0b0f19;
   --bg-stage: #0b0f19;

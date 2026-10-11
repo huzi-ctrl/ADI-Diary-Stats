@@ -62,8 +62,8 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
         <div className="sfd-brand">
           <div className="sfd-brand-symbol">ADI</div>
           <div className="sfd-brand-text">
-            <span className="sfd-brand-title">DriveStats</span>
-            <span className="sfd-brand-sub">Effortless Schedule & Capacity Intelligence</span>
+            <span className="sfd-brand-title hover-serif-switch">DriveStats</span>
+            <span className="sfd-brand-sub font-editorial">Effortless Schedule & Capacity Intelligence</span>
           </div>
         </div>
 
@@ -72,31 +72,47 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
           <nav className="sfd-liquid-glass-strip" aria-label="Header Navigation">
             <button
               type="button"
-              className={`sfd-strip-btn ${activeTab === 'weekly' ? 'active' : ''}`}
+              className={`sfd-strip-btn sfd-char-hover ${activeTab === 'weekly' ? 'active' : ''}`}
               onClick={() => setActiveTab('weekly')}
             >
-              Weekly
+              <span className="sfd-char-wave">
+                {'Weekly'.split('').map((c, i) => (
+                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                ))}
+              </span>
             </button>
             <button
               type="button"
-              className={`sfd-strip-btn ${activeTab === 'yearly' ? 'active' : ''}`}
+              className={`sfd-strip-btn sfd-char-hover ${activeTab === 'yearly' ? 'active' : ''}`}
               onClick={() => setActiveTab('yearly')}
             >
-              Yearly
+              <span className="sfd-char-wave">
+                {'Yearly'.split('').map((c, i) => (
+                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                ))}
+              </span>
             </button>
             <button
               type="button"
-              className={`sfd-strip-btn ${activeTab === 'explorer' ? 'active' : ''}`}
+              className={`sfd-strip-btn sfd-char-hover ${activeTab === 'explorer' ? 'active' : ''}`}
               onClick={() => setActiveTab('explorer')}
             >
-              Explorer
+              <span className="sfd-char-wave">
+                {'Explorer'.split('').map((c, i) => (
+                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                ))}
+              </span>
             </button>
             <button
               type="button"
-              className={`sfd-strip-btn ${activeTab === 'settings' ? 'active' : ''}`}
+              className={`sfd-strip-btn sfd-char-hover ${activeTab === 'settings' ? 'active' : ''}`}
               onClick={() => setActiveTab('settings')}
             >
-              Settings
+              <span className="sfd-char-wave">
+                {'Settings'.split('').map((c, i) => (
+                  <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+                ))}
+              </span>
             </button>
           </nav>
 
@@ -139,11 +155,15 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
           {/* Primary Action Pill */}
           <button 
             type="button" 
-            className="sfd-btn-primary"
+            className="sfd-btn-primary sfd-char-hover"
             onClick={() => alert("Syncing Google & Outlook calendars locally...")}
           >
             <RefreshCw size={14} />
-            <span>Sync Diary</span>
+            <span className="sfd-char-wave">
+              {'Sync Diary'.split('').map((c, i) => (
+                <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c === ' ' ? '\u00A0' : c}</span>
+              ))}
+            </span>
           </button>
         </div>
       </header>
@@ -375,10 +395,14 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
               <div className="sfd-ai-badge-action-bar">
                 <button
                   type="button"
-                  className="sfd-ai-badge-action-btn"
+                  className="sfd-ai-badge-action-btn sfd-char-hover"
                   onClick={() => setIsShiftSimulated(prev => !prev)}
                 >
-                  {isShiftSimulated ? 'Reset to Original Schedule' : 'Simulate Schedule Shift (+£90.00)'}
+                  <span className="sfd-char-wave">
+                    {(isShiftSimulated ? 'Reset to Original Schedule' : 'Simulate Schedule Shift (+£90.00)').split('').map((c, i) => (
+                      <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.02}s` }}>{c === ' ' ? '\u00A0' : c}</span>
+                    ))}
+                  </span>
                 </button>
                 <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>
                   {isShiftSimulated ? 'Revenue recalculated dynamically' : 'Pure simulation • No calendar changes made'}
@@ -464,38 +488,54 @@ export function DesignSystemMockup({ onDismissMockup }: DesignSystemMockupProps)
         <nav className="sfd-dock" aria-label="Navigation Dock">
           <button 
             type="button" 
-            className={`sfd-dock-btn ${activeTab === 'weekly' ? 'active' : ''}`}
+            className={`sfd-dock-btn sfd-char-hover ${activeTab === 'weekly' ? 'active' : ''}`}
             onClick={() => setActiveTab('weekly')}
           >
             <LayoutDashboard size={16} />
-            <span>Weekly</span>
+            <span className="sfd-char-wave">
+              {'Weekly'.split('').map((c, i) => (
+                <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+              ))}
+            </span>
           </button>
 
           <button 
             type="button" 
-            className={`sfd-dock-btn ${activeTab === 'yearly' ? 'active' : ''}`}
+            className={`sfd-dock-btn sfd-char-hover ${activeTab === 'yearly' ? 'active' : ''}`}
             onClick={() => setActiveTab('yearly')}
           >
             <BarChart3 size={16} />
-            <span>Yearly</span>
+            <span className="sfd-char-wave">
+              {'Yearly'.split('').map((c, i) => (
+                <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+              ))}
+            </span>
           </button>
 
           <button 
             type="button" 
-            className={`sfd-dock-btn ${activeTab === 'explorer' ? 'active' : ''}`}
+            className={`sfd-dock-btn sfd-char-hover ${activeTab === 'explorer' ? 'active' : ''}`}
             onClick={() => setActiveTab('explorer')}
           >
             <FolderKanban size={16} />
-            <span>Explorer</span>
+            <span className="sfd-char-wave">
+              {'Explorer'.split('').map((c, i) => (
+                <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+              ))}
+            </span>
           </button>
 
           <button 
             type="button" 
-            className={`sfd-dock-btn ${activeTab === 'settings' ? 'active' : ''}`}
+            className={`sfd-dock-btn sfd-char-hover ${activeTab === 'settings' ? 'active' : ''}`}
             onClick={() => setActiveTab('settings')}
           >
             <Settings size={16} />
-            <span>Settings</span>
+            <span className="sfd-char-wave">
+              {'Settings'.split('').map((c, i) => (
+                <span key={i} className="sfd-char" style={{ animationDelay: `${i * 0.025}s` }}>{c}</span>
+              ))}
+            </span>
           </button>
         </nav>
       </footer>
