@@ -656,9 +656,10 @@ function App() {
                   className="btn btn-danger" 
                   style={{ padding: '6px 14px', fontSize: '13px' }} 
                   onClick={handleClear}
+                  title="Log out and reset session"
                 >
                   <LogOut size={13} />
-                  <span>Clear</span>
+                  <span>Log out</span>
                 </MagneticPill>
               </div>
             )}
@@ -780,7 +781,7 @@ function App() {
                     }}
                   >
                     <LogOut size={14} />
-                    <span>Disconnect Calendar</span>
+                    <span>Log out</span>
                   </button>
                 </div>
               )}
