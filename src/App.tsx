@@ -9,8 +9,10 @@ import { LayoutDashboard, List, LogOut, ChevronLeft, ChevronRight, RefreshCw, Tr
 import { useUserSettings } from './hooks/useUserSettings';
 import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
+import { DesignSystemMockup } from './components/mockup/DesignSystemMockup';
 
 function App() {
+  const [showMockup, setShowMockup] = useState<boolean>(true);
   const [viewMode, setViewMode] = useState<'dashboard' | 'yearly' | 'events' | 'ai' | 'settings'>('dashboard');
   const [legalModal, setLegalModal] = useState<'privacy' | 'tos' | null>(() => {
     const params = new URLSearchParams(window.location.search);
@@ -108,6 +110,10 @@ function App() {
     weekNavActionsRef.current.resetYear = () => setSelectedYear(null);
   }, [setCurrentWeekStart, setSelectedYear]);
 
+  if (showMockup) {
+    return <DesignSystemMockup onDismissMockup={() => setShowMockup(false)} />;
+  }
+
   return (
     <div className="app-container">
       {/* App Header */}
@@ -127,6 +133,28 @@ function App() {
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }} className="header-actions">
+          {/* Switch to New Mockup button */}
+          <button 
+            type="button" 
+            className="btn btn-primary" 
+            style={{ 
+              padding: '0.5rem 0.85rem', 
+              borderRadius: '10px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.4rem', 
+              fontSize: '0.8rem', 
+              fontWeight: 600,
+              background: '#1a56db',
+              borderColor: '#1a56db'
+            }} 
+            onClick={() => setShowMockup(true)}
+            title="Inspect the new Swiss Flight Deck mockup"
+          >
+            <Sparkles size={14} />
+            <span>View New Mockup</span>
+          </button>
+
           {/* Theme Switcher Toggle */}
           <button 
             type="button" 
