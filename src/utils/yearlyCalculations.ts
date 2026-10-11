@@ -64,6 +64,9 @@ export interface YearlyAverage {
   year: number;
   averageFillPct: number;
   change: number;
+  isFutureYear?: boolean;
+  activeWeeks?: number;
+  totalWeeks?: number;
 }
 
 export function getMondayOfDate(d: Date): Date {
@@ -282,22 +285,32 @@ export function calculateYoyData(weekDataList: WeekData[], excludedYears: number
 export function calculateYearlyAverages(yoyData: YoyDataResult, excludedYears: number[] = []): YearlyAverage[] {
   const { sortedYears, dataByYear } = yoyData;
   const filteredYears = sortedYears.filter(yr => !excludedYears.includes(yr));
+  const currentYear = new Date().getFullYear();
+
   return filteredYears.map((yr, idx) => {
-    const vals = Object.values(dataByYear[yr] || {});
-    const avg = vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+    const allVals = Object.values(dataByYear[yr] || {});
+    // Filter out 0% weeks (holidays, vacations, non-teaching weeks, and unbooked future weeks)
+    const activeVals = allVals.filter(v => v > 0);
+    const valsToAverage = activeVals.length > 0 ? activeVals : allVals;
+    const avg = valsToAverage.length > 0 ? valsToAverage.reduce((a, b) => a + b, 0) / valsToAverage.length : 0;
     
     let change = 0;
     if (idx > 0) {
       const prevYr = filteredYears[idx - 1];
-      const prevVals = Object.values(dataByYear[prevYr] || {});
-      const prevAvg = prevVals.length > 0 ? prevVals.reduce((a, b) => a + b, 0) / prevVals.length : 0;
+      const prevAllVals = Object.values(dataByYear[prevYr] || {});
+      const prevActiveVals = prevAllVals.filter(v => v > 0);
+      const prevValsToAverage = prevActiveVals.length > 0 ? prevActiveVals : prevAllVals;
+      const prevAvg = prevValsToAverage.length > 0 ? prevValsToAverage.reduce((a, b) => a + b, 0) / prevValsToAverage.length : 0;
       change = avg - prevAvg;
     }
     
     return {
       year: yr,
       averageFillPct: avg,
-      change
+      change,
+      isFutureYear: yr > currentYear,
+      activeWeeks: activeVals.length,
+      totalWeeks: allVals.length
     };
   });
 }

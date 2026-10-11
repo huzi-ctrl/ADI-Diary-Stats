@@ -103,7 +103,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
             Year-over-Year Performance Summary
           </h3>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
-            Annual schedule booking rate (capacity utilization). Higher % means a fuller schedule and higher earnings. Incomplete or starting years can be excluded in Settings.
+            Annual schedule booking rate (capacity utilization) calculated across active teaching weeks (excluding holidays &amp; breaks). Higher % means a fuller schedule. Incomplete or starting years can be excluded in Settings.
           </p>
         </div>
 
@@ -134,13 +134,23 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                   </span>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                       <span style={{ fontSize: '1.2rem', fontWeight: 800, color }}>
                         {item.averageFillPct.toFixed(1)}%
                       </span>
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                         booking rate
                       </span>
+                      {item.isFutureYear && (
+                        <span style={{ fontSize: '0.68rem', background: 'rgba(56, 189, 248, 0.15)', color: 'var(--accent-cyan)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 700, letterSpacing: '0.02em' }}>
+                          Advance Bookings
+                        </span>
+                      )}
+                      {item.activeWeeks !== undefined && (
+                        <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                          ({item.activeWeeks} active wks)
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
