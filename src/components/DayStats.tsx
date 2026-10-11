@@ -461,22 +461,22 @@ export const DayStats: React.FC<DayStatsProps> = ({
         </div>
       </div>
 
-      {/* 4 Soft Sculpted KPI Cards (Original Mockup Style) */}
+      {/* Clean Modern KPI Cards */}
       <section className="sfd-kpi-grid">
         {/* Metric 1: Day Revenue */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Day Revenue</span>
             <span className="sfd-kpi-badge emerald">
-              {dayEvents.length} Bookings
+              {dayEvents.length} {dayEvents.length === 1 ? 'Slot' : 'Slots'}
             </span>
           </div>
           <div className="sfd-kpi-value">
             £{simulatedEarnings.toFixed(2)}
           </div>
           <div className="sfd-kpi-meta">
-            <span className="sfd-kpi-sub font-editorial">
-              £{hourlyRate}/hr lesson rate {testRate > 0 ? `• £${testRate}/test` : ''}
+            <span className="sfd-kpi-sub">
+              £{hourlyRate}/hr rate {testRate > 0 ? `• £${testRate}/test` : ''}
             </span>
           </div>
         </div>
@@ -485,15 +485,13 @@ export const DayStats: React.FC<DayStatsProps> = ({
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Teaching Hours</span>
-            <span className="sfd-kpi-badge emerald">
-              {simulatedTeachingHours.toFixed(1)}h Total
-            </span>
+            <span className="sfd-kpi-badge neutral">Billable</span>
           </div>
           <div className="sfd-kpi-value">
-            {simulatedTeachingHours.toFixed(1)}h
+            {simulatedTeachingHours.toFixed(1)}<span style={{ fontSize: '0.65em', fontWeight: 600, color: 'var(--sfd-ink-muted)', marginLeft: '2px' }}>h</span>
           </div>
           <div className="sfd-kpi-meta">
-            <span className="sfd-kpi-sub font-editorial">
+            <span className="sfd-kpi-sub">
               {billableLessons.length} paid lessons {dayTests.length > 0 ? `+ ${dayTests.length} tests` : ''}
             </span>
           </div>
@@ -503,14 +501,14 @@ export const DayStats: React.FC<DayStatsProps> = ({
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Transit Windows</span>
-            <span className="sfd-kpi-badge amber">15m Standard</span>
+            <span className="sfd-kpi-badge amber">15m Buffer</span>
           </div>
           <div className="sfd-kpi-value">
-            {(totalBufferMins / 60).toFixed(1)}h
+            {(totalBufferMins / 60).toFixed(1)}<span style={{ fontSize: '0.65em', fontWeight: 600, color: 'var(--sfd-ink-muted)', marginLeft: '2px' }}>h</span>
           </div>
           <div className="sfd-kpi-meta">
-            <span className="sfd-kpi-sub font-editorial">
-              Automated inter-lesson transit allowances
+            <span className="sfd-kpi-sub">
+              Automated transit windows reserved
             </span>
           </div>
         </div>
@@ -518,17 +516,17 @@ export const DayStats: React.FC<DayStatsProps> = ({
         {/* Metric 4: Scheduling Efficiency & Dead Gaps */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
-            <span className="sfd-kpi-label">Scheduling Efficiency</span>
+            <span className="sfd-kpi-label">Scheduling Flow</span>
             <span className={`sfd-kpi-badge ${efficiencyPct >= 80 ? 'emerald' : efficiencyPct >= 65 ? 'amber' : 'coral'}`}>
-              {efficiencyPct}% Efficient
+              {efficiencyPct}% Score
             </span>
           </div>
           <div className="sfd-kpi-value" style={{ color: simulatedDeadGaps > 0 ? 'var(--sfd-coral)' : 'var(--sfd-emerald)' }}>
             {simulatedDeadGaps > 0 ? `${(simulatedDeadGaps / 60).toFixed(1)}h` : 'Optimal'}
           </div>
           <div className="sfd-kpi-meta">
-            <span className="sfd-kpi-sub font-editorial">
-              {simulatedDeadGaps > 0 ? `${simulatedDeadGaps}m unbookable gaps under 90m` : 'Zero fragmented dead time'}
+            <span className="sfd-kpi-sub">
+              {simulatedDeadGaps > 0 ? `${simulatedDeadGaps}m fragmented dead gaps` : 'Zero fragmented dead time'}
             </span>
           </div>
         </div>

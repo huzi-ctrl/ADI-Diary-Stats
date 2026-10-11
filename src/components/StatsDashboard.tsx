@@ -315,35 +315,25 @@ Analyze and return the JSON object.`;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', animation: 'fadeIn 0.4s ease-out' }}>
       
-      {/* Top Filter & Date Banner */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        <div style={{ background: 'var(--sfd-surface-card)', border: '1px solid var(--sfd-border-hairline)', boxShadow: 'var(--sfd-shadow-soft)', padding: '6px 16px', borderRadius: '9999px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sfd-ink-secondary)' }}>
-          <Calendar size={14} style={{ color: 'var(--sfd-primary)' }} />
-          <span>Active Week:</span>
-          <strong style={{ color: 'var(--sfd-ink-primary)' }}>{formatDateShort(weekStart)} &mdash; {formatDateShort(weekEnd)}</strong>
+      {/* Filter / Excluded Events Notification */}
+      {filteredOutEvents.length > 0 && (
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--sfd-surface-card)', border: '1px solid var(--sfd-border-hairline)', borderRadius: '14px', padding: '6px 14px', fontSize: '12.5px', color: 'var(--sfd-ink-muted)', width: 'fit-content' }}>
+          <ShieldAlert size={14} style={{ color: 'var(--sfd-amber)', flexShrink: 0 }} />
+          <span>Excluded <strong>{filteredOutEvents.length}</strong> personal events/rests this week.</span>
         </div>
+      )}
 
-        {filteredOutEvents.length > 0 && (
-          <div style={{ background: 'var(--sfd-primary-soft)', border: '1px solid rgba(29, 78, 216, 0.15)', padding: '6px 16px', borderRadius: '9999px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--sfd-primary)' }}>
-            <ShieldAlert size={14} />
-            <span>Hidden <strong>{filteredOutEvents.length}</strong> personal events/rests this week.</span>
-          </div>
-        )}
-      </div>
-
-      {/* Soft Sculpted KPI Cards */}
+      {/* Clean Modern KPI Cards */}
       <section className="sfd-kpi-grid">
         {/* Metric 1: Weekly Lessons */}
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Weekly Lessons</span>
-            <span className="sfd-kpi-badge emerald">
-              {lessonsOnly.length > 0 ? `${lessonsOnly.length} booked` : '0 booked'}
-            </span>
+            <span className="sfd-kpi-badge emerald">Booked</span>
           </div>
           <div className="sfd-kpi-value">{lessonsOnly.length}</div>
           <div className="sfd-kpi-meta">
-            <span className="sfd-kpi-sub font-editorial">
+            <span className="sfd-kpi-sub">
               {lessonsOnly.length} paid &bull; {nonPayingLessons.length} free
             </span>
           </div>
@@ -353,11 +343,13 @@ Analyze and return the JSON object.`;
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Teaching Hours</span>
-            <span className="sfd-kpi-badge neutral">{totalTeachHours} hrs</span>
+            <span className="sfd-kpi-badge neutral">Billable</span>
           </div>
-          <div className="sfd-kpi-value">{totalTeachHours}<span style={{ fontSize: '20px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>h</span></div>
+          <div className="sfd-kpi-value">
+            {totalTeachHours}<span style={{ fontSize: '0.65em', fontWeight: 600, color: 'var(--sfd-ink-muted)', marginLeft: '2px' }}>h</span>
+          </div>
           <div className="sfd-kpi-meta">
-            <span className="sfd-kpi-sub font-editorial">
+            <span className="sfd-kpi-sub">
               {totalTeachHours}h paid &bull; {nonPayingTeachHours}h free
             </span>
           </div>
@@ -367,18 +359,15 @@ Analyze and return the JSON object.`;
         <div className="sfd-kpi-card">
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Weekly Revenue</span>
-            <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-              <span className="sfd-kpi-badge emerald">£{hourlyRate}/hr</span>
-              {testRate > 0 && <span className="sfd-kpi-badge amber">£{testRate}/test</span>}
-            </div>
+            <span className="sfd-kpi-badge emerald">£{hourlyRate}/hr</span>
           </div>
           <div className="sfd-kpi-value">£{weeklyEarnings.toLocaleString()}</div>
           <div className="sfd-kpi-meta">
-            <ArrowUpRight size={14} style={{ color: 'var(--sfd-emerald)' }} />
-            <span className="sfd-kpi-sub font-editorial">
+            <ArrowUpRight size={13} style={{ color: 'var(--sfd-emerald)', flexShrink: 0 }} />
+            <span className="sfd-kpi-sub">
               {testRate > 0 && testBookings.length > 0 
-                ? `£${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} (${testBookings.length} test${testBookings.length > 1 ? 's' : ''})`
-                : `${totalTeachHours}h @ £${hourlyRate}/hr`}
+                ? `£${weeklyLessonEarnings.toLocaleString()} lessons + £${weeklyTestEarnings.toLocaleString()} tests (${testBookings.length})`
+                : `${totalTeachHours}h @ £${hourlyRate}/hr base rate`}
             </span>
           </div>
         </div>
@@ -388,13 +377,15 @@ Analyze and return the JSON object.`;
           <div className="sfd-kpi-top">
             <span className="sfd-kpi-label">Capacity Fill</span>
             <span className={`sfd-kpi-badge ${thisWeekStats.fillPct >= 75 ? 'emerald' : thisWeekStats.fillPct >= 50 ? 'amber' : 'coral'}`}>
-              {thisWeekStats.fillPct}% Utilization
+              {thisWeekStats.fillPct >= 100 ? 'Full' : `${thisWeekStats.fillPct}%`}
             </span>
           </div>
           <div className="sfd-kpi-value">{thisWeekStats.fillPct}%</div>
           <div className="sfd-kpi-meta">
-            <span className="sfd-kpi-sub font-editorial">
-              {thisWeekStats.freeHours.toFixed(1)}h free bandwidth remaining
+            <span className="sfd-kpi-sub">
+              {thisWeekStats.freeHours > 0 
+                ? `${thisWeekStats.freeHours.toFixed(1)}h remaining bandwidth` 
+                : 'Target bandwidth reached'}
             </span>
           </div>
         </div>

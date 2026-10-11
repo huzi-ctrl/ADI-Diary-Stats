@@ -509,14 +509,17 @@
   box-shadow: 
     0 1px 0 0 rgba(255, 255, 255, 0.95) inset,
     var(--sfd-shadow-soft);
-  border-radius: 22px;
-  padding: 20px 22px;
+  border-radius: 20px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 6px;
   transition: all 0.2s var(--sfd-ease-fluid);
   position: relative;
   overflow: hidden;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 [data-theme="dark"] .sfd-kpi-card {
@@ -535,21 +538,29 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
 }
 
 .sfd-kpi-label {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--sfd-ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .sfd-kpi-badge {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 2.5px 8px;
   border-radius: 9999px;
-  line-height: 1.3;
+  line-height: 1.25;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .sfd-kpi-badge.emerald {
@@ -577,16 +588,31 @@
 }
 
 .sfd-kpi-value {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.15;
   color: var(--sfd-ink-primary);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  margin: 2px 0;
+}
+
+.sfd-kpi-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
 }
 
 .sfd-kpi-sub {
-  font-size: 12.5px;
+  font-family: var(--sfd-font-ui);
+  font-style: normal !important;
+  font-size: 12px;
+  font-weight: 500;
   color: var(--sfd-ink-muted);
+  line-height: 1.35;
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* =========================================================================
@@ -1498,12 +1524,12 @@
 @media (max-width: 640px) {
 
   .sfd-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
 
   .sfd-kpi-card {
-    padding: 14px 12px;
+    padding: 14px 13px;
     border-radius: 18px;
     gap: 4px;
   }
@@ -1513,16 +1539,18 @@
   }
 
   .sfd-kpi-label {
-    font-size: 11.5px;
+    font-size: 12px;
+    font-weight: 700;
   }
 
   .sfd-kpi-badge {
-    font-size: 10px;
-    padding: 2px 6px;
+    font-size: 10.5px;
+    padding: 2px 7px;
   }
 
   .sfd-kpi-sub {
     font-size: 11px;
+    line-height: 1.35;
   }
 
   .sfd-cockpit-split {
