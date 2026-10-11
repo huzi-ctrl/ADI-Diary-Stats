@@ -218,37 +218,37 @@
 }
 
 /* =========================================================================
-   Authentic Liquid Glass Navigation Strip: Caustic Refraction & Optical Distortion
+   Kota Studio Authentic Liquid Glass Navigation Strip
+   4 Stacked Optical Layers: Tint & Shadow, Fog Refraction, Lateral Inner Rim, Caustic Highlights
    ========================================================================= */
 .sfd-liquid-glass-strip {
   position: relative;
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(28px) saturate(220%) brightness(1.04);
-  -webkit-backdrop-filter: blur(28px) saturate(220%) brightness(1.04);
+  background-color: rgba(239, 239, 239, 0.65);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   border-radius: 9999px;
-  padding: 5px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  padding: 4px 6px;
   box-shadow: 
-    0 12px 32px -8px rgba(15, 23, 42, 0.08),
-    0 2px 6px 0 rgba(15, 23, 42, 0.03),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.04),
-    inset 20px 0 24px -20px rgba(37, 99, 235, 0.12),
-    inset -20px 0 24px -20px rgba(236, 72, 153, 0.1);
+    0px 0px 0px 1px rgba(0, 0, 0, 0.08),
+    0px 8px 20px 0px rgba(0, 0, 0, 0.04),
+    inset 16px 0px 16px -24px rgba(0, 0, 0, 0.12),
+    inset -16px 0px 16px -24px rgba(0, 0, 0, 0.12),
+    inset 0px 1px 0px 0px rgba(255, 255, 255, 0.95),
+    inset 0px -1px 0px 0px rgba(255, 255, 255, 0.8),
+    inset 0px 24px 10px -24px rgba(255, 255, 255, 0.9);
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="dark"] .sfd-liquid-glass-strip {
-  background: rgba(18, 24, 38, 0.55);
-  backdrop-filter: blur(28px) saturate(200%);
-  -webkit-backdrop-filter: blur(28px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background-color: rgba(30, 41, 59, 0.65);
   box-shadow: 
-    0 12px 32px -8px rgba(0, 0, 0, 0.5),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.25),
-    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.4);
+    0px 0px 0px 1px rgba(255, 255, 255, 0.12),
+    0px 8px 24px 0px rgba(0, 0, 0, 0.3),
+    inset 0px 1px 0px 0px rgba(255, 255, 255, 0.18),
+    inset 0px -1px 0px 0px rgba(0, 0, 0, 0.3);
 }
 
 .sfd-strip-btn {
@@ -258,51 +258,42 @@
   gap: 6px;
   padding: 6px 14px;
   border-radius: 9999px;
-  border: 1px solid transparent;
+  border: none;
   background: transparent;
-  color: var(--sfd-ink-muted);
+  color: #64748b;
   font-family: var(--sfd-font-ui);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.22s var(--sfd-ease-fluid);
   outline: none;
 }
 
 .sfd-strip-btn:hover {
-  color: var(--sfd-ink-primary);
-  background: rgba(255, 255, 255, 0.5);
+  color: #0f172a;
 }
 
 [data-theme="dark"] .sfd-strip-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
-/* Liquid Glass Active Capsule: Elevated Refractive Lens */
+/* Kota Signature Active Morphing Pill with Royal Lapis Caustics */
 .sfd-strip-btn.active {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(20px) saturate(200%);
-  -webkit-backdrop-filter: blur(20px) saturate(200%);
-  color: #0f172a;
-  font-weight: 700;
-  border: 1px solid rgba(255, 255, 255, 0.95);
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  color: #ffffff !important;
+  font-weight: 600;
   box-shadow: 
-    0 4px 16px -2px rgba(15, 23, 42, 0.1),
-    0 2px 4px -1px rgba(15, 23, 42, 0.06),
-    inset 0 1.5px 1px 0 #ffffff,
-    inset 0 -1px 1.5px 0 rgba(0, 0, 0, 0.06),
-    inset 1px 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset -1px 0 1px 0 rgba(255, 255, 255, 0.8);
-  transform: translateY(-0.5px);
+    0 6px 20px -3px rgba(29, 78, 216, 0.45),
+    inset 0px 1px 1px 0px rgba(255, 255, 255, 0.4),
+    inset 0px -1px 1px 0px rgba(0, 0, 0, 0.2);
 }
 
 [data-theme="dark"] .sfd-strip-btn.active {
-  background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  color: #ffffff !important;
   box-shadow: 
-    0 4px 16px -2px rgba(0, 0, 0, 0.4),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.35);
+    0 6px 20px -3px rgba(37, 99, 235, 0.45),
+    inset 0px 1px 1px 0px rgba(255, 255, 255, 0.4);
 }
 
 /* Kota & Unseen Signature Character Wave & Blur Animation */
@@ -940,19 +931,19 @@
 }
 
 .sfd-dock-btn.active {
-  background: #ffffff;
-  color: #1e293b;
-  font-weight: 700;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+  color: #ffffff !important;
+  font-weight: 600;
   box-shadow: 
-    0 4px 14px -2px rgba(15, 23, 42, 0.08),
-    0 1px 2px 0 rgba(15, 23, 42, 0.04),
-    inset 0px 1px 0px 0px #ffffff;
+    0 6px 20px -3px rgba(29, 78, 216, 0.45),
+    inset 0px 1px 1px 0px rgba(255, 255, 255, 0.4),
+    inset 0px -1px 1px 0px rgba(0, 0, 0, 0.2);
 }
 
 [data-theme="dark"] .sfd-dock-btn.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: #f8fafc;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  color: #ffffff !important;
+  box-shadow: 
+    0 6px 20px -3px rgba(37, 99, 235, 0.45),
+    inset 0px 1px 1px 0px rgba(255, 255, 255, 0.4);
 }
