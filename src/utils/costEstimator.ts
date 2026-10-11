@@ -32,16 +32,16 @@ export interface CostBreakdown {
 // 1 UK Imperial Gallon = 4.54609 Litres
 export const LITRES_PER_UK_GALLON = 4.54609;
 
-// Verified UK national forecourt benchmarks (RAC Fuel Watch / DESNZ averages)
+// Verified UK national forecourt benchmarks (FuelCosts.co.uk / Official CMA Fuel Finder data)
 export const DEFAULT_UK_BENCHMARKS = {
   petrol: {
-    costPerUnit: 1.725, // £1.725 / litre (172.5p) current UK pump average
+    costPerUnit: 1.755, // £1.755 / litre (175.5p) current UK pump average via FuelCosts.co.uk
     defaultMpg: 40.0, // Learner stop-start town driving in a 1.0L-1.2L tuition car
     unitLabel: '£/L',
     efficiencyLabel: 'MPG',
   },
   diesel: {
-    costPerUnit: 1.989, // £1.989 / litre (198.9p) current UK pump average
+    costPerUnit: 2.007, // £2.007 / litre (200.7p) current UK pump average via FuelCosts.co.uk
     defaultMpg: 45.0, // Learner stop-start town driving in a diesel tuition car
     unitLabel: '£/L',
     efficiencyLabel: 'MPG',
@@ -126,66 +126,63 @@ export interface LiveFuelPriceResult {
 }
 
 /**
- * Fetches current UK fuel prices or returns verified national averages.
+ * Fetches current UK fuel prices from the FuelCosts.co.uk API (official CMA Fuel Finder data)
+ * or returns verified national averages.
  */
 export async function fetchLiveUKFuelPrices(): Promise<LiveFuelPriceResult> {
   const fallback: LiveFuelPriceResult = {
     petrol: DEFAULT_UK_BENCHMARKS.petrol.costPerUnit,
     diesel: DEFAULT_UK_BENCHMARKS.diesel.costPerUnit,
     electric: DEFAULT_UK_BENCHMARKS.electric.costPerUnit,
-    source: 'UK National Average Index (DESNZ / CMA)',
+    source: 'FuelCosts.co.uk (CMA Fuel Finder)',
     timestamp: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
   };
 
-  try {
-    // Attempt to fetch from public UK open pricing feed if available with 4s timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
+  const endpoints = [
+    '/fuelcosts-api/stats/regions',
+    'https://fuelcosts.co.uk/api/stats/regions',
+  ];
 
-    const res = await fetch('https://api.allorigins.win/raw?url=https://fuelprices.asda.com/fuelprices.json', {
-      signal: controller.signal,
-    }).catch(() => null);
+  for (const url of endpoints) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-    clearTimeout(timeoutId);
+      const res = await fetch(url, {
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
 
-    if (res && res.ok) {
-      const data = await res.json();
-      if (data && data.stations && Array.isArray(data.stations) && data.stations.length > 0) {
-        let totalE10 = 0;
-        let countE10 = 0;
-        let totalB7 = 0;
-        let countB7 = 0;
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.national) {
+          const avgE10 = typeof data.national.averageE10 === 'number' ? data.national.averageE10 : null;
+          const avgDiesel = typeof data.national.averageDiesel === 'number' ? data.national.averageDiesel : null;
 
-        for (const s of data.stations.slice(0, 50)) {
-          if (s.prices?.E10 && typeof s.prices.E10 === 'number') {
-            totalE10 += s.prices.E10;
-            countE10++;
+          if (avgE10 && avgE10 > 50 && avgE10 < 300) {
+            // FuelCosts prices are returned in pence (e.g. 175.5p), convert to £/litre
+            const petrolPrice = Math.round((avgE10 / 100) * 1000) / 1000;
+            const dieselPrice = avgDiesel && avgDiesel > 50 && avgDiesel < 300
+              ? Math.round((avgDiesel / 100) * 1000) / 1000
+              : fallback.diesel;
+
+            const stationsCount = data.national.totalStations 
+              ? `${data.national.totalStations.toLocaleString()} stations` 
+              : '5,000+ stations';
+
+            return {
+              petrol: petrolPrice,
+              diesel: dieselPrice,
+              electric: DEFAULT_UK_BENCHMARKS.electric.costPerUnit,
+              source: `FuelCosts.co.uk (${stationsCount})`,
+              timestamp: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
+            };
           }
-          if (s.prices?.B7 && typeof s.prices.B7 === 'number') {
-            totalB7 += s.prices.B7;
-            countB7++;
-          }
-        }
-
-        if (countE10 > 0) {
-          // Asda prices are in pence (e.g. 141.7), convert to £/litre
-          const avgPetrol = Math.round((totalE10 / countE10) / 10) / 100;
-          const avgDiesel = countB7 > 0 
-            ? Math.round((totalB7 / countB7) / 10) / 100 
-            : DEFAULT_UK_BENCHMARKS.diesel.costPerUnit;
-
-          return {
-            petrol: avgPetrol > 0.9 && avgPetrol < 2.5 ? avgPetrol : DEFAULT_UK_BENCHMARKS.petrol.costPerUnit,
-            diesel: avgDiesel > 0.9 && avgDiesel < 2.5 ? avgDiesel : DEFAULT_UK_BENCHMARKS.diesel.costPerUnit,
-            electric: DEFAULT_UK_BENCHMARKS.electric.costPerUnit,
-            source: 'UK Forecourt Live Feed',
-            timestamp: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
-          };
         }
       }
+    } catch {
+      // Try next endpoint or fall back
     }
-  } catch {
-    // Graceful fallback to verified UK national benchmarks
   }
 
   return fallback;

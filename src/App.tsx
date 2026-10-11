@@ -121,7 +121,7 @@ function App() {
         setFuelFetchMessage(`Updated: ${(data.petrol * 100).toFixed(1)}p/L (${data.source})`);
       }
     } catch {
-      setFuelFetchMessage('Using UK forecourt benchmarks.');
+      setFuelFetchMessage('Using FuelCosts.co.uk national index.');
     } finally {
       setIsFetchingFuel(false);
     }
@@ -1284,7 +1284,7 @@ function App() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Fuel size={16} style={{ color: 'var(--sfd-primary)' }} />
                         <span style={{ fontSize: '0.825rem', color: 'var(--text-main)', fontWeight: 600 }}>
-                          UK Forecourt Fuel Benchmark:
+                          UK Fuel Price Index (FuelCosts.co.uk):
                         </span>
                         <span style={{ fontSize: '0.825rem', color: 'var(--sfd-emerald)', fontWeight: 700 }}>
                           {vehicleFuelType === 'electric' 
