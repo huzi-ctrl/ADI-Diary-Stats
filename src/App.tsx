@@ -10,6 +10,8 @@ import { useUserSettings } from './hooks/useUserSettings';
 import { useCalendarData } from './hooks/useCalendarData';
 import { useWeekNavigation } from './hooks/useWeekNavigation';
 import { DesignSystemMockup } from './components/mockup/DesignSystemMockup';
+import { LiquidGlassCard } from './components/ui/LiquidGlassCard';
+import { MagneticPill } from './components/ui/MagneticPill';
 
 import './components/mockup/design-system-mockup.css';
 
@@ -118,71 +120,75 @@ function App() {
 
   return (
     <div className="sfd-mockup-root">
+      {/* Ambient Caustic Glow Orbs (Unseen Scene) */}
+      <div className="sfd-ambient-orb-top" />
+      <div className="sfd-ambient-orb-bottom" />
+
       {/* Master Fluid Header */}
-      <header className="sfd-header">
+      <LiquidGlassCard tilt={false} glare={true} className="sfd-header">
         <div className="sfd-brand">
-          <div className="sfd-brand-symbol">
-            <img src="/favicon.png" alt="ADI stats logo" style={{ height: '30px', width: '30px', objectFit: 'contain' }} />
+          <div className="pearl-sphere">
+            <span style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(28, 25, 23, 0.75)' }}>01</span>
           </div>
           <div className="sfd-brand-text">
-            <span className="sfd-brand-title">ADI stats</span>
+            <span className="sfd-brand-title iridescent-text">ADI stats</span>
             <span className="sfd-brand-sub font-editorial">Approved Driving Instructor Schedule Analytics</span>
           </div>
         </div>
 
         <div className="sfd-header-controls">
-          {/* Kota Studio 4-Layer Liquid Glass Navigation Strip */}
+          {/* Liquid Glass Navigation Strip */}
           {onboardingComplete && (
             <nav className="sfd-liquid-glass-strip" aria-label="Main Navigation">
-              <button
+              <MagneticPill
                 type="button"
                 className={`sfd-strip-btn ${viewMode === 'dashboard' ? 'active' : ''}`}
                 onClick={() => setViewMode('dashboard')}
               >
                 <LayoutDashboard size={14} />
                 <span>Weekly</span>
-              </button>
-              <button
+              </MagneticPill>
+              <MagneticPill
                 type="button"
                 className={`sfd-strip-btn ${viewMode === 'yearly' ? 'active' : ''}`}
                 onClick={() => setViewMode('yearly')}
               >
                 <TrendingUp size={14} />
                 <span>Yearly</span>
-              </button>
-              <button
+              </MagneticPill>
+              <MagneticPill
                 type="button"
                 className={`sfd-strip-btn ${viewMode === 'events' ? 'active' : ''}`}
                 onClick={() => setViewMode('events')}
               >
                 <List size={14} />
                 <span>Explorer</span>
-              </button>
+              </MagneticPill>
               {enableAiInsights && (
-                <button
+                <MagneticPill
                   type="button"
                   className={`sfd-strip-btn ${viewMode === 'ai' ? 'active' : ''}`}
                   onClick={() => setViewMode('ai')}
                 >
                   <Sparkles size={14} />
                   <span>AI</span>
-                </button>
+                </MagneticPill>
               )}
-              <button
+              <MagneticPill
                 type="button"
                 className={`sfd-strip-btn ${viewMode === 'settings' ? 'active' : ''}`}
                 onClick={() => setViewMode('settings')}
               >
                 <Settings size={14} />
                 <span>Settings</span>
-              </button>
+              </MagneticPill>
             </nav>
           )}
 
           {/* Week Selector Chip in Header (when on weekly view) */}
           {onboardingComplete && viewMode === 'dashboard' && (
             <div className="sfd-week-chip">
-              <button 
+              <MagneticPill 
                 type="button" 
                 className="sfd-chip-btn" 
                 onClick={handlePrevWeek}
@@ -190,11 +196,11 @@ function App() {
                 aria-label="Previous Week"
               >
                 <ChevronLeft size={16} />
-              </button>
+              </MagneticPill>
               <span className="sfd-week-label">
                 {weekRangeLabel}
               </span>
-              <button 
+              <MagneticPill 
                 type="button" 
                 className="sfd-chip-btn" 
                 onClick={handleNextWeek}
@@ -202,8 +208,8 @@ function App() {
                 aria-label="Next Week"
               >
                 <ChevronRight size={16} />
-              </button>
-              <button 
+              </MagneticPill>
+              <MagneticPill 
                 type="button" 
                 className="sfd-chip-btn" 
                 onClick={handleCurrentWeek}
@@ -211,14 +217,14 @@ function App() {
                 aria-label="Current Week"
               >
                 <RefreshCw size={13} />
-              </button>
+              </MagneticPill>
             </div>
           )}
 
           {/* Year Selector Chip in Header (when on yearly view) */}
           {onboardingComplete && viewMode === 'yearly' && (
             <div className="sfd-week-chip">
-              <button 
+              <MagneticPill 
                 type="button" 
                 className="sfd-chip-btn" 
                 disabled={selectedYear === null || availableYears.indexOf(selectedYear) === availableYears.length - 1}
@@ -233,7 +239,7 @@ function App() {
                 title="Older Year"
               >
                 <ChevronLeft size={16} />
-              </button>
+              </MagneticPill>
               <select
                 value={selectedYear || 'all'}
                 onChange={(e) => setSelectedYear(e.target.value === 'all' ? null : parseInt(e.target.value, 10))}
@@ -253,7 +259,7 @@ function App() {
                   <option key={year} value={year}>{year} Stats</option>
                 ))}
               </select>
-              <button 
+              <MagneticPill 
                 type="button" 
                 className="sfd-chip-btn" 
                 disabled={selectedYear === null}
@@ -270,12 +276,12 @@ function App() {
                 title="Newer Year"
               >
                 <ChevronRight size={16} />
-              </button>
+              </MagneticPill>
             </div>
           )}
 
           {/* AI Copilot Toggle Pill */}
-          <button 
+          <MagneticPill 
             type="button" 
             className={`sfd-ai-toggle ${enableAiInsights ? 'active' : ''}`}
             onClick={() => {
@@ -289,18 +295,18 @@ function App() {
           >
             <Sparkles size={14} />
             <span>AI Copilot: {enableAiInsights ? 'On' : 'Off'}</span>
-          </button>
+          </MagneticPill>
 
           {/* Theme Switcher */}
-          <button 
+          <MagneticPill 
             type="button" 
             className="sfd-chip-btn" 
             style={{ width: '36px', height: '36px', border: '1px solid var(--border-light)' }}
             onClick={toggleTheme}
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           >
-            {theme === 'dark' ? <Sun size={15} style={{ color: 'var(--accent-amber)' }} /> : <Moon size={15} style={{ color: 'var(--accent-indigo)' }} />}
-          </button>
+            {theme === 'dark' ? <Sun size={15} style={{ color: 'var(--accent-amber)' }} /> : <Moon size={15} style={{ color: 'var(--accent-rose)' }} />}
+          </MagneticPill>
 
           {/* Connected file / sync / clear buttons when onboarding complete */}
           {onboardingComplete && (
@@ -309,7 +315,7 @@ function App() {
                 {fileName}
               </span>
               {calendarUrl && (
-                <button
+                <MagneticPill
                   type="button"
                   className="sfd-btn-primary"
                   style={{ padding: '6px 14px', fontSize: '13px' }}
@@ -319,9 +325,9 @@ function App() {
                 >
                   <RefreshCw size={13} className={isSyncing ? 'spin-animation' : ''} />
                   <span>{isSyncing ? 'Syncing...' : 'Sync Live'}</span>
-                </button>
+                </MagneticPill>
               )}
-              <button 
+              <MagneticPill 
                 type="button" 
                 className="btn btn-danger" 
                 style={{ padding: '6px 14px', fontSize: '13px' }} 
@@ -329,12 +335,12 @@ function App() {
               >
                 <LogOut size={13} />
                 <span>Clear</span>
-              </button>
+              </MagneticPill>
             </div>
           )}
 
           {/* Showcase Pill */}
-          <button 
+          <MagneticPill 
             type="button" 
             className="sfd-prototype-btn-return"
             onClick={() => setShowMockup(true)}
@@ -342,9 +348,9 @@ function App() {
           >
             <Sparkles size={12} style={{ display: 'inline', marginRight: '4px' }} />
             Showcase
-          </button>
+          </MagneticPill>
         </div>
-      </header>
+      </LiquidGlassCard>
 
       {/* Main Content Area */}
       <main>
@@ -728,57 +734,57 @@ function App() {
         )}
       </main>
 
-      {/* Floating Bottom Navigation Dock (Kota Liquid Glass Pill) */}
+      {/* Floating Bottom Navigation Dock (Apple Liquid Glass Pill) */}
       {onboardingComplete && (
-        <div className="sfd-floating-dock">
-          <nav className="sfd-dock-glass" aria-label="Quick Switcher">
-            <button
+        <div className="sfd-dock-container">
+          <nav className="sfd-dock" aria-label="Quick Switcher">
+            <MagneticPill
               type="button"
-              className={`sfd-dock-item ${viewMode === 'dashboard' ? 'active' : ''}`}
+              className={`sfd-dock-btn ${viewMode === 'dashboard' ? 'active' : ''}`}
               onClick={() => setViewMode('dashboard')}
               title="Weekly Dashboard"
             >
               <LayoutDashboard size={16} />
               <span>Weekly</span>
-            </button>
-            <button
+            </MagneticPill>
+            <MagneticPill
               type="button"
-              className={`sfd-dock-item ${viewMode === 'yearly' ? 'active' : ''}`}
+              className={`sfd-dock-btn ${viewMode === 'yearly' ? 'active' : ''}`}
               onClick={() => setViewMode('yearly')}
               title="Yearly Stats"
             >
               <TrendingUp size={16} />
               <span>Yearly</span>
-            </button>
-            <button
+            </MagneticPill>
+            <MagneticPill
               type="button"
-              className={`sfd-dock-item ${viewMode === 'events' ? 'active' : ''}`}
+              className={`sfd-dock-btn ${viewMode === 'events' ? 'active' : ''}`}
               onClick={() => setViewMode('events')}
               title="Explorer"
             >
               <List size={16} />
               <span>Explorer</span>
-            </button>
+            </MagneticPill>
             {enableAiInsights && (
-              <button
+              <MagneticPill
                 type="button"
-                className={`sfd-dock-item ${viewMode === 'ai' ? 'active' : ''}`}
+                className={`sfd-dock-btn ${viewMode === 'ai' ? 'active' : ''}`}
                 onClick={() => setViewMode('ai')}
                 title="AI Insights"
               >
                 <Sparkles size={16} />
                 <span>AI</span>
-              </button>
+              </MagneticPill>
             )}
-            <button
+            <MagneticPill
               type="button"
-              className={`sfd-dock-item ${viewMode === 'settings' ? 'active' : ''}`}
+              className={`sfd-dock-btn ${viewMode === 'settings' ? 'active' : ''}`}
               onClick={() => setViewMode('settings')}
               title="Settings"
             >
               <Settings size={16} />
               <span>Settings</span>
-            </button>
+            </MagneticPill>
           </nav>
         </div>
       )}

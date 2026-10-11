@@ -1,47 +1,51 @@
-@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500;1,6..72,600&display=swap');
 
 :root {
-  /* Default: Light Mode First (Unseen Fluid Craft & Kota Liquid Glass) */
-  --bg-dark: #f8f9fb;
-  --bg-card: #ffffff;
-  --bg-card-hover: #ffffff;
-  --bg-input: #f1f4f9;
+  /* =========================================================================
+     Unseen.co Architectural Travertine, Rose & Iridescent Pearl Palette
+     ========================================================================= */
+  --bg-dark: #FAF6F4;
+  --bg-stage: #FAF6F4;
+  --bg-card: rgba(255, 255, 255, 0.82);
+  --bg-card-hover: rgba(255, 255, 255, 0.92);
+  --bg-input: #F1EDEB;
+  --bg-nested: #F1EDEB;
+  --bg-nested-hover: #E8E2DE;
   
-  --primary-glow: rgba(29, 78, 216, 0.08);
-  --accent-primary: #1d4ed8;
-  --accent-primary-hover: #1e40af;
-  --accent-primary-active: #172554;
-  --accent-primary-soft: #eff6ff;
+  --primary-glow: rgba(246, 200, 195, 0.25);
+  --accent-primary: #1c1917;
+  --accent-primary-hover: #292524;
+  --accent-primary-active: #0c0a09;
+  --accent-primary-soft: rgba(246, 200, 195, 0.35);
 
-  --accent-purple: #1d4ed8;
-  --accent-indigo: #2563eb;
-  --accent-cyan: #0284c7;
+  --accent-rose: #F6C8C3;
+  --accent-sand: #F1EDEB;
   --accent-emerald: #059669;
   --accent-emerald-soft: #ecfdf5;
   --accent-amber: #d97706;
   --accent-amber-soft: #fffbeb;
   --accent-coral: #e11d48;
   --accent-coral-soft: #fff1f2;
-  --accent-pink: #db2777;
+  --accent-purple: #7c3aed;
+  --accent-purple-soft: #f5f3ff;
 
-  --text-main: #0f172a;
-  --text-muted: #475569;
-  --text-dim: #64748b;
+  --text-main: #1c1917;
+  --text-muted: #78716c;
+  --text-dim: #a8a29e;
   
-  --border-glow: rgba(29, 78, 216, 0.2);
-  --border-light: rgba(15, 23, 42, 0.06);
-  --border-medium: rgba(15, 23, 42, 0.12);
+  --border-glow: rgba(246, 200, 195, 0.5);
+  --border-light: rgba(28, 25, 23, 0.06);
+  --border-medium: rgba(28, 25, 23, 0.12);
 
-  --bg-nested: #f1f4f9;
-  --bg-nested-hover: #e8edf5;
-  --card-shadow: 0 14px 34px -8px rgba(15, 23, 42, 0.04), 0 2px 8px -2px rgba(15, 23, 42, 0.02);
-  --card-shadow-hover: 0 22px 48px -10px rgba(15, 23, 42, 0.08), 0 4px 14px -2px rgba(15, 23, 42, 0.03);
+  --card-shadow: 0 16px 36px -8px rgba(28, 25, 23, 0.06), 0 2px 8px -2px rgba(28, 25, 23, 0.02);
+  --card-shadow-hover: 0 24px 50px -10px rgba(28, 25, 23, 0.1), 0 4px 14px -2px rgba(28, 25, 23, 0.04);
+  --pearl-glow: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95), rgba(246, 200, 195, 0.6) 30%, rgba(200, 220, 255, 0.5) 60%, rgba(220, 200, 255, 0.7) 100%);
 
-  --font-display: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-body: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-editorial: 'Newsreader', Georgia, 'Times New Roman', serif;
   
-  --transition-smooth: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .font-editorial {
@@ -49,50 +53,42 @@
   font-style: italic;
 }
 
-.hover-serif-switch {
-  transition: font-family 0.2s ease, letter-spacing 0.2s ease;
-}
-.hover-serif-switch:hover {
-  font-family: var(--font-editorial);
-  font-style: italic;
-  letter-spacing: -0.01em;
-}
-
 [data-theme="dark"] {
-  --bg-dark: #0a0d14;
-  --bg-card: rgba(20, 26, 38, 0.85);
-  --bg-card-hover: rgba(26, 34, 50, 0.92);
-  --bg-input: rgba(15, 20, 30, 0.95);
+  --bg-dark: #12100f;
+  --bg-stage: #12100f;
+  --bg-card: rgba(28, 25, 23, 0.82);
+  --bg-card-hover: rgba(38, 34, 32, 0.92);
+  --bg-input: rgba(41, 37, 36, 0.7);
+  --bg-nested: rgba(41, 37, 36, 0.7);
+  --bg-nested-hover: rgba(56, 51, 49, 0.85);
   
-  --primary-glow: rgba(59, 130, 246, 0.12);
-  --accent-primary: #3b82f6;
-  --accent-primary-hover: #60a5fa;
-  --accent-primary-active: #2563eb;
-  --accent-primary-soft: rgba(59, 130, 246, 0.15);
+  --primary-glow: rgba(246, 200, 195, 0.12);
+  --accent-primary: #FAF6F4;
+  --accent-primary-hover: #F1EDEB;
+  --accent-primary-active: #E7E1DA;
+  --accent-primary-soft: rgba(246, 200, 195, 0.15);
 
-  --accent-purple: #3b82f6;
-  --accent-indigo: #60a5fa;
-  --accent-cyan: #38bdf8;
+  --accent-rose: #F6C8C3;
+  --accent-sand: #292524;
   --accent-emerald: #10b981;
   --accent-emerald-soft: rgba(16, 185, 129, 0.15);
   --accent-amber: #f59e0b;
   --accent-amber-soft: rgba(245, 158, 11, 0.15);
   --accent-coral: #f43f5e;
   --accent-coral-soft: rgba(244, 63, 94, 0.15);
-  --accent-pink: #ec4899;
+  --accent-purple: #a78bfa;
+  --accent-purple-soft: rgba(167, 139, 250, 0.15);
 
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
+  --text-main: #FAF6F4;
+  --text-muted: #d6d3d1;
+  --text-dim: #a8a29e;
   
-  --border-glow: rgba(59, 130, 246, 0.2);
+  --border-glow: rgba(246, 200, 195, 0.3);
   --border-light: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.15);
+  --border-medium: rgba(255, 255, 255, 0.16);
 
-  --bg-nested: rgba(255, 255, 255, 0.04);
-  --bg-nested-hover: rgba(255, 255, 255, 0.08);
-  --card-shadow: 0 14px 34px -8px rgba(0, 0, 0, 0.4);
-  --card-shadow-hover: 0 22px 48px -10px rgba(0, 0, 0, 0.6);
+  --card-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.5);
+  --card-shadow-hover: 0 24px 54px -10px rgba(0, 0, 0, 0.7);
 }
 
 * {
@@ -112,7 +108,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom Fluid Scrollbar */
+/* Fluid Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -131,204 +127,177 @@ body {
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
   color: var(--text-main);
-}
-
-/* Container Layouts */
-.app-container {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 1.25rem 1rem 6rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .app-container {
-    padding: 2rem 1.5rem 6rem 1.5rem;
-    gap: 2rem;
-  }
 }
 
 /* =========================================================================
-   Kota Studio 4-Layer Liquid Glass Composite
+   Unseen.co Iridescent Text Sheen
    ========================================================================= */
-.kota-liquid-glass {
+.iridescent-text {
+  background: linear-gradient(135deg, #1c1917 0%, #292524 40%, #7c3aed 65%, #2563eb 82%, #ec4899 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: iridescentShimmer 8s ease infinite;
+}
+
+[data-theme="dark"] .iridescent-text {
+  background: linear-gradient(135deg, #FAF6F4 0%, #F6C8C3 40%, #c084fc 65%, #60a5fa 82%, #f472b6 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes iridescentShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* =========================================================================
+   Apple visionOS Dynamic Liquid Glass & Hyperplexed Specular Tracking
+   ========================================================================= */
+.liquid-glass-card {
   position: relative;
-  background-color: rgba(239, 239, 239, 0.68);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  border-radius: 9999px;
-  box-shadow: 
-    0px 0px 0px 1px rgba(0, 0, 0, 0.08),
-    0px 8px 20px 0px rgba(0, 0, 0, 0.04),
-    inset 16px 0px 16px -24px rgba(0, 0, 0, 0.12),
-    inset -16px 0px 16px -24px rgba(0, 0, 0, 0.12),
-    inset 0px 1px 0px 0px rgba(255, 255, 255, 0.95),
-    inset 0px -1px 0px 0px rgba(255, 255, 255, 0.8),
-    inset 0px 24px 10px -24px rgba(255, 255, 255, 0.9);
-  transition: var(--transition-smooth);
-}
-
-[data-theme="dark"] .kota-liquid-glass {
-  background-color: rgba(30, 38, 54, 0.65);
-  box-shadow: 
-    0px 0px 0px 1px rgba(255, 255, 255, 0.1),
-    0px 8px 24px 0px rgba(0, 0, 0, 0.3),
-    inset 16px 0px 16px -24px rgba(0, 0, 0, 0.4),
-    inset -16px 0px 16px -24px rgba(0, 0, 0, 0.4),
-    inset 0px 1px 0px 0px rgba(255, 255, 255, 0.25),
-    inset 0px -1px 0px 0px rgba(0, 0, 0, 0.4);
-}
-
-/* Kota Signature Character Blur Wave */
-@keyframes charBlurPulse {
-  0% { filter: blur(0px); }
-  50% { filter: blur(1.5px); }
-  100% { filter: blur(0px); }
-}
-.char-hover:hover .char-span {
-  animation: charBlurPulse 0.24s ease forwards;
-}
-.char-span:nth-child(1) { animation-delay: 0.00s; }
-.char-span:nth-child(2) { animation-delay: 0.03s; }
-.char-span:nth-child(3) { animation-delay: 0.06s; }
-.char-span:nth-child(4) { animation-delay: 0.09s; }
-.char-span:nth-child(5) { animation-delay: 0.12s; }
-.char-span:nth-child(6) { animation-delay: 0.15s; }
-.char-span:nth-child(7) { animation-delay: 0.18s; }
-.char-span:nth-child(8) { animation-delay: 0.21s; }
-
-/* Header styling - Sculpted & Fluid */
-.app-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.25rem;
   background: var(--bg-card);
-  border: 1px solid var(--border-light);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
   border-radius: 26px;
-  padding: 1.25rem 1.5rem;
-  box-shadow: var(--card-shadow);
-  animation: fadeIn 0.6s ease-out;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
 
-@media (min-width: 768px) {
-  .app-header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.25rem 2rem;
-  }
+/* Hyperplexed Spotlight Glow on Mouse Movement */
+.liquid-glass-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 27px;
+  background: radial-gradient(
+    360px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(246, 200, 195, 0.75),
+    rgba(190, 215, 255, 0.35) 35%,
+    rgba(0, 0, 0, 0.05) 70%,
+    transparent 90%
+  );
+  z-index: -1;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
-.brand-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+[data-theme="dark"] .liquid-glass-card::before {
+  background: radial-gradient(
+    360px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(246, 200, 195, 0.3),
+    rgba(147, 197, 253, 0.2) 35%,
+    rgba(255, 255, 255, 0.05) 70%,
+    transparent 90%
+  );
 }
 
-.brand-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+/* Internal Specular Glare Layer that follows mouse */
+.liquid-glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  background: radial-gradient(
+    280px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.65),
+    rgba(255, 255, 255, 0) 65%
+  );
+  pointer-events: none;
+  z-index: 10;
+  opacity: var(--glare-opacity, 0);
+  transition: opacity 0.25s ease;
+}
+
+[data-theme="dark"] .liquid-glass-card::after {
+  background: radial-gradient(
+    280px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0) 65%
+  );
+}
+
+.liquid-glass-card:hover::after {
+  --glare-opacity: 1;
+}
+
+/* Apple visionOS 3D Rim Highlights */
+.vision-rim {
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.9) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.05) inset,
+    var(--card-shadow);
+}
+
+[data-theme="dark"] .vision-rim {
+  box-shadow: 
+    0 1px 0 0 rgba(255, 255, 255, 0.15) inset,
+    0 -1px 0 0 rgba(0, 0, 0, 0.4) inset,
+    var(--card-shadow);
+}
+
+/* Hyperplexed Magnetic Interactive Button/Pill */
+.magnetic-pill {
+  position: relative;
+  border-radius: 9999px;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+.magnetic-pill:active {
+  transform: scale(0.95) !important;
+}
+
+/* Unseen Floating Pearl Sphere */
+.pearl-sphere {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--pearl-glow);
+  box-shadow: 
+    0 12px 28px -6px rgba(246, 200, 195, 0.6),
+    inset -4px -4px 10px rgba(140, 160, 220, 0.5),
+    inset 4px 4px 12px rgba(255, 255, 255, 0.95);
+  animation: floatPearl 5s ease-in-out infinite;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 18px -4px rgba(29, 78, 216, 0.35);
-  color: #fff;
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+@keyframes floatPearl {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(6deg); }
 }
 
-/* Sculpted Organic Card Base (Unseen Studio 24px) */
-.glass-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: 24px;
-  padding: 1.5rem;
-  box-shadow: var(--card-shadow);
-  transition: var(--transition-smooth);
+/* Interactive Fluid Dock */
+.fluid-dock {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 16px 36px -8px rgba(28, 25, 23, 0.1),
+    0 2px 8px -2px rgba(28, 25, 23, 0.04),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
 }
 
-@media (min-width: 768px) {
-  .glass-card {
-    border-radius: 26px;
-    padding: 1.75rem;
-  }
+[data-theme="dark"] .fluid-dock {
+  background: rgba(28, 25, 23, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 16px 36px -8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-.glass-card:hover {
-  border-color: var(--border-medium);
-  box-shadow: var(--card-shadow-hover);
-  transform: translateY(-1px);
-}
-
-/* KPI Metrics Grid */
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  animation: slideUp 0.6s ease-out;
-}
-
-@media (min-width: 768px) {
-  .kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.25rem;
-  }
-}
-
-.kpi-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  border-radius: 22px;
-  padding: 1.25rem 1.5rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--card-shadow);
-  transition: var(--transition-smooth);
-}
-
-.kpi-card:hover {
-  box-shadow: var(--card-shadow-hover);
-  transform: translateY(-2px);
-  border-color: var(--border-medium);
-}
-
-.kpi-title {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  font-weight: 500;
-  letter-spacing: 0.01em;
-}
-
-.kpi-value {
-  font-size: 2.25rem;
-  font-weight: 700;
-  font-family: var(--font-display);
-  color: var(--text-main);
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-}
-
-.kpi-footer {
-  font-size: 0.8125rem;
-  color: var(--text-dim);
-  margin-top: auto;
-}
-
-/* Interactive Pill Buttons */
+/* Standard Buttons & Utility Classes */
 .btn {
   font-family: var(--font-display);
   font-weight: 600;
@@ -345,20 +314,25 @@ h1, h2, h3, h4, h5, h6 {
   outline: none;
 }
 
-.btn:active {
-  transform: scale(0.97);
+.btn-primary {
+  background: #1c1917;
+  color: #FAF6F4;
+  box-shadow: 0 6px 18px -3px rgba(28, 25, 23, 0.25);
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
-  color: #fff;
-  box-shadow: 0 6px 18px -3px rgba(29, 78, 216, 0.35);
+[data-theme="dark"] .btn-primary {
+  background: #FAF6F4;
+  color: #1c1917;
+  box-shadow: 0 6px 18px -3px rgba(0, 0, 0, 0.4);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
-  box-shadow: 0 8px 22px -3px rgba(29, 78, 216, 0.45);
+  background: #292524;
   transform: translateY(-1px);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background: #ffffff;
 }
 
 .btn-secondary {
@@ -379,75 +353,6 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--accent-coral);
 }
 
-.btn-danger:hover {
-  background: rgba(225, 29, 72, 0.15);
-}
-
-/* Charts Grid */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  animation: fadeIn 0.8s ease-out;
-}
-
-@media (min-width: 900px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
-  }
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
-}
-
-.chart-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--text-main);
-}
-
-/* SVG Chart Elements */
-.svg-chart {
-  width: 100%;
-  height: 220px;
-  overflow: visible;
-  min-width: 600px;
-}
-
-.chart-scroll-container {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 0.5rem;
-  scrollbar-width: thin;
-}
-
-.bar-hover {
-  transition: fill 0.2s ease-in-out;
-}
-
-.bar-hover:hover {
-  fill: var(--accent-primary);
-  filter: drop-shadow(0 4px 10px rgba(29, 78, 216, 0.3));
-}
-
-.chart-tooltip {
-  background: var(--bg-card);
-  border: 1px solid var(--border-medium);
-  border-radius: 12px;
-  padding: 8px 14px;
-  font-size: 0.8125rem;
-  pointer-events: none;
-  box-shadow: var(--card-shadow);
-}
-
 /* Search and Input Fields */
 .search-input, .select-input {
   background: var(--bg-input);
@@ -464,50 +369,10 @@ h1, h2, h3, h4, h5, h6 {
 .search-input:focus, .select-input:focus {
   border-color: var(--accent-primary);
   background: var(--bg-card);
-  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+  box-shadow: 0 0 0 3px rgba(246, 200, 195, 0.35);
 }
 
-/* Table Wrapper */
-.table-wrapper {
-  overflow-x: auto;
-  border-radius: 20px;
-  border: 1px solid var(--border-light);
-  background: var(--bg-card);
-  box-shadow: var(--card-shadow);
-}
-
-.event-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 0.875rem;
-}
-
-.event-table th {
-  background: var(--bg-nested);
-  padding: 1rem 1.25rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border-light);
-  font-size: 0.8125rem;
-}
-
-.event-table td {
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text-main);
-  vertical-align: middle;
-}
-
-.event-table tr:last-child td {
-  border-bottom: none;
-}
-
-.event-table tr:hover td {
-  background: var(--bg-nested);
-}
-
-/* Category Badges - Soft Pill Aesthetics */
+/* Category Badges */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -518,10 +383,10 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0.01em;
 }
 
-.badge-work { background: var(--accent-primary-soft); color: var(--accent-primary); border: 1px solid rgba(29, 78, 216, 0.2); }
-.badge-fitness { background: var(--accent-emerald-soft); color: var(--accent-emerald); border: 1px solid var(--accent-emerald-border); }
+.badge-work { background: rgba(246, 200, 195, 0.35); color: #1c1917; border: 1px solid rgba(246, 200, 195, 0.6); }
+.badge-fitness { background: var(--accent-emerald-soft); color: var(--accent-emerald); border: 1px solid rgba(5, 150, 105, 0.2); }
 .badge-social { background: #fdf2f8; color: #db2777; border: 1px solid rgba(219, 39, 119, 0.2); }
-.badge-personal { background: var(--accent-amber-soft); color: var(--accent-amber); border: 1px solid var(--accent-amber-border); }
+.badge-personal { background: var(--accent-amber-soft); color: var(--accent-amber); border: 1px solid rgba(217, 119, 6, 0.2); }
 .badge-default { background: var(--bg-nested); color: var(--text-muted); border: 1px solid var(--border-light); }
 
 /* Animation Keyframes */
@@ -542,49 +407,4 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
-}
-
-/* Horizontal Tab Strip - Kota Liquid Glass Pill Strip */
-.nav-tab-strip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  background: rgba(239, 239, 239, 0.65);
-  backdrop-filter: blur(14px) saturate(180%);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  padding: 0.35rem 0.5rem;
-  border-radius: 9999px;
-  box-shadow: 
-    0px 0px 0px 1px rgba(0, 0, 0, 0.08),
-    0px 8px 20px 0px rgba(0, 0, 0, 0.04),
-    inset 0px 1px 0px 0px rgba(255, 255, 255, 0.95);
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-[data-theme="dark"] .nav-tab-strip {
-  background: rgba(30, 38, 54, 0.65);
-  box-shadow: 
-    0px 0px 0px 1px rgba(255, 255, 255, 0.1),
-    0px 8px 20px 0px rgba(0, 0, 0, 0.3);
-}
-
-.nav-tab-strip::-webkit-scrollbar {
-  display: none;
-}
-
-/* Floating Bottom Navigation Dock (Fixed for Mobile & Quick Switching) */
-.floating-bottom-dock {
-  position: fixed;
-  bottom: 24px;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.floating-bottom-dock > nav {
-  pointer-events: auto;
 }
