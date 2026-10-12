@@ -39,6 +39,16 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
 VITE_OUTLOOK_CLIENT_ID=your_microsoft_client_id_here
 ```
 
+#### Microsoft / Outlook App Registration Configuration:
+In the [Azure Portal](https://portal.azure.com/) / Microsoft Entra ID:
+1. Go to **App registrations** and select your application.
+2. Under **Manage**, select **Authentication**.
+3. Under **Redirect URIs**, ensure your domain is added (e.g. `https://www.adistats.co.uk/` and/or `http://localhost:5173/`).
+4. Under **Implicit grant and hybrid flows**, check the box:
+   - ✅ **Access tokens (used for implicit flows)**
+   - ✅ **ID tokens (used for implicit and hybrid flows)**
+5. Click **Save** at the top. *(This fixes `AADSTS700051: response_type 'token' is not enabled`)*.
+
 ### 3. Run the Development Server
 ```bash
 npm run dev
