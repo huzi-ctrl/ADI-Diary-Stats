@@ -67,13 +67,23 @@ export function useCalendarData(
     if (cachedLive) {
       try {
         const events = JSON.parse(cachedLive);
-        return events.map((e: Record<string, unknown>) => ({
-          ...e,
-          start: new Date(String(e.start)),
-          end: new Date(String(e.end))
-        })) as CalendarEvent[];
+        if (Array.isArray(events)) {
+          return events
+            .map((e: Record<string, unknown>) => {
+              const start = new Date(String(e.start));
+              const end = new Date(String(e.end));
+              if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+              return {
+                ...e,
+                start,
+                end
+              };
+            })
+            .filter((e): e is CalendarEvent => e !== null);
+        }
       } catch (err) {
         console.error('Failed to parse cached live calendar events', err);
+        localStorage.removeItem('adi_cached_calendar_events');
       }
     }
     const saved = localStorage.getItem('adi_calendar_ics');
@@ -82,6 +92,7 @@ export function useCalendarData(
         return parseICS(saved);
       } catch (e) {
         console.error('Failed to parse saved calendar', e);
+        localStorage.removeItem('adi_calendar_ics');
       }
     }
     return [];
@@ -504,7 +515,7 @@ export function useCalendarData(
   const { instructorEvents, filteredOutEvents } = useMemo(() => {
     const cutoffDate = new Date();
     cutoffDate.setMonth(cutoffDate.getMonth() + 6);
-    const validEvents = allEvents.filter(e => e.start <= cutoffDate);
+    const validEvents = allEvents.filter(e => e && e.start instanceof Date && !isNaN(e.start.getTime()) && e.start <= cutoffDate);
     return splitInstructorEvents(validEvents);
   }, [allEvents]);
 
@@ -512,7 +523,9 @@ export function useCalendarData(
   const availableYears = useMemo(() => {
     const yearsSet = new Set<number>();
     instructorEvents.forEach(e => {
-      yearsSet.add(e.start.getFullYear());
+      if (e && e.start instanceof Date && !isNaN(e.start.getTime())) {
+        yearsSet.add(e.start.getFullYear());
+      }
     });
     return Array.from(yearsSet).sort((a, b) => b - a); // newest to oldest
   }, [instructorEvents]);

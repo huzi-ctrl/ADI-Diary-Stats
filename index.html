@@ -15,10 +15,28 @@
     <link rel="apple-touch-icon" href="/favicon.svg" />
     
     <script>
+      // Automatically recover if a stale chunk/hash fails to load
+      window.addEventListener('vite:preloadError', (event) => {
+        console.warn('Vite chunk preload error detected; auto-reloading fresh build...', event);
+        window.location.reload();
+      });
+
       // Service worker registration
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(err => {
+          navigator.serviceWorker.register('/sw.js').then((reg) => {
+            reg.onupdatefound = () => {
+              const installing = reg.installing;
+              if (installing) {
+                installing.onstatechange = () => {
+                  if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('New version installed; auto-refreshing page.');
+                    window.location.reload();
+                  }
+                };
+              }
+            };
+          }).catch(err => {
             console.log('SW registration failed: ', err);
           });
         });
