@@ -708,7 +708,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', fontSize: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <div style={{ width: '10px', height: '10px', background: 'linear-gradient(135deg, var(--accent-purple), var(--accent-indigo))', borderRadius: '9999px' }} />
-              <span style={{ color: 'var(--text-muted)' }}>Revenue (Gross &amp; Net)</span>
+              <span style={{ color: 'var(--text-muted)' }}>Net Take-Home (Bar)</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
               <div style={{ width: '12px', height: '2px', background: 'var(--accent-emerald)' }} />
@@ -890,10 +890,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                 const barY = getYLeft(mData.earnings);
 
                 // Collision detection: if capacity dot is vertically near the bar top label
-                const isNearBarTop = Math.abs(y - barY) < 28;
-                const capLabelX = isNearBarTop ? x + 16 : x;
-                const capLabelY = isNearBarTop ? y + 3 : (y - 8);
-                const textAnchor = isNearBarTop ? "start" : "middle";
+                const isNearBarTop = Math.abs(y - barY) < 30;
+                // If dot is at or below bar top, position label cleanly below dot (y + 14); otherwise above dot (y - 9)
+                const capLabelY = isNearBarTop ? (y >= barY ? y + 14 : y - 10) : (y - 8);
 
                 return (
                   <g key={`dot-${mData.monthKey}`}>
@@ -909,14 +908,14 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                       <title>{`${mData.label}:\nUtilization: ${mData.fillPct.toFixed(0)}%`}</title>
                     </circle>
 
-                    {/* Capacity label above/beside circle */}
+                    {/* Capacity label placed without colliding with bar revenue */}
                     <text
-                      x={capLabelX}
+                      x={x}
                       y={capLabelY}
                       fill="var(--accent-emerald)"
                       fontSize="9"
                       fontWeight="800"
-                      textAnchor={textAnchor}
+                      textAnchor="middle"
                     >
                       {mData.fillPct.toFixed(0)}%
                     </text>
@@ -1819,9 +1818,13 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           <div className="kpi-value" style={{ color: 'var(--accent-emerald)', fontSize: '2rem', fontWeight: 800 }}>
             £{globalSummary.netRevenue.toLocaleString()}
           </div>
-          <span className="kpi-footer" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            <strong style={{ color: 'var(--accent-emerald)' }}>{globalSummary.profitMargin.toFixed(0)}% margin</strong> &bull; £{globalSummary.totalExpenses.toLocaleString()} vehicle costs
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+            <span style={{ color: 'var(--accent-emerald)', fontWeight: 700, background: 'rgba(16, 185, 129, 0.12)', padding: '2px 8px', borderRadius: '6px' }}>
+              {globalSummary.profitMargin.toFixed(0)}% margin
+            </span>
+            <span>&bull;</span>
+            <span>£{globalSummary.totalExpenses.toLocaleString()} vehicle costs</span>
+          </div>
         </div>
 
       </div>
