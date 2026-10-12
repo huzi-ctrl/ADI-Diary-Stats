@@ -141,34 +141,49 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
           {yearlyAverages.map((item, idx) => {
             const color = idx === 0 
               ? 'var(--accent-purple)' 
               : idx === 1 
                 ? 'var(--accent-indigo)' 
                 : 'var(--accent-cyan)';
+
+            const yearMetric = yearlyMetrics.find(m => m.year === item.year);
+            const yearNetRevenue = yearMetric 
+              ? yearMetric.netRevenue 
+              : monthDataList
+                  .filter(m => m.monthKey.startsWith(`${item.year}-`))
+                  .reduce((sum, m) => sum + m.netRevenue, 0);
+            const yearGross = yearMetric 
+              ? yearMetric.earnings 
+              : monthDataList
+                  .filter(m => m.monthKey.startsWith(`${item.year}-`))
+                  .reduce((sum, m) => sum + m.earnings, 0);
             
             return (
               <div 
                 key={item.year} 
                 style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'minmax(240px, 1.2fr) minmax(180px, 2fr) minmax(140px, auto)', 
-                  alignItems: 'center', 
-                  gap: '1.25rem',
-                  paddingBottom: '0.85rem',
-                  borderBottom: idx < yearlyAverages.length - 1 ? '1px solid var(--border-light)' : 'none'
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  gap: '0.65rem',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid var(--border-light)',
+                  transition: 'all 0.2s ease'
                 }}
-                className="yearly-glance-row"
+                className="hover-glow"
               >
-                {/* Col 1: Year & Booking Rate */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)', minWidth: '45px' }}>
-                    {item.year}
-                  </span>
-                  
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {/* Top Tier: Left (Year & Booking Rate) + Right (Net Income & Trend Badge) */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+                  {/* Left: Year & Booking Rate */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-main)', minWidth: '45px' }}>
+                      {item.year}
+                    </span>
+                    
                     <span style={{ fontSize: '1.25rem', fontWeight: 800, color }}>
                       {item.averageFillPct.toFixed(1)}%
                     </span>
@@ -186,33 +201,47 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                       </span>
                     )}
                     {item.activeWeeks !== undefined && (
-                      <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
                         ({item.activeWeeks} active wks{item.holidayWeeks !== undefined && item.holidayWeeks > 0 && !item.isFutureYear ? ` • ${item.holidayWeeks} wks off` : ''}{item.isCurrentYear ? ' YTD' : ''})
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Right: Net Income (Hero) + Gross (Subtle) + Trend Badge */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
+                    {(yearNetRevenue > 0 || yearGross > 0) && (
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Net</span>
+                        <span style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--accent-emerald)', letterSpacing: '-0.01em' }}>
+                          £{Math.round(yearNetRevenue).toLocaleString()}
+                        </span>
+                        {yearGross > 0 && (
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', fontWeight: 500 }}>
+                            (£{Math.round(yearGross).toLocaleString()} gross)
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {idx === 0 ? (
+                      <span style={{ fontSize: '0.72rem', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', padding: '0.2rem 0.5rem', borderRadius: '6px', fontWeight: 600 }}>
+                        Baseline Year
+                      </span>
+                    ) : item.change >= 0 ? (
+                      <span style={{ fontSize: '0.72rem', background: 'rgba(16,185,129,0.1)', color: 'var(--accent-emerald)', padding: '0.2rem 0.5rem', borderRadius: '6px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                        ▲ +{item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year} {item.isCurrentYear ? '(YTD)' : ''}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '0.72rem', background: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.2rem 0.5rem', borderRadius: '6px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                        ▼ {item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year} {item.isCurrentYear ? '(YTD)' : ''}
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Col 2: Horizontal Progress Bar (Aligned Perfectly Across All Rows) */}
-                <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.16)', height: '10px', borderRadius: '9999px', overflow: 'hidden' }}>
+                {/* Bottom Tier: Full-Width Horizontal Progress Bar */}
+                <div style={{ width: '100%', background: 'rgba(148, 163, 184, 0.14)', height: '7px', borderRadius: '9999px', overflow: 'hidden' }}>
                   <div style={{ width: `${Math.min(item.averageFillPct, 100)}%`, height: '100%', background: color, borderRadius: '9999px', transition: 'width 0.8s ease' }} />
-                </div>
-
-                {/* Col 3: Trend Badge */}
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  {idx === 0 ? (
-                    <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)', padding: '0.25rem 0.5rem', borderRadius: '6px', fontWeight: 600 }}>
-                      Baseline Year
-                    </span>
-                  ) : item.change >= 0 ? (
-                    <span style={{ fontSize: '0.75rem', background: 'rgba(16,185,129,0.1)', color: 'var(--accent-emerald)', padding: '0.25rem 0.5rem', borderRadius: '6px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                      ▲ +{item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year} {item.isCurrentYear ? '(YTD)' : ''}
-                    </span>
-                  ) : (
-                    <span style={{ fontSize: '0.75rem', background: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '0.25rem 0.5rem', borderRadius: '6px', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                      ▼ {item.change.toFixed(1)}% vs {yearlyAverages[idx - 1].year} {item.isCurrentYear ? '(YTD)' : ''}
-                    </span>
-                  )}
                 </div>
               </div>
             );
