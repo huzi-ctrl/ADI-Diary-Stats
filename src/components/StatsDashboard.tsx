@@ -12,7 +12,8 @@ import {
   Clock,
   CheckCircle2,
   ShieldCheck,
-  Car
+  Car,
+  ChevronDown
 } from 'lucide-react';
 import { getCachedAiItem, setCachedAiItem, formatAiError, getEffectiveApiKey } from '../utils/aiHelper';
 import { useWeeklyCapacity } from '../hooks/useWeeklyCapacity';
@@ -72,6 +73,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({
   } | null>(null);
   const [weeklyAiLoading, setWeeklyAiLoading] = useState(false);
   const [weeklyAiError, setWeeklyAiError] = useState<string | null>(null);
+  const [showVehicleCosts, setShowVehicleCosts] = useState<boolean>(false);
 
   const effectiveApiKey = getEffectiveApiKey(aiApiKey, aiProvider);
 
@@ -416,7 +418,7 @@ Analyze and return the JSON object.`;
                 : `${vehicleCosts.profitMargin.toFixed(0)}% take-home margin after £${vehicleCosts.totalCost.toFixed(0)} vehicle expenses`}
             >
               {hoursNumber > 0 
-                ? `${vehicleCosts.profitMargin.toFixed(0)}% take-home margin`
+                ? `${vehicleCosts.profitMargin.toFixed(0)}% margin • -£${vehicleCosts.totalCost.toFixed(0)} expenses`
                 : `${totalTeachHours}h @ £${hourlyRate}/hr base rate`}
             </span>
           </div>
@@ -618,105 +620,104 @@ Analyze and return the JSON object.`;
             </div>
           </div>
 
-          {/* Card 3: AI Copilot Coaching & Report */}
-          {enableAiInsights && (
-            <div className="sfd-card-container">
-              <div className="sfd-card-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
-                    <Sparkles size={18} />
-                  </div>
-                  <h3 className="sfd-card-heading">AI Weekly Copilot</h3>
-                  <InfoPlacard
-                    title="AI Weekly Copilot"
-                    badge="Smart Coaching"
-                    description="Automated business coaching intelligence that reviews your diary structure, bottlenecks, and productivity pacing."
-                    calculation="Analyzes weekly distribution, gap ratios, and lesson times through secure client-side AI analysis."
-                    tip="Review the AI tips at the beginning of each week to eliminate scheduling bottlenecks and protect your rest days."
-                  />
+          {/* Card 3 (Collapsible): Vehicle Running Costs & Operating Expenses Breakdown */}
+          <div 
+            className="sfd-card-container hover-glow"
+            style={{ 
+              padding: '14px 18px', 
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: showVehicleCosts ? '12px' : '0px',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <div 
+              onClick={() => setShowVehicleCosts(!showVehicleCosts)}
+              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', userSelect: 'none', flexWrap: 'wrap', gap: '8px' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-emerald-soft, rgba(16, 185, 129, 0.12))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-emerald)', flexShrink: 0 }}>
+                  <Car size={16} />
                 </div>
-
-                {effectiveApiKey && (
-                  <button
-                    type="button"
-                    onClick={() => fetchWeeklyAiReport(true)}
-                    disabled={weeklyAiLoading}
-                    style={{ background: 'transparent', border: 'none', color: 'var(--sfd-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                    title="Regenerate Weekly Insights"
-                  >
-                    <RefreshCw size={13} className={weeklyAiLoading ? 'spin-animation' : ''} />
-                  </button>
-                )}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>Vehicle Running Costs &amp; Operating Expenses</span>
+                    <span className="sfd-card-tag" style={{ textTransform: 'capitalize', fontSize: '11px', padding: '2px 8px' }}>
+                      {vehicleCostSettings.fuelType === 'electric' ? '⚡ EV' : vehicleCostSettings.fuelType === 'diesel' ? '🛢️ Diesel' : '⛽ Petrol'} ({vehicleCostSettings.efficiency} {vehicleCostSettings.fuelType === 'electric' ? 'mi/kWh' : 'MPG'})
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>
+                    -£{vehicleCosts.totalCost.toFixed(2)} running expenses &bull; ~{Math.round(vehicleCosts.estimatedMiles)} miles driven
+                  </span>
+                </div>
               </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--sfd-primary)', fontWeight: 600 }}>
+                <span>{showVehicleCosts ? 'Hide Details' : 'View Breakdown'}</span>
+                <ChevronDown size={15} style={{ transform: showVehicleCosts ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              </div>
+            </div>
 
-              {!effectiveApiKey ? (
-                <p style={{ fontSize: '13px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.5 }}>
-                  AI Coaching is active. Add a Gemini or OpenAI API Key in <strong>Settings</strong> to receive automated weekly schedule analysis.
+            {showVehicleCosts && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px', borderTop: '1px solid var(--sfd-border-hairline)' }}>
+                <p className="sfd-card-description" style={{ marginBottom: '8px' }}>
+                  Estimated operating expenditure based on active teaching hours, learner city driving, and wear.
                 </p>
-              ) : weeklyAiLoading ? (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem', color: 'var(--sfd-primary)', gap: '10px' }}>
-                  <RefreshCw size={22} className="spin-animation" />
-                  <span style={{ fontSize: '13px', fontWeight: 600 }}>Analyzing weekly pacing...</span>
-                </div>
-              ) : weeklyAiError ? (
-                <div style={{ background: 'var(--sfd-coral-soft)', color: 'var(--sfd-coral)', border: '1px solid var(--sfd-coral-border)', padding: '12px', borderRadius: '14px', fontSize: '12px' }}>
-                  {weeklyAiError}
-                </div>
-              ) : weeklyAiReport ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  {/* Score Gauge & Executive Summary */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: 'var(--sfd-surface-nested)', padding: '12px 16px', borderRadius: '18px' }}>
-                      <svg 
-                        width="60" 
-                        height="60" 
-                        viewBox="0 0 100 100" 
-                        style={{ flexShrink: 0, width: '60px', height: '60px', minWidth: '60px', minHeight: '60px' }}
-                      >
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--sfd-border-hairline)" strokeWidth="8"/>
-                        <circle 
-                          cx="50" 
-                          cy="50" 
-                          r="40" 
-                          fill="none" 
-                          stroke={weeklyAiReport.score >= 80 ? 'var(--sfd-emerald)' : weeklyAiReport.score >= 60 ? 'var(--sfd-primary)' : 'var(--sfd-coral)'} 
-                          strokeWidth="8" 
-                          strokeDasharray="251" 
-                          strokeDashoffset={251 - (251 * weeklyAiReport.score) / 100} 
-                          strokeLinecap="round" 
-                          transform="rotate(-90 50 50)"
-                          style={{ transition: 'stroke-dashoffset 0.8s ease-out' }}
-                        />
-                        <text x="50" y="56" textAnchor="middle" fill="var(--sfd-ink-primary)" fontSize="20" fontWeight="bold">{weeklyAiReport.score}%</text>
-                      </svg>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
-                        <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>Efficiency Score</span>
-                        <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', lineHeight: 1.3 }}>{weeklyAiReport.scoreReason}</span>
-                      </div>
-                    </div>
 
-                    <p style={{ fontSize: '13px', color: 'var(--sfd-ink-secondary)', margin: 0, lineHeight: 1.5 }}>
-                      {weeklyAiReport.summary}
-                    </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                    <span style={{ color: 'var(--sfd-ink-muted)' }}>Estimated Mileage</span>
+                    <strong style={{ color: 'var(--sfd-ink-primary)' }}>~{Math.round(vehicleCosts.estimatedMiles)} miles <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({vehicleCostSettings.milesPerHour} mph avg)</span></strong>
                   </div>
-
-                  {weeklyAiReport.recommendations?.length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--sfd-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Recommendations</span>
-                      <div style={{ display: 'grid', gridTemplateColumns: weeklyAiReport.recommendations.length > 1 ? 'repeat(auto-fit, minmax(240px, 1fr))' : '1fr', gap: '8px' }}>
-                        {weeklyAiReport.recommendations.map((rec, rIdx) => (
-                          <div key={rIdx} style={{ display: 'flex', gap: '8px', fontSize: '12.5px', color: 'var(--sfd-ink-secondary)', lineHeight: 1.4, background: 'var(--sfd-surface-nested)', padding: '10px 14px', borderRadius: '12px', border: '1px solid var(--sfd-border-hairline)' }}>
-                            <span style={{ color: 'var(--sfd-primary)', fontWeight: 700 }}>&bull;</span>
-                            <span>{rec}</span>
-                          </div>
-                        ))}
-                      </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                    <span style={{ color: 'var(--sfd-ink-muted)' }}>Fuel / Energy Cost</span>
+                    <strong style={{ color: 'var(--sfd-ink-primary)' }}>£{vehicleCosts.fuelCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({vehicleCostSettings.fuelType === 'electric' ? `£${vehicleCostSettings.fuelCostPerUnit}/kWh` : `${(vehicleCostSettings.fuelCostPerUnit * 100).toFixed(1)}p/L`})</span></strong>
+                  </div>
+                  {vehicleCostSettings.enableDepreciation && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                      <span style={{ color: 'var(--sfd-ink-muted)' }}>Wear &amp; Depreciation</span>
+                      <strong style={{ color: 'var(--sfd-ink-primary)' }}>£{vehicleCosts.depreciationCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({(vehicleCostSettings.depreciationPerMile * 100).toFixed(0)}p/mi)</span></strong>
                     </div>
                   )}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
+                    <span style={{ color: 'var(--sfd-ink-muted)' }}>Total Running Expenses</span>
+                    <strong style={{ color: '#ef4444' }}>-£{vehicleCosts.totalCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}> (£{vehicleCosts.costPerHour.toFixed(2)}/hr)</span></strong>
+                  </div>
+
+                  {/* Net Take-Home Highlight Box */}
+                  <div style={{ background: 'var(--sfd-surface-nested)', padding: '12px 14px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px', border: '1px solid var(--sfd-border-hairline)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--sfd-ink-muted)' }}>Net Take-Home Profit</span>
+                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '9999px', background: 'rgba(16, 185, 129, 0.12)', color: 'var(--sfd-emerald)' }}>
+                        {vehicleCosts.profitMargin.toFixed(0)}% Margin
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                      <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--sfd-emerald)' }}>
+                        £{vehicleCosts.netRevenue.toFixed(2)}
+                      </span>
+                      <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>
+                        from £{weeklyEarnings.toLocaleString()} gross
+                      </span>
+                    </div>
+
+                    {/* Profit Margin bar */}
+                    <div style={{ width: '100%', height: '6px', background: 'rgba(239, 68, 68, 0.25)', borderRadius: '9999px', overflow: 'hidden' }}>
+                      <div 
+                        style={{ 
+                          width: `${vehicleCosts.profitMargin}%`, 
+                          height: '100%', 
+                          background: 'var(--sfd-emerald)',
+                          borderRadius: '9999px',
+                          transition: 'width 0.4s ease-out'
+                        }} 
+                      />
+                    </div>
+                  </div>
                 </div>
-              ) : null}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Column: Executive Summary & Details */}
@@ -779,84 +780,103 @@ Analyze and return the JSON object.`;
             </div>
           </div>
 
-          {/* Card: Vehicle Running Costs & Net Take-Home */}
-          <div className="sfd-card-container">
-            <div className="sfd-card-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-emerald-soft, rgba(16, 185, 129, 0.12))', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-emerald)' }}>
-                  <Car size={18} />
-                </div>
-                <h3 className="sfd-card-heading">Vehicle Running Costs &amp; Net Take-Home</h3>
-                <InfoPlacard
-                  title="Vehicle Running Costs & Net Profit"
-                  badge="Cost Engine"
-                  description="Live calculation of fuel consumption and vehicle wear incurred while delivering this week's booked lessons."
-                  calculation={`Estimated Miles = ${totalTeachHours}h × ${vehicleCostSettings.milesPerHour} mph = ${Math.round(vehicleCosts.estimatedMiles)} mi. Fuel Spend = £${vehicleCosts.fuelCost.toFixed(0)}. Net Profit = Gross − £${vehicleCosts.totalCost.toFixed(0)} expenses.`}
-                  tip="Learner tuition involves high stop-start idling and low gears, which reduces real MPG by ~15-20% compared to highway cruising."
-                />
-              </div>
-              <span className="sfd-card-tag" style={{ textTransform: 'capitalize' }}>
-                {vehicleCostSettings.fuelType === 'electric' ? '⚡ EV' : vehicleCostSettings.fuelType === 'diesel' ? '🛢️ Diesel' : '⛽ Petrol'} ({vehicleCostSettings.efficiency} {vehicleCostSettings.fuelType === 'electric' ? 'mi/kWh' : 'MPG'})
-              </span>
-            </div>
-
-
-            <p className="sfd-card-description" style={{ marginBottom: '12px' }}>
-              Estimated operating expenditure based on active teaching hours, learner city driving, and wear.
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
-                <span style={{ color: 'var(--sfd-ink-muted)' }}>Estimated Mileage</span>
-                <strong style={{ color: 'var(--sfd-ink-primary)' }}>~{Math.round(vehicleCosts.estimatedMiles)} miles <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({vehicleCostSettings.milesPerHour} mph avg)</span></strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
-                <span style={{ color: 'var(--sfd-ink-muted)' }}>Fuel / Energy Cost</span>
-                <strong style={{ color: 'var(--sfd-ink-primary)' }}>£{vehicleCosts.fuelCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({vehicleCostSettings.fuelType === 'electric' ? `£${vehicleCostSettings.fuelCostPerUnit}/kWh` : `${(vehicleCostSettings.fuelCostPerUnit * 100).toFixed(1)}p/L`})</span></strong>
-              </div>
-              {vehicleCostSettings.enableDepreciation && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
-                  <span style={{ color: 'var(--sfd-ink-muted)' }}>Wear &amp; Depreciation</span>
-                  <strong style={{ color: 'var(--sfd-ink-primary)' }}>£{vehicleCosts.depreciationCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}>({(vehicleCostSettings.depreciationPerMile * 100).toFixed(0)}p/mi)</span></strong>
-                </div>
-              )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', borderBottom: '1px solid var(--sfd-border-hairline)', paddingBottom: '6px' }}>
-                <span style={{ color: 'var(--sfd-ink-muted)' }}>Total Running Expenses</span>
-                <strong style={{ color: '#ef4444' }}>-£{vehicleCosts.totalCost.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--sfd-ink-muted)' }}> (£{vehicleCosts.costPerHour.toFixed(2)}/hr)</span></strong>
-              </div>
-
-              {/* Net Take-Home Highlight Box */}
-              <div style={{ background: 'var(--sfd-surface-nested)', padding: '12px 14px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px', border: '1px solid var(--sfd-border-hairline)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--sfd-ink-muted)' }}>Net Take-Home Profit</span>
-                  <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '9999px', background: 'rgba(16, 185, 129, 0.12)', color: 'var(--sfd-emerald)' }}>
-                    {vehicleCosts.profitMargin.toFixed(0)}% Margin
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--sfd-emerald)' }}>
-                    £{vehicleCosts.netRevenue.toFixed(2)}
-                  </span>
-                  <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)' }}>
-                    from £{weeklyEarnings.toLocaleString()} gross
-                  </span>
-                </div>
-
-                {/* Profit Margin bar */}
-                <div style={{ width: '100%', height: '6px', background: 'rgba(239, 68, 68, 0.25)', borderRadius: '9999px', overflow: 'hidden' }}>
-                  <div 
-                    style={{ 
-                      width: `${vehicleCosts.profitMargin}%`, 
-                      height: '100%', 
-                      background: 'var(--sfd-emerald)',
-                      borderRadius: '9999px',
-                      transition: 'width 0.4s ease-out'
-                    }} 
+          {/* Card: AI Weekly Copilot (Promoted to Right Column for Instant Above-the-Fold Visibility) */}
+          {enableAiInsights && (
+            <div className="sfd-card-container">
+              <div className="sfd-card-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)', flexShrink: 0 }}>
+                    <Sparkles size={18} />
+                  </div>
+                  <h3 className="sfd-card-heading">AI Weekly Copilot</h3>
+                  <InfoPlacard
+                    title="AI Weekly Copilot"
+                    badge="Smart Coaching"
+                    description="Automated business coaching intelligence that reviews your diary structure, bottlenecks, and productivity pacing."
+                    calculation="Analyzes weekly distribution, gap ratios, and lesson times through secure client-side AI analysis."
+                    tip="Review the AI tips at the beginning of each week to eliminate scheduling bottlenecks and protect your rest days."
                   />
                 </div>
+
+                {effectiveApiKey && (
+                  <button
+                    type="button"
+                    onClick={() => fetchWeeklyAiReport(true)}
+                    disabled={weeklyAiLoading}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--sfd-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    title="Regenerate Weekly Insights"
+                  >
+                    <RefreshCw size={13} className={weeklyAiLoading ? 'spin-animation' : ''} />
+                  </button>
+                )}
               </div>
+
+              {!effectiveApiKey ? (
+                <p style={{ fontSize: '13px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.5 }}>
+                  AI Coaching is active. Add a Gemini or OpenAI API Key in <strong>Settings</strong> to receive automated weekly schedule analysis.
+                </p>
+              ) : weeklyAiLoading ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1.75rem 1rem', color: 'var(--sfd-primary)', gap: '10px' }}>
+                  <RefreshCw size={22} className="spin-animation" />
+                  <span style={{ fontSize: '13px', fontWeight: 600 }}>Analyzing weekly pacing...</span>
+                </div>
+              ) : weeklyAiError ? (
+                <div style={{ background: 'var(--sfd-coral-soft)', color: 'var(--sfd-coral)', border: '1px solid var(--sfd-coral-border)', padding: '12px', borderRadius: '14px', fontSize: '12px' }}>
+                  {weeklyAiError}
+                </div>
+              ) : weeklyAiReport ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {/* Score Gauge & Executive Summary */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: 'var(--sfd-surface-nested)', padding: '12px 14px', borderRadius: '16px' }}>
+                    <svg 
+                      width="54" 
+                      height="54" 
+                      viewBox="0 0 100 100" 
+                      style={{ flexShrink: 0, width: '54px', height: '54px', minWidth: '54px', minHeight: '54px' }}
+                    >
+                      <circle cx="50" cy="50" r="40" fill="none" stroke="var(--sfd-border-hairline)" strokeWidth="8"/>
+                      <circle 
+                        cx="50" 
+                        cy="50" 
+                        r="40" 
+                        fill="none" 
+                        stroke={weeklyAiReport.score >= 80 ? 'var(--sfd-emerald)' : weeklyAiReport.score >= 60 ? 'var(--sfd-primary)' : 'var(--sfd-coral)'} 
+                        strokeWidth="8" 
+                        strokeDasharray="251" 
+                        strokeDashoffset={251 - (251 * weeklyAiReport.score) / 100} 
+                        strokeLinecap="round" 
+                        transform="rotate(-90 50 50)"
+                        style={{ transition: 'stroke-dashoffset 0.8s ease-out' }}
+                      />
+                      <text x="50" y="56" textAnchor="middle" fill="var(--sfd-ink-primary)" fontSize="20" fontWeight="bold">{weeklyAiReport.score}%</text>
+                    </svg>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', minWidth: 0, flex: 1 }}>
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--sfd-ink-primary)' }}>Efficiency Score</span>
+                      <span style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', lineHeight: 1.3 }}>{weeklyAiReport.scoreReason}</span>
+                    </div>
+                  </div>
+
+                  <p style={{ fontSize: '12.5px', color: 'var(--sfd-ink-secondary)', margin: 0, lineHeight: 1.45 }}>
+                    {weeklyAiReport.summary}
+                  </p>
+
+                  {weeklyAiReport.recommendations?.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <span style={{ fontSize: '11.5px', fontWeight: 700, color: 'var(--sfd-ink-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Recommendations</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {weeklyAiReport.recommendations.map((rec, rIdx) => (
+                          <div key={rIdx} style={{ display: 'flex', gap: '8px', fontSize: '12px', color: 'var(--sfd-ink-secondary)', lineHeight: 1.4, background: 'var(--sfd-surface-nested)', padding: '9px 12px', borderRadius: '12px', border: '1px solid var(--sfd-border-hairline)' }}>
+                            <span style={{ color: 'var(--sfd-primary)', fontWeight: 700 }}>&bull;</span>
+                            <span>{rec}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </div>
-          </div>
+          )}
 
           {/* Card: Lesson Time-of-Day Slots */}
           <div className="sfd-card-container">
