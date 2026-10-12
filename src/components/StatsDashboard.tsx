@@ -718,6 +718,84 @@ Analyze and return the JSON object.`;
               </div>
             )}
           </div>
+          {/* Card: Lesson Time-of-Day Slots */}
+          <div className="sfd-card-container">
+            <div className="sfd-card-header">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
+                  <Activity size={18} />
+                </div>
+                <h3 className="sfd-card-heading">Lesson Time-of-Day Slots</h3>
+                <InfoPlacard
+                  title="Time-of-Day Slot Distribution"
+                  badge="Timing Insights"
+                  description="Categorizes lessons by student appointment time: Morning (6am–12pm), Afternoon (12pm–6pm), Evening (6pm–12am), and Night (12am–6am)."
+                  calculation="Calculates percentage share and slot counts across each time window based on lesson start times."
+                  tip="Pupil demand is highest after 4pm and on weekends. Charging premium rates for peak evening slots can optimize income."
+                />
+              </div>
+              <span className="sfd-card-tag">Slot Distribution</span>
+            </div>
+
+            <div className="sfd-timeofday-grid">
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Morning (6am &ndash; 12pm)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-primary)' }}>{morningPct}%</span>
+                <span className="sfd-timeofday-sub">{morningCount} slots</span>
+              </div>
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Afternoon (12pm &ndash; 6pm)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-ink-primary)' }}>{afternoonPct}%</span>
+                <span className="sfd-timeofday-sub">{afternoonCount} slots</span>
+              </div>
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Evening (6pm &ndash; 12am)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-emerald)' }}>{eveningPct}%</span>
+                <span className="sfd-timeofday-sub">{eveningCount} slots</span>
+              </div>
+              <div className="sfd-timeofday-card">
+                <span className="sfd-timeofday-label">Night (12am &ndash; 6am)</span>
+                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-amber)' }}>{nightPct}%</span>
+                <span className="sfd-timeofday-sub">{nightCount} slots</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Practical Driving Tests & Local Privacy Twin Row */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: testBookings.length > 0 ? 'repeat(auto-fit, minmax(200px, 1fr))' : '1fr', 
+            gap: '16px' 
+          }}>
+            {/* Card: Tests & Practical Exams */}
+            {testBookings.length > 0 && (
+              <div className="sfd-card-container" style={{ padding: '18px 20px', gap: '10px' }}>
+                <div className="sfd-card-header" style={{ marginBottom: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--sfd-amber-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#92400e' }}>
+                      <Calendar size={15} />
+                    </div>
+                    <h3 className="sfd-card-heading" style={{ fontSize: '13.5px' }}>Practical Driving Tests</h3>
+                  </div>
+                  <span className="sfd-card-tag" style={{ color: '#92400e', fontSize: '11px', padding: '2px 8px' }}>{testBookings.length} Active</span>
+                </div>
+                <p style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.4 }}>
+                  You have {testBookings.length} driving test appointment{testBookings.length > 1 ? 's' : ''} scheduled this week ({allFutureTests.length} total across calendar).
+                </p>
+              </div>
+            )}
+
+            {/* Local-First Privacy Card */}
+            <div className="sfd-card-container" style={{ padding: '18px 20px', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--sfd-ink-primary)' }}>
+                <ShieldCheck size={16} style={{ color: 'var(--sfd-emerald)', flexShrink: 0 }} />
+                <span>100% Client-Side Privacy</span>
+              </div>
+              <p style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.4 }}>
+                All parsing, buffer calculations, and capacity analytics run locally in your browser. No student data ever touches external servers.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Right Column: Executive Summary & Details */}
@@ -877,85 +955,6 @@ Analyze and return the JSON object.`;
               ) : null}
             </div>
           )}
-
-          {/* Card: Lesson Time-of-Day Slots */}
-          <div className="sfd-card-container">
-            <div className="sfd-card-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--sfd-primary-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--sfd-primary)' }}>
-                  <Activity size={18} />
-                </div>
-                <h3 className="sfd-card-heading">Lesson Time-of-Day Slots</h3>
-                <InfoPlacard
-                  title="Time-of-Day Slot Distribution"
-                  badge="Timing Insights"
-                  description="Categorizes lessons by student appointment time: Morning (6am–12pm), Afternoon (12pm–6pm), Evening (6pm–12am), and Night (12am–6am)."
-                  calculation="Calculates percentage share and slot counts across each time window based on lesson start times."
-                  tip="Pupil demand is highest after 4pm and on weekends. Charging premium rates for peak evening slots can optimize income."
-                />
-              </div>
-              <span className="sfd-card-tag">Slot Distribution</span>
-            </div>
-
-            <div className="sfd-timeofday-grid">
-              <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Morning (6am &ndash; 12pm)</span>
-                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-primary)' }}>{morningPct}%</span>
-                <span className="sfd-timeofday-sub">{morningCount} slots</span>
-              </div>
-              <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Afternoon (12pm &ndash; 6pm)</span>
-                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-ink-primary)' }}>{afternoonPct}%</span>
-                <span className="sfd-timeofday-sub">{afternoonCount} slots</span>
-              </div>
-              <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Evening (6pm &ndash; 12am)</span>
-                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-emerald)' }}>{eveningPct}%</span>
-                <span className="sfd-timeofday-sub">{eveningCount} slots</span>
-              </div>
-              <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Night (12am &ndash; 6am)</span>
-                <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-amber)' }}>{nightPct}%</span>
-                <span className="sfd-timeofday-sub">{nightCount} slots</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Practical Driving Tests & Local Privacy Twin Row */}
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: testBookings.length > 0 ? 'repeat(auto-fit, minmax(200px, 1fr))' : '1fr', 
-            gap: '16px' 
-          }}>
-            {/* Card: Tests & Practical Exams */}
-            {testBookings.length > 0 && (
-              <div className="sfd-card-container" style={{ padding: '18px 20px', gap: '10px' }}>
-                <div className="sfd-card-header" style={{ marginBottom: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--sfd-amber-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#92400e' }}>
-                      <Calendar size={15} />
-                    </div>
-                    <h3 className="sfd-card-heading" style={{ fontSize: '13.5px' }}>Practical Driving Tests</h3>
-                  </div>
-                  <span className="sfd-card-tag" style={{ color: '#92400e', fontSize: '11px', padding: '2px 8px' }}>{testBookings.length} Active</span>
-                </div>
-                <p style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.4 }}>
-                  You have {testBookings.length} driving test appointment{testBookings.length > 1 ? 's' : ''} scheduled this week ({allFutureTests.length} total across calendar).
-                </p>
-              </div>
-            )}
-
-            {/* Local-First Privacy Card */}
-            <div className="sfd-card-container" style={{ padding: '18px 20px', gap: '8px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--sfd-ink-primary)' }}>
-                <ShieldCheck size={16} style={{ color: 'var(--sfd-emerald)', flexShrink: 0 }} />
-                <span>100% Client-Side Privacy</span>
-              </div>
-              <p style={{ fontSize: '12px', color: 'var(--sfd-ink-muted)', margin: 0, lineHeight: 1.4 }}>
-                All parsing, buffer calculations, and capacity analytics run locally in your browser. No student data ever touches external servers.
-              </p>
-            </div>
-          </div>
         </div>
       </main>
     </div>
