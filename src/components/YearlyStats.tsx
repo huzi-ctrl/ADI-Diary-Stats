@@ -123,10 +123,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
     return (
       <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <div>
-          <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <TrendingUp size={18} className="gradient-text" />
-            Year-over-Year Performance Summary
-          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <TrendingUp size={18} className="gradient-text" />
+              Year-over-Year Performance Summary
+            </h3>
+            <InfoPlacard
+              title="Year-over-Year Performance Summary"
+              badge="Annual Utilization"
+              description="Annual schedule booking rate (capacity utilization) calculated across active teaching weeks for each recorded year."
+              calculation="(Total Teaching Hours Delivered ÷ Total Ideal Capacity Target) × 100 per active operational week, excluding holidays."
+              tip="Compare annual booking rates to evaluate whether pupil demand is growing, stabilizing, or softening year over year."
+            />
+          </div>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
             Annual schedule booking rate (capacity utilization) calculated across active teaching weeks (excluding holidays &amp; breaks). Higher % means a fuller schedule. Incomplete or starting years can be excluded in Settings.
           </p>
@@ -248,10 +257,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div>
-            <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <TrendingUp size={18} className="gradient-text" />
-              Year-over-Year Capacity Trends
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <TrendingUp size={18} className="gradient-text" />
+                Year-over-Year Capacity Trends
+              </h3>
+              <InfoPlacard
+                title="Year-over-Year Capacity Trends"
+                badge="Weekly Pacing"
+                description="Side-by-side comparison of weekly schedule fill rates from Week 1 through Week 53 across multiple calendar years."
+                calculation="Plots weekly fill percentages. Toggle between Raw, 4-week moving average (Smoothed), and 52-week centered moving average (Deseasonalized)."
+                tip="Use smoothed or deseasonalized views to spot long-term directional growth independent of seasonal fluctuations."
+              />
+            </div>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
               Comparing weekly fill percentages across different calendar years (Week 1 to Week 53).
             </p>
@@ -462,10 +480,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
     return (
       <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div>
-          <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <TrendingUp size={18} className="gradient-text" />
-            Seasonal Capacity Overlay (Month-by-Month)
-          </h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <TrendingUp size={18} className="gradient-text" />
+              Seasonal Capacity Overlay (Month-by-Month)
+            </h3>
+            <InfoPlacard
+              title="Seasonal Capacity Overlay"
+              badge="Monthly Dynamics"
+              description="Compares capacity utilization across individual calendar months (Jan to Dec) across recorded years side-by-side."
+              calculation="Averages weekly fill percentages within each calendar month for each recorded year."
+              tip="Driving school demand typically peaks in summer and early autumn. Identifying historical winter dips lets you plan marketing or time off in advance."
+            />
+          </div>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
             Compare how different months of the year performed across 2024, 2025, and 2026 side-by-side.
           </p>
@@ -659,10 +686,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       <div className="glass-card animate-slide-up" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div>
-            <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <CalendarDays size={18} className="gradient-text" />
-              YoY Monthly Trend Tracker: {monthNames[selectedTrendMonth]}
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <CalendarDays size={18} className="gradient-text" />
+                YoY Monthly Trend Tracker: {monthNames[selectedTrendMonth]}
+              </h3>
+              <InfoPlacard
+                title={`YoY Monthly Trend: ${monthNames[selectedTrendMonth]}`}
+                badge="Month Deep Dive"
+                description={`Analyzes how ${monthNames[selectedTrendMonth]} has performed year-over-year in tuition revenue and capacity utilization.`}
+                calculation="Compares net take-home revenue and schedule fill percentages for the selected month across all recorded calendar years."
+                tip="Click different month tabs to pinpoint specific months where pupil demand has grown or softened."
+              />
+            </div>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
               Track how {monthNames[selectedTrendMonth]} has evolved financially and operationally across the years.
             </p>
@@ -902,10 +938,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       <div className="glass-card" style={{ padding: '1.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
           <div>
-            <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Activity size={18} className="gradient-text" />
-              Business & Scheduling Efficiency Metrics (YoY)
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Activity size={18} className="gradient-text" />
+                Business & Scheduling Efficiency Metrics (YoY)
+              </h3>
+              <InfoPlacard
+                title="Business & Scheduling Efficiency Metrics"
+                badge="YoY Performance"
+                description="Novel Year-over-Year KPIs tracking scheduling efficiency, daily earnings density, active workdays, and net take-home revenue."
+                calculation="Scheduling Efficiency = (Actual Teaching Hours ÷ Total Working Span) × 100. Earnings/Workday = Revenue ÷ Active Teaching Days."
+                tip="High lesson volume with falling scheduling efficiency indicates increased dead time between lessons. Compact your booking blocks to protect your earnings per hour."
+              />
+            </div>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
               Novel Year-over-Year KPIs tracking paid lesson efficiency, rate optimization, and workload.
             </p>
@@ -1049,10 +1094,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
 
     return (
       <div className="glass-card" style={{ padding: '1.5rem', background: 'linear-gradient(135deg, rgba(99,102,241,0.03) 0%, rgba(6,182,212,0.03) 100%)', border: '1px solid rgba(6,182,212,0.15)' }}>
-        <h3 className="chart-title" style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Award size={18} className="gradient-text" style={{ color: 'var(--accent-cyan)' }} />
-          Smart Scheduling Advisor
-        </h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.5rem' }}>
+          <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Award size={18} className="gradient-text" style={{ color: 'var(--accent-cyan)' }} />
+            Smart Scheduling Advisor
+          </h3>
+          <InfoPlacard
+            title="Smart Scheduling Advisor"
+            badge="AI Diagnostics"
+            description="Identifies scheduling bottlenecks, wasted dead gaps between student lessons, and potential uncaptured revenue across your diary."
+            calculation="Calculates dead gaps between consecutive appointments and compares operational pacing against your ideal schedule profile."
+            tip="Closing just 2 hours of dead gaps per week can recover over £3,000 to £4,000 in lost annual billable instruction time."
+          />
+        </div>
         <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
           AI-driven diagnostics analyzing routes, travel buffers, and daily scheduling gaps to optimize your business revenue.
         </p>
@@ -1786,10 +1840,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
 
       {/* 2. Ideal Working Schedule Table */}
       <div className="glass-card" style={{ padding: '1.5rem' }}>
-        <h3 className="chart-title" style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Clock size={18} className="gradient-text" />
-          Calculated Ideal Schedule
-        </h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.25rem' }}>
+          <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Clock size={18} className="gradient-text" />
+            Calculated Ideal Schedule
+          </h3>
+          <InfoPlacard
+            title="Calculated Ideal Schedule"
+            badge="Baseline Pacing"
+            description="Your baseline working schedule derived by calculating the median start and end times across active diary days to avoid single-day distortion."
+            calculation="Computes median first appointment start and last appointment finish times for each day of the week (Mon–Sun)."
+            tip="Set custom working hour caps in Settings if your calculated schedule spans longer than your preferred work-life balance ceiling."
+          />
+        </div>
         <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
           Typical working hours calculated globally using median start and end times across active days in your diary to avoid single-day outliers.
         </p>
@@ -1835,10 +1898,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
       <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div>
-            <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <TrendingUp size={18} className="gradient-text" />
-              Weekly Teaching Workload & Capacity Utilization
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <TrendingUp size={18} className="gradient-text" />
+                Weekly Teaching Workload &amp; Capacity Utilization
+              </h3>
+              <InfoPlacard
+                title="Chronological Weekly Workload"
+                badge="52-Week Pulse"
+                description="Full chronological view of weekly instructional teaching hours and schedule fill percentages across past and future weeks."
+                calculation="Sum of lesson hours per week plotted against your configured capacity ceiling. Solid lines represent past delivered weeks; dashed lines show upcoming bookings."
+                tip="Monitor upcoming weeks to catch booking cliffs ahead of time and ensure a smooth income flow throughout the year."
+              />
+            </div>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: '0.25rem 0 0 0' }}>
               Chronological weekly trends. Hover bars for details. Drag or scroll horizontally to see all weeks.
             </p>
@@ -1879,10 +1951,19 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
 
       {/* 4. Monthly Breakdowns */}
       <div className="glass-card" style={{ padding: '1.5rem' }}>
-        <h3 className="chart-title" style={{ marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Activity size={18} className="gradient-text" />
-          Monthly Aggregate Breakdowns
-        </h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '0.25rem' }}>
+          <h3 className="chart-title" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Activity size={18} className="gradient-text" />
+            Monthly Aggregate Breakdowns
+          </h3>
+          <InfoPlacard
+            title="Monthly Aggregate Breakdowns"
+            badge="Summary Table"
+            description="Comprehensive tabular breakdown of pupil lessons delivered, driving tests attended, actual instructional hours, target hours, fill rate, and net revenue per month."
+            calculation="Aggregates all calendar events, vehicle operating costs, and test appointments within each calendar month."
+            tip="Export this data directly to CSV using the buttons at the top of the page for your accountant or tax return preparation."
+          />
+        </div>
         <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
           Overview of pupil lessons, test bookings, total hours, and relative fill capacity grouped by month.
         </p>
