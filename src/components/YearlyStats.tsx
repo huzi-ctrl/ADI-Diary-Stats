@@ -1735,7 +1735,7 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         <div className="glass-card kpi-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="kpi-title">Total Teaching Hours</span>
+              <span className="kpi-title">Teaching Hours</span>
               <InfoPlacard
                 title="Total Teaching Hours"
                 badge="Annual Volume"
@@ -1753,9 +1753,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         <div className="glass-card kpi-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="kpi-title">Typical Weekly Ideal Span</span>
+              <span className="kpi-title">Weekly Ideal Span</span>
               <InfoPlacard
-                title="Typical Weekly Ideal Span"
+                title="Weekly Ideal Span"
                 badge="Target Pace"
                 description="Average weekly teaching capacity target calculated from your historical scheduling profile or custom settings."
                 calculation="Represents your benchmark target working hours per typical operational week."
@@ -1773,9 +1773,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         <div className="glass-card kpi-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="kpi-title">Average Fill Percentage</span>
+              <span className="kpi-title">Average Fill Rate</span>
               <InfoPlacard
-                title="Average Fill Percentage"
+                title="Average Fill Rate"
                 badge="Annual Utilization"
                 description="Average utilization of your teaching capacity across all operating weeks of the year."
                 calculation="(Total Teaching Hours Delivered ÷ Total Ideal Capacity Target) × 100."
@@ -1789,9 +1789,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
         </div>
 
         <div className="glass-card kpi-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span className="kpi-title">Estimated Total Revenue</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <span className="kpi-title" style={{ whiteSpace: 'nowrap' }}>Annual Net Revenue</span>
               <InfoPlacard
                 title="Annual Net & Gross Revenue"
                 badge="Net Take-Home"
@@ -1808,7 +1808,9 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
                 background: 'var(--bg-nested)',
                 padding: '0.2rem 0.55rem',
                 borderRadius: '9999px',
-                border: '1px solid var(--border-light)'
+                border: '1px solid var(--border-light)',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
               }}
               title={`Gross tuition revenue before expenses: £${globalSummary.totalEarnings.toLocaleString()}`}
             >
@@ -1818,12 +1820,11 @@ export const YearlyStats: React.FC<YearlyStatsProps> = ({
           <div className="kpi-value" style={{ color: 'var(--accent-emerald)', fontSize: '2rem', fontWeight: 800 }}>
             £{globalSummary.netRevenue.toLocaleString()}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-            <span style={{ color: 'var(--accent-emerald)', fontWeight: 700, background: 'rgba(16, 185, 129, 0.12)', padding: '2px 8px', borderRadius: '6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px', flexWrap: 'wrap' }}>
+            <span style={{ color: 'var(--accent-emerald)', fontWeight: 700, background: 'rgba(16, 185, 129, 0.12)', padding: '2px 8px', borderRadius: '6px', whiteSpace: 'nowrap' }}>
               {globalSummary.profitMargin.toFixed(0)}% margin
             </span>
-            <span>&bull;</span>
-            <span>£{globalSummary.totalExpenses.toLocaleString()} vehicle costs</span>
+            <span style={{ whiteSpace: 'nowrap' }}>&bull; £{globalSummary.totalExpenses.toLocaleString()} vehicle costs</span>
           </div>
         </div>
 
