@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, RefreshCw, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
+import { AlertCircle, RefreshCw, ArrowRight, ArrowLeft, Sparkles, ShieldCheck, Check } from 'lucide-react';
 import { FileUploader } from './FileUploader';
 
 interface GoogleCalendarApiItem {
@@ -118,7 +118,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
     }
     const success = await onFetchEventsForCalendar(selectedCalendarId);
     if (success) {
-      onCompleteOnboarding();
+      setOnboardingStep('ai_config');
     }
   };
 
@@ -145,7 +145,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
             <FileUploader
               onFileParsed={(text, name) => {
                 onFileParsed(text, name);
-                onCompleteOnboarding();
+                setOnboardingStep('ai_config');
               }}
               handleConnectGoogle={handleConnectGoogle}
               handleConnectOutlook={handleConnectOutlook}
@@ -153,7 +153,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
               setCalendarUrl={setCalendarUrl}
               handleSyncLiveCalendar={(url) => {
                 handleSyncLiveCalendar(url);
-                onCompleteOnboarding();
+                setOnboardingStep('ai_config');
               }}
               isSyncing={isSyncing}
             />
@@ -164,83 +164,6 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 <span>Synchronization error: {syncError}</span>
               </div>
             )}
-
-            {/* AI Assistant & Copilot Preference */}
-            <div
-              style={{
-                marginTop: '0.25rem',
-                padding: '0.9rem 1.1rem',
-                borderRadius: '16px',
-                background: 'var(--bg-nested)',
-                border: '1px solid var(--border-light)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '1rem',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    borderRadius: '11px',
-                    background: enableAiInsights ? 'rgba(37, 99, 235, 0.1)' : 'rgba(100, 116, 139, 0.1)',
-                    color: enableAiInsights ? 'var(--accent-blue)' : 'var(--text-dim)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <Sparkles size={18} />
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.25 }}>
-                    AI Copilot &amp; Weekly Insights
-                  </div>
-                  <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', lineHeight: 1.35, marginTop: '2px' }}>
-                    {enableAiInsights
-                      ? 'Automated weekly workload analysis & pacing tips'
-                      : 'Disabled — pure local offline analytics only'}
-                  </div>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setEnableAiInsights?.(!enableAiInsights)}
-                aria-label={enableAiInsights ? 'Disable AI Features' : 'Enable AI Features'}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '6px 14px',
-                  borderRadius: '9999px',
-                  fontSize: '0.775rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  border: enableAiInsights ? '1px solid rgba(37, 99, 235, 0.35)' : '1px solid var(--border-medium)',
-                  background: enableAiInsights ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)',
-                  color: enableAiInsights ? 'var(--accent-blue)' : 'var(--text-muted)',
-                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
-                  transition: 'all 0.15s ease',
-                  flexShrink: 0,
-                }}
-              >
-                <span
-                  style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    background: enableAiInsights ? '#10b981' : '#94a3b8',
-                  }}
-                />
-                {enableAiInsights ? 'Enabled' : 'Disabled'}
-              </button>
-            </div>
           </div>
         )}
 
@@ -309,82 +232,6 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                   ))}
                 </div>
 
-                {/* AI Assistant & Copilot Preference */}
-                <div
-                  style={{
-                    padding: '0.9rem 1.1rem',
-                    borderRadius: '16px',
-                    background: 'var(--bg-nested)',
-                    border: '1px solid var(--border-light)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '1rem',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div
-                      style={{
-                        width: '36px',
-                        height: '36px',
-                        borderRadius: '11px',
-                        background: enableAiInsights ? 'rgba(37, 99, 235, 0.1)' : 'rgba(100, 116, 139, 0.1)',
-                        color: enableAiInsights ? 'var(--accent-blue)' : 'var(--text-dim)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                        transition: 'all 0.2s ease',
-                      }}
-                    >
-                      <Sparkles size={18} />
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.25 }}>
-                        AI Copilot &amp; Weekly Insights
-                      </div>
-                      <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', lineHeight: 1.35, marginTop: '2px' }}>
-                        {enableAiInsights
-                          ? 'Automated weekly workload analysis & pacing tips'
-                          : 'Disabled — pure local offline analytics only'}
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setEnableAiInsights?.(!enableAiInsights)}
-                    aria-label={enableAiInsights ? 'Disable AI Features' : 'Enable AI Features'}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '6px 14px',
-                      borderRadius: '9999px',
-                      fontSize: '0.775rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      border: enableAiInsights ? '1px solid rgba(37, 99, 235, 0.35)' : '1px solid var(--border-medium)',
-                      background: enableAiInsights ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)',
-                      color: enableAiInsights ? 'var(--accent-blue)' : 'var(--text-muted)',
-                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
-                      transition: 'all 0.15s ease',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: enableAiInsights ? '#10b981' : '#94a3b8',
-                      }}
-                    />
-                    {enableAiInsights ? 'Enabled' : 'Disabled'}
-                  </button>
-                </div>
-
                 <div style={{ display: 'flex', gap: '1rem', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem', marginTop: '0.5rem' }}>
                   <button
                     type="button"
@@ -409,13 +256,158 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                       </>
                     ) : (
                       <>
-                        Open Dashboard <ArrowRight size={15} />
+                        Continue to AI Choice <ArrowRight size={15} />
                       </>
                     )}
                   </button>
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* STEP 3 (or Step 2 for ICS/Webcal): DELIBERATE AI YES/NO CHOICE */}
+        {onboardingStep === 'ai_config' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ borderBottom: '1px solid var(--border-light)', paddingBottom: '1rem' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '3px 10px', borderRadius: '9999px', background: 'rgba(37, 99, 235, 0.08)', color: 'var(--accent-blue)', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+                <Sparkles size={13} /> Decision Required
+              </div>
+              <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>
+                Enable AI Copilot &amp; Weekly Insights?
+              </h3>
+              <p style={{ margin: '0.35rem 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.45 }}>
+                Please choose whether you want automated AI workload analysis or pure offline local analytics. You can adjust this anytime in settings.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '1rem' }}>
+              
+              {/* OPTION YES: ENABLE AI */}
+              <div
+                className="hover-glow"
+                onClick={() => {
+                  setEnableAiInsights?.(true);
+                  localStorage.setItem('adi_enable_ai_insights', 'true');
+                  onCompleteOnboarding();
+                }}
+                style={{
+                  background: 'var(--bg-nested)',
+                  border: enableAiInsights ? '2px solid rgba(37, 99, 235, 0.7)' : '1px solid var(--border-light)',
+                  borderRadius: '18px',
+                  padding: '1.4rem 1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  boxShadow: enableAiInsights ? '0 4px 16px rgba(37, 99, 235, 0.12)' : 'none',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(37, 99, 235, 0.12)', color: 'var(--accent-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Sparkles size={22} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                      Yes, Enable AI
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-blue)', fontWeight: 700 }}>
+                      Weekly Coaching &amp; Pacing
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
+                    Automated weekly timetable summaries, pupil cancellation pacing, and tips to recover dead gaps.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{
+                    marginTop: '1.25rem',
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 700
+                  }}
+                >
+                  <Check size={16} /> Yes, Enable AI
+                </button>
+              </div>
+
+              {/* OPTION NO: PURE LOCAL MODE */}
+              <div
+                className="hover-glow"
+                onClick={() => {
+                  setEnableAiInsights?.(false);
+                  localStorage.setItem('adi_enable_ai_insights', 'false');
+                  onCompleteOnboarding();
+                }}
+                style={{
+                  background: 'var(--bg-nested)',
+                  border: !enableAiInsights ? '2px solid rgba(16, 185, 129, 0.7)' : '1px solid var(--border-light)',
+                  borderRadius: '18px',
+                  padding: '1.4rem 1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  boxShadow: !enableAiInsights ? '0 4px 16px rgba(16, 185, 129, 0.1)' : 'none',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--sfd-emerald)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <ShieldCheck size={22} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                      No, Keep Pure Local
+                    </div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--sfd-emerald)', fontWeight: 700 }}>
+                      100% Offline &amp; Private
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0, lineHeight: 1.45 }}>
+                    Zero AI network calls. All schedule analytics, workload calculations, and vehicle costs run strictly inside your browser.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  style={{
+                    marginTop: '1.25rem',
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 700
+                  }}
+                >
+                  No, Pure Local Mode
+                </button>
+              </div>
+
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '0.5rem', borderTop: '1px solid var(--border-light)' }}>
+              <button
+                type="button"
+                onClick={() => setOnboardingStep(accessToken ? 'calendar_select' : 'connect')}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.5rem' }}
+              >
+                <ArrowLeft size={14} /> Back to calendar options
+              </button>
+            </div>
           </div>
         )}
       </div>
