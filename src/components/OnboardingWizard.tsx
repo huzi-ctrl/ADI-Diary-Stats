@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, RefreshCw, ArrowRight, ArrowLeft } from 'lucide-react';
+import { AlertCircle, RefreshCw, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { FileUploader } from './FileUploader';
 
 interface GoogleCalendarApiItem {
@@ -50,6 +50,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   handleSyncLiveCalendar,
   isSyncing,
   onFileParsed,
+  enableAiInsights = true,
+  setEnableAiInsights,
   accessToken,
   tokenType,
   onFetchEventsForCalendar,
@@ -162,6 +164,83 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                 <span>Synchronization error: {syncError}</span>
               </div>
             )}
+
+            {/* AI Assistant & Copilot Preference */}
+            <div
+              style={{
+                marginTop: '0.25rem',
+                padding: '0.9rem 1.1rem',
+                borderRadius: '16px',
+                background: 'var(--bg-nested)',
+                border: '1px solid var(--border-light)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '1rem',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div
+                  style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '11px',
+                    background: enableAiInsights ? 'rgba(37, 99, 235, 0.1)' : 'rgba(100, 116, 139, 0.1)',
+                    color: enableAiInsights ? 'var(--accent-blue)' : 'var(--text-dim)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <Sparkles size={18} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.25 }}>
+                    AI Copilot &amp; Weekly Insights
+                  </div>
+                  <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', lineHeight: 1.35, marginTop: '2px' }}>
+                    {enableAiInsights
+                      ? 'Automated weekly workload analysis & pacing tips'
+                      : 'Disabled — pure local offline analytics only'}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setEnableAiInsights?.(!enableAiInsights)}
+                aria-label={enableAiInsights ? 'Disable AI Features' : 'Enable AI Features'}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 14px',
+                  borderRadius: '9999px',
+                  fontSize: '0.775rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: enableAiInsights ? '1px solid rgba(37, 99, 235, 0.35)' : '1px solid var(--border-medium)',
+                  background: enableAiInsights ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)',
+                  color: enableAiInsights ? 'var(--accent-blue)' : 'var(--text-muted)',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                  transition: 'all 0.15s ease',
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    background: enableAiInsights ? '#10b981' : '#94a3b8',
+                  }}
+                />
+                {enableAiInsights ? 'Enabled' : 'Disabled'}
+              </button>
+            </div>
           </div>
         )}
 
@@ -228,6 +307,82 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
                       </div>
                     </label>
                   ))}
+                </div>
+
+                {/* AI Assistant & Copilot Preference */}
+                <div
+                  style={{
+                    padding: '0.9rem 1.1rem',
+                    borderRadius: '16px',
+                    background: 'var(--bg-nested)',
+                    border: '1px solid var(--border-light)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '1rem',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <div
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '11px',
+                        background: enableAiInsights ? 'rgba(37, 99, 235, 0.1)' : 'rgba(100, 116, 139, 0.1)',
+                        color: enableAiInsights ? 'var(--accent-blue)' : 'var(--text-dim)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      <Sparkles size={18} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.25 }}>
+                        AI Copilot &amp; Weekly Insights
+                      </div>
+                      <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', lineHeight: 1.35, marginTop: '2px' }}>
+                        {enableAiInsights
+                          ? 'Automated weekly workload analysis & pacing tips'
+                          : 'Disabled — pure local offline analytics only'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setEnableAiInsights?.(!enableAiInsights)}
+                    aria-label={enableAiInsights ? 'Disable AI Features' : 'Enable AI Features'}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '6px 14px',
+                      borderRadius: '9999px',
+                      fontSize: '0.775rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      border: enableAiInsights ? '1px solid rgba(37, 99, 235, 0.35)' : '1px solid var(--border-medium)',
+                      background: enableAiInsights ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)',
+                      color: enableAiInsights ? 'var(--accent-blue)' : 'var(--text-muted)',
+                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                      transition: 'all 0.15s ease',
+                      flexShrink: 0,
+                    }}
+                  >
+                    <span
+                      style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background: enableAiInsights ? '#10b981' : '#94a3b8',
+                      }}
+                    />
+                    {enableAiInsights ? 'Enabled' : 'Disabled'}
+                  </button>
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem', marginTop: '0.5rem' }}>
