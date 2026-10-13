@@ -739,22 +739,34 @@ Analyze and return the JSON object.`;
 
             <div className="sfd-timeofday-grid">
               <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Morning (6am &ndash; 12pm)</span>
+                <div className="sfd-timeofday-header">
+                  <span className="sfd-timeofday-label">Morning</span>
+                  <span className="sfd-timeofday-hours">6am &ndash; 12pm</span>
+                </div>
                 <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-primary)' }}>{morningPct}%</span>
                 <span className="sfd-timeofday-sub">{morningCount} slots</span>
               </div>
               <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Afternoon (12pm &ndash; 6pm)</span>
+                <div className="sfd-timeofday-header">
+                  <span className="sfd-timeofday-label">Afternoon</span>
+                  <span className="sfd-timeofday-hours">12pm &ndash; 6pm</span>
+                </div>
                 <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-ink-primary)' }}>{afternoonPct}%</span>
                 <span className="sfd-timeofday-sub">{afternoonCount} slots</span>
               </div>
               <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Evening (6pm &ndash; 12am)</span>
+                <div className="sfd-timeofday-header">
+                  <span className="sfd-timeofday-label">Evening</span>
+                  <span className="sfd-timeofday-hours">6pm &ndash; 12am</span>
+                </div>
                 <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-emerald)' }}>{eveningPct}%</span>
                 <span className="sfd-timeofday-sub">{eveningCount} slots</span>
               </div>
               <div className="sfd-timeofday-card">
-                <span className="sfd-timeofday-label">Night (12am &ndash; 6am)</span>
+                <div className="sfd-timeofday-header">
+                  <span className="sfd-timeofday-label">Night</span>
+                  <span className="sfd-timeofday-hours">12am &ndash; 6am</span>
+                </div>
                 <span className="sfd-timeofday-pct" style={{ color: 'var(--sfd-amber)' }}>{nightPct}%</span>
                 <span className="sfd-timeofday-sub">{nightCount} slots</span>
               </div>
